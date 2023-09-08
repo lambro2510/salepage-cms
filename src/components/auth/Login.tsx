@@ -11,7 +11,7 @@ import { Admin } from '../../interfaces/models/admin';
 import { defaultHttp } from '../../utils/http';
 
 interface FormValues {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -25,7 +25,7 @@ const Login = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    setPageTitle('Admin Login');
+    setPageTitle('Đăng nhập');
   }, []);
 
   useEffect(() => {
@@ -39,12 +39,12 @@ const Login = () => {
 
     defaultHttp
       .post(apiRoutes.login, {
-        email: values.email,
+        username: values.username,
         password: values.password,
       })
       .then((response) => {
         const admin: Admin = {
-          token: response.data.token,
+          token: response.data.data.token,
         };
         dispatch(login(admin));
       })
@@ -69,7 +69,7 @@ const Login = () => {
         initialValues={
           import.meta.env.VITE_DEMO_MODE === 'true'
             ? {
-                email: 'eve.holt@reqres.in',
+                username: 'eve.holt@reqres.in',
                 password: 'password',
               }
             : {}
@@ -77,23 +77,19 @@ const Login = () => {
       >
         <div>
           <Form.Item
-            name="email"
+            name="username"
             label={
               <p className="block text-sm font-medium text-gray-900">Email</p>
             }
             rules={[
               {
                 required: true,
-                message: 'Please enter your email',
-              },
-              {
-                type: 'email',
-                message: 'Invalid email address',
-              },
+                message: 'Vui lòng nhập tài khoản',
+              }
             ]}
           >
             <Input
-              placeholder="name@example.com"
+              placeholder="lambro25102001"
               className="bg-gray-50 text-gray-900 sm:text-sm py-1.5"
             />
           </Form.Item>
@@ -109,7 +105,7 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                message: 'Please enter your password',
+                message: 'Vui lòng nhập mật khấu',
               },
             ]}
           >
