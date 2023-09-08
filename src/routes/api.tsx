@@ -7,4 +7,6 @@ export const apiRoutes = {
   reviews: `${API_URL}/unknown`,
 
   orderHistories: `${API_URL}/seller/product-transaction`,
+
+  getProducts: `${API_URL}/seller/product`,
 };

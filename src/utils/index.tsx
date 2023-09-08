@@ -23,7 +23,7 @@ export const showNotification = (
 };
 
 export const handleErrorResponse = (
-  error: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  error: any,
   callback?: () => void,
   errorMessage?: string
 ) => {

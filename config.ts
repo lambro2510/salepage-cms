@@ -7,8 +7,8 @@ enum LayoutType {
 }
 
 const CONFIG = {
-  appName: 'Reforge',
-  helpLink: 'https://github.com/arifszn/reforge',
+  appName: 'Salepage Cms',
+  helpLink: 'https://github.com/lambro2510/salepage-portal.git',
   enablePWA: true,
   theme: {
     accentColor: '#818cf8',
@@ -16,7 +16,7 @@ const CONFIG = {
     showBreadcrumb: true,
   },
   metaTags: {
-    title: 'Reforge',
+    title: 'Salepage Cms',
     description:
       'An out-of-box UI solution for enterprise applications as a React boilerplate.',
     imageURL: 'logo.svg',
