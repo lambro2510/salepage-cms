@@ -4,7 +4,7 @@
   "version": "1.1.0",
   "type": "module",
   "scripts": {
-    "start": "npm run dev",
+    "start": "vite --host 0.0.0.0",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
