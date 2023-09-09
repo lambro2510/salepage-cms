@@ -8,5 +8,9 @@ export const apiRoutes = {
 
   orderHistories: `${API_URL}/seller/product-transaction`,
 
-  getProducts: `${API_URL}/seller/product`,
+  products: `${API_URL}/seller/product`,
+
+  stores: `${API_URL}/seller/store`,
+
+  categories: `${API_URL}/seller/product-category`,
 };

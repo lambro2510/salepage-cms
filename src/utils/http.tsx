@@ -29,7 +29,10 @@ http.interceptors.request.use(
 
 http.interceptors.response.use(
   (response) => {
-    return response;
+    if(!response?.data?.error){
+      return response;
+    }
+    throw Error(response?.data?.message)
   },
   (error) => {
     if (error?.response?.status === 401) {

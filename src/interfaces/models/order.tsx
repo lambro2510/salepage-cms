@@ -3,7 +3,7 @@ export interface Order {
     productId?: string,
     productName?: string,
     productImageUrl?: string,
-    totalPrice?: number,
+    total_price?: number,
     sellerName?: string,
     buyerName: string,
     storeName?: string,
@@ -11,9 +11,9 @@ export interface Order {
     note?: string,
     quantity?: number,
     isUseVoucher?: boolean,
-    productTransactionState?: string,
+    productTransactionState: string,
     voucherInfo?: any,
-    createdAt?: string
+    created_at?: string
 }
 
 export interface OrderFilter {

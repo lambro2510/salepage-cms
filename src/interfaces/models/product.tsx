@@ -2,7 +2,7 @@ export interface Product {
     productId: string;
     productName: string;
     productPrice: number;
-    categoryName: string | null;
+    categoryName?: string;
     description: string;
     productTypes: string[]; 
     productRate: {
@@ -11,7 +11,7 @@ export interface Product {
       avgPoint: number;
     };
     sellerUsername: string;
-    storeName: string | null;
+    storeName?: string;
     sellingAddress: string;
     imageUrl: string;
     storeId: string;
@@ -19,7 +19,9 @@ export interface Product {
     isHot: boolean;
   }
 
+export interface ProductDetail {
   
+}
   
   
   
