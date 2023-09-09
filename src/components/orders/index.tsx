@@ -7,7 +7,7 @@ import {
     ProDescriptions,
 } from '@ant-design/pro-components';
 import {Avatar, BreadcrumbProps, Modal, Button, Dropdown, Menu} from 'antd';
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { EllipsisOutlined, SearchOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useRef, useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
 import { apiRoutes } from '../../routes/api';
@@ -61,17 +61,25 @@ const Orders = () => {
     };
 
     const getOrders = (params : any, sort : any) => {
+        let field : any ;
+        if (typeof sort === 'object' && sort !== null) {
+            for (const [key, value] of Object.entries(sort)) {
+                field = key;
+                console.log(key);
+              }
+          }
         
         return http
         .get(apiRoutes.orderHistories, {
             params: {
                 productName: params.productName,
                 buyerName : params.buyerName,
+                sellerStoreName : params.storeName,
                 gte: params.createdAt ? params.createdAt[0] : null ,
                 lte: params.createdAt ? params.createdAt[1] : null ,
                 page: params.current ? params.current - 1 : 0,
                 size: params.pageSize | 10,
-                sort: sort
+                sort: field
             },
         })
         .then((response) => {
@@ -164,12 +172,15 @@ const Orders = () => {
             dataIndex : 'productName',
             align: 'center',
             sorter: false,
+            filterMode: 'menu',
+            filtered: false,
             filterDropdown(props) {
                 return(
                     productFilter
                 )
             },
-            render: (_, row: Order) => row?.productName,
+            filterDropdownOpen: false,
+            render: (_, row: Order) => row.productName,
             
         },
         {
@@ -178,7 +189,7 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             search : false,
-            render: (_, row: Order) => row?.quantity
+            render: (_, row: Order) => row.quantity
         },
         {
             title: 'Tổng tiền thanh toán',
@@ -186,21 +197,21 @@ const Orders = () => {
             align: 'center',
             sorter: true,
             search : false,
-            render: (_, row: Order) => row?.totalPrice
+            render: (_, row: Order) => row.totalPrice
         },
         {
             title: 'Người mua',
             dataIndex : 'buyerName',
             align: 'center',
             sorter: false,
-            render: (_, row: Order) => row?.buyerName
+            render: (_, row: Order) => row.buyerName
         },
         {
             title: 'Cửa hàng',
             dataIndex : 'storeName',
             align: 'center',
             sorter: false,
-            render: (_, row: Order) => row?.storeName
+            render: (_, row: Order) => row.storeName
         },
         {
             title: 'Địa chỉ giao hàng',
@@ -208,7 +219,7 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             search : false,
-            render: (_, row: Order) => row?.address
+            render: (_, row: Order) => row.address
         },
         {
             title: 'Ghi chú',
@@ -216,7 +227,7 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             search : false,
-            render: (_, row: Order) => row?.note
+            render: (_, row: Order) => row.note
         },
         {
             title: 'Sử dụng mã giảm giá',
@@ -224,7 +235,7 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             search : false,
-            render: (_, row: Order) => row?.isUseVoucher
+            render: (_, row: Order) => row.isUseVoucher
         },
         {
             title: 'Trạng thái đơn hàng',
@@ -233,7 +244,7 @@ const Orders = () => {
             sorter: false,
             search : false,
             render: (_, row: Order) => {
-                return <span style={{color : 'green'}} >{getState(row?.productTransactionState)}</span>
+                return <span style={{color : 'green'}} >{getState(row.productTransactionState)}</span>
             }
         },
         {
@@ -242,7 +253,7 @@ const Orders = () => {
             align: 'center',
             sorter: true,
             valueType: 'dateRange',
-            render: (_, row: Order) => row?.createdAt
+            render: (_, row: Order) => row.createdAt
         }
     ]
 
@@ -267,9 +278,47 @@ const Orders = () => {
                 dateFormatter="number"
                 search={{
                     labelWidth: 'auto',
-                    searchText: 'Tìm kiếm',
-                    resetText: 'Xóa bộ lọc',
-                    style: {backgroundColor: '#D58EDC'}
+                    filterType: 'query',
+                    showHiddenNum: true,
+                    collapseRender(collapsed, props, intl, hiddenNum) {
+                        if(collapsed){
+                            return  [
+                                <Link to={'#'} onClick={() => {console.log(props)}}>
+                                    Mở rộng({props.hiddenNum})
+                                    <DownOutlined />
+                                </Link>
+                            ]
+                        }else{
+                            return  [
+                                <Link to={'#'} onClick={() => {console.log(props)}}>
+                                    Thu nhỏ
+                                    <UpOutlined />
+                                </Link>
+                            ]
+                        }
+                    },
+                    optionRender(searchConfig, props, dom) {
+                        return [
+                            <Button
+                                key="customSearch"
+                                className='bg-primary'
+                                icon={<SearchOutlined />}
+                                onClick={() => {
+                                    searchConfig?.form?.submit();
+                                }}
+                            >
+                                Tìm kiếm
+                            </Button>,
+                            <Button
+                                key="customReset"
+                                onClick={() => {
+                                    searchConfig?.form?.resetFields();
+                                }}
+                            >
+                                Xóa bộ lọc
+                            </Button>,
+                        ];
+                    },
                   }}
                 toolBarRender={() => [
                     <Dropdown
