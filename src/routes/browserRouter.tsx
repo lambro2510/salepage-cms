@@ -26,7 +26,9 @@ const Order = loadable(() => import('../components/orders'), {
 const Products = loadable(() => import('../components/products'), {
   fallback: fallbackElement,
 });
-
+const UpdateProduct = loadable(() => import('../components/products/UpdateCard'), {
+  fallback: fallbackElement,
+});
 export const browserRouter = createBrowserRouter([
   {
     path: webRoutes.home,
@@ -62,6 +64,10 @@ export const browserRouter = createBrowserRouter([
       {
         path: webRoutes.products,
         element: <Products />,
+      },
+      {
+        path: `${webRoutes.products}/:id/:name`,
+        element: <UpdateProduct />
       },
       {
         path: webRoutes.orders,

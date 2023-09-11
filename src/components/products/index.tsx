@@ -4,23 +4,13 @@ import {
     ProColumns,
     RequestData,
     TableDropdown,
-    ProDescriptions,
-    ProForm,
-    ProFormInstance,
-    ProFormDateRangePicker,
-    ProFormDigit,
-    ProFormRadio,
-    ProFormSelect,
-    ProFormSwitch,
-    ProFormText,
-    ProFormTextArea,
-    ProFormMoney,
+    ProDescriptions
 } from '@ant-design/pro-components';
-import { Avatar, BreadcrumbProps, Modal, Button, Dropdown, Menu, Space, FormInstance, Form } from 'antd';
-import Icon, { EllipsisOutlined, WarningOutlined, DownOutlined, UpOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Avatar, BreadcrumbProps, Modal, Button, Dropdown, Menu, Space, Form } from 'antd';
+import Icon, { EllipsisOutlined, WarningOutlined, DownOutlined, UpOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CiCircleMore } from 'react-icons/ci';
 import { useRef, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { apiRoutes } from '../../routes/api';
 import { webRoutes } from '../../routes/web';
 import {
@@ -42,27 +32,18 @@ enum ActionKey {
     UPDATE = 'update'
 }
 
-interface CreateProduct {
-    productName: string,
-    description: string,
-    categoryId: string,
-    productPrice: number,
-    sellingAddress: string,
-    storeId: string,
-    imageUrl: string,
-    productId: string
-}
-
 const breadcrumb: BreadcrumbProps = {
     items: [
         {
             key: webRoutes.products,
             title: <Link to={webRoutes.products}>Sản phẩm</Link>,
         },
+        
     ],
 };
 
 const Products = () => {
+    const navigate = useNavigate();
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, modalContextHolder] = Modal.useModal();
@@ -137,7 +118,7 @@ const Products = () => {
         if (key === ActionKey.DELETE) {
             showDeleteConfirmation(product);
         } else if (key === ActionKey.UPDATE) {
-            showUpdateConfirmation(product);
+            navigate(`${webRoutes.products}/${product.productId}/${product.productName}`);
         }
     };
 
@@ -173,93 +154,6 @@ const Products = () => {
                         );
 
                         actionRef.current?.reloadAndRest?.();
-                    })
-                    .catch((error) => {
-                        handleErrorResponse(error);
-                    });
-            },
-        });
-    };
-
-    const showUpdateConfirmation = (product: Product) => {
-        modal.confirm({
-            title: 'Cập nhật sản phẩm?',
-            icon: <ExclamationCircleOutlined />,
-            type: 'warning',
-            okText: 'Cập nhật',
-            cancelText: 'Hủy bỏ',
-            content: (
-                <ProForm<{
-                    productName: string;
-                    categoryId?: string;
-                    storeId?: string;
-                    sellingAddress?: string;
-                    productPrice?: number;
-                }>
-                    layout={'horizontal'}
-                    labelAlign={'right'}
-                >
-                    <ProFormText
-                        name="productName"
-                        label="Tên sản phẩm"
-                        placeholder="Nhập tên sản phẩm"
-                        initialValue={product.productName}
-                    />
-                    <ProFormSelect
-                        name="categoryId"
-                        label="Loại sản phẩm"
-                        options={categories.map(category => ({
-                            value: category.categoryId,
-                            label: category.categoryName
-                        }))}
-                        initialValue={product.categoryId}
-
-                    />
-                    <ProFormSelect
-                        name="storeId"
-                        label="Cửa hàng bán"
-                        options={stores.map(store => ({
-                            value: store.storeId,
-                            label: store.storeName
-                        }))}
-                        initialValue={product.storeId}
-
-                    />
-                    <ProFormMoney
-                        name="productPrice"
-                        label="Giá tiền"
-                        initialValue={product.productPrice}
-                    />
-
-                    <ProFormText
-                        colProps={{ span: 24 }}
-                        name="sellingAddress"
-                        label="Địa chỉ bán hàng"
-                        initialValue={product.description}
-                    />
-                    <ProFormTextArea
-                        colProps={{ span: 24 }}
-                        name="description"
-                        label="Mô tả sản phẩm"
-                        initialValue={product.description}
-                    />
-                </ProForm>
-            ),
-            okButtonProps: {
-                className: 'bg-primary',
-            },
-            onOk: () => {
-
-                return http
-                    .put(`${apiRoutes.products}/${product.productId}`, {})
-                    .then(() => {
-                        showNotification(
-                            'Thành công',
-                            NotificationType.SUCCESS,
-                            `${product} đã được cập nhật`
-                        );
-                        actionRef.current?.reloadAndRest?.();
-
                     })
                     .catch((error) => {
                         handleErrorResponse(error);
