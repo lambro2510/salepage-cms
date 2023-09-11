@@ -26,6 +26,7 @@
     "@loadable/component": "^5.15.3",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/loadable__component": "^5.13.4",
+    "@types/lodash.merge": "^4.6.7",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",

@@ -204,7 +204,6 @@ const CreateProduct = () => {
                         options={options}
                         placeholder='Địa chỉ bán hàng'
                         disabled={false}
-                        loading={true}
                     />
                 }
                 />
