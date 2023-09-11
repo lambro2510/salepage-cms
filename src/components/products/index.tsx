@@ -53,7 +53,7 @@ const Products = () => {
     useEffect(() => {
         Promise.all([loadStores(), loadCategories()])
             .then(() => {
-                setLoading(false);
+                
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -64,11 +64,11 @@ const Products = () => {
         return http.get(apiRoutes.stores, {
             params: {
                 page: 0,
-                size: 20
+                size: 100
             }
         })
             .then((response => {
-                setStores(response.data.data.data)
+                setStores(response?.data?.data?.data)
             }))
             .catch((error) => {
                 handleErrorResponse(error);
@@ -118,7 +118,8 @@ const Products = () => {
         if (key === ActionKey.DELETE) {
             showDeleteConfirmation(product);
         } else if (key === ActionKey.UPDATE) {
-            navigate(`${webRoutes.products}/${product.productId}/${product.productName}`);
+            
+            navigate(`${webRoutes.products}/${product.productId}`);
         }
     };
 
@@ -328,28 +329,6 @@ const Products = () => {
                             ]
                         }
                     },
-                    // optionRender(searchConfig, props, dom) {
-                    //     return [
-                    //         <Button
-                    //             key="customSearch"
-                    //             className='bg-primary'
-                    //             icon={<SearchOutlined />}
-                    //             onClick={() => {
-                    //                 searchConfig?.form?.submit();
-                    //             }}
-                    //         >
-                    //             Tìm kiếm
-                    //         </Button>,
-                    //         <Button
-                    //             key="customReset"
-                    //             onClick={() => {
-                    //                 searchConfig?.form?.resetFields();
-                    //             }}
-                    //         >
-                    //             Xóa bộ lọc
-                    //         </Button>,
-                    //     ];
-                    // },
                 }}
                 toolBarRender={() => [
                     <Dropdown

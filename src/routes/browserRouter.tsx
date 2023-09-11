@@ -66,7 +66,7 @@ export const browserRouter = createBrowserRouter([
         element: <Products />,
       },
       {
-        path: `${webRoutes.products}/:id/:name`,
+        path: `${webRoutes.products}/:id`,
         element: <UpdateProduct />
       },
       {
