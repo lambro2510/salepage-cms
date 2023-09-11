@@ -1,0 +1,12 @@
+name: Auto deploy
+
+on:
+  push:
+    branches: [ "master" ] 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Trigger deploy in Bizfly App Engine
+        run: curl -X POST ${{ secrets.WEB_HOOK_URL }} 
