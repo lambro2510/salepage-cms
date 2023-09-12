@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import adminSlice, { AdminState } from './slices/adminSlice';
+import adminSlice, { AuthState } from './slices/authSlice';
 import {
   persistReducer,
   FLUSH,
@@ -17,7 +17,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  admin: adminSlice,
+  auth: adminSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -33,6 +33,6 @@ export const store = configureStore({
 });
 
 export type RootState = {
-  admin: AdminState;
+  auth: AuthState;
 };
 export type AppDispatch = typeof store.dispatch;

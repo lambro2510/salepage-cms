@@ -1,17 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Admin } from '../../interfaces/models/admin';
+import { Auth } from '../../interfaces/models/auth';
 
-export type AdminState = Admin | null;
+export type AuthState = Auth | null;
 
-const initialState: AdminState = null;
+const initialState: AuthState = null;
 
-export const adminSlice = createSlice({
+export const authSlice = createSlice({
   name: 'admin',
   initialState: initialState,
   reducers: {
     login: (state, action) => {
       state = action.payload;
-
       return state;
     },
     logout: (state) => {
@@ -22,6 +21,6 @@ export const adminSlice = createSlice({
   },
 });
 
-export const { login, logout } = adminSlice.actions;
+export const { login, logout } = authSlice.actions;
 
-export default adminSlice.reducer;
+export default authSlice.reducer;

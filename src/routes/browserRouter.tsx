@@ -9,31 +9,34 @@ import loadable from '@loadable/component';
 import ProgressBar from '../components/loader/progressBar';
 import RequireAuth from './requireAuth';
 import Login from '../components/auth/Login';
-import About from '../components/demo-pages/about';
 
 const errorElement = <ErrorPage />;
 const fallbackElement = <ProgressBar />;
 
-const Dashboard = loadable(() => import('../components/dashboard'), {
+const Home = loadable(() => import('../components/home'), {
   fallback: fallbackElement,
 });
-const Users = loadable(() => import('../components/users'), {
+const Profile = loadable(() => import('../components/profile'), {
   fallback: fallbackElement,
 });
-const Order = loadable(() => import('../components/orders'), {
+const ProfileCard = loadable(() => import('../components/profile/profile-card'), {
   fallback: fallbackElement,
 });
-const Products = loadable(() => import('../components/products'), {
-  fallback: fallbackElement,
-});
-const UpdateProduct = loadable(() => import('../components/products/UpdateCard'), {
+const OrderCard = loadable(() => import('../components/profile/order-card'), {
   fallback: fallbackElement,
 });
 export const browserRouter = createBrowserRouter([
   {
     path: webRoutes.home,
-    element: <Redirect />,
+    element: <Layout />,
     errorElement: errorElement,
+    children: [
+      {
+        path: webRoutes.home,
+        element: <Home />,
+        errorElement: errorElement,
+      }
+    ]
   },
 
   // auth routes
@@ -58,25 +61,23 @@ export const browserRouter = createBrowserRouter([
     errorElement: errorElement,
     children: [
       {
-        path: webRoutes.dashboard,
-        element: <Dashboard />,
-      },
-      {
-        path: webRoutes.products,
-        element: <Products />,
-      },
-      {
-        path: `${webRoutes.products}/:id`,
-        element: <UpdateProduct />
-      },
-      {
-        path: webRoutes.orders,
-        element: <Order />,
-      },
-      {
-        path: webRoutes.about,
-        element: <About />,
-      },
+        path: webRoutes.profile,
+        element: <Profile />,
+        errorElement: errorElement,
+        children: [
+          {
+            path: `${webRoutes.profile}/:id`,
+            element: <ProfileCard />,
+            errorElement: errorElement,
+
+          },
+          {
+            path: `${webRoutes.profile}/order`,
+            element: <OrderCard />,
+            errorElement: errorElement,
+          },
+        ]
+      }
     ],
   },
 

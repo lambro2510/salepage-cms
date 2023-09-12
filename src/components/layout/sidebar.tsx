@@ -4,39 +4,27 @@ import { UserOutlined, InfoCircleOutlined, ShoppingOutlined, BarcodeOutlined, Sh
 
 export const sidebar = [
   {
-    path: webRoutes.dashboard,
-    key: webRoutes.dashboard,
-    name: 'Thống kê',
-    icon: <BiHomeAlt2 />,
-  },
-  {
     path: webRoutes.orders,
     key: webRoutes.orders,
-    name: 'Lịch sử đơn hàng',
+    name: 'Sản phẩm cho hôm này',
     icon: <OrderedListOutlined />,
   },
   {
     path: webRoutes.products,
     key: webRoutes.products,
-    name: 'Sản phẩm đang bán',
+    name: 'Sản phẩm yêu thích',
     icon: <ShoppingOutlined />,
   },
   {
     path: webRoutes.vouchers,
     key: webRoutes.vouchers,
-    name: 'Kho mã giảm giá',
+    name: 'Livetream sản phẩm',
     icon: <BarcodeOutlined />,
   },
   {
     path: webRoutes.stores,
     key: webRoutes.stores,
-    name: 'Cửa hàng',
+    name: 'Blog bình luận',
     icon: <ShopOutlined />,
-  },
-  {
-    path: webRoutes.about,
-    key: webRoutes.about,
-    name: 'Giới thiệu',
-    icon: <InfoCircleOutlined />,
-  },
+  }
 ];

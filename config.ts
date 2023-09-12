@@ -7,12 +7,12 @@ enum LayoutType {
 }
 
 const CONFIG = {
-  appName: 'Salepage Cms',
-  helpLink: 'https://github.com/lambro2510/salepage-portal.git',
+  appName: 'Sàn giao dịch shoppi',
+  helpLink: 'https://github.com/lambro2510/salepage-fontend.git',
   enablePWA: true,
   theme: {
     accentColor: '#818cf8',
-    sidebarLayout: LayoutType.MIX,
+    sidebarLayout: LayoutType.TOP,
     showBreadcrumb: true,
   },
   metaTags: {

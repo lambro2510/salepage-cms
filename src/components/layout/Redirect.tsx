@@ -4,10 +4,10 @@ import { webRoutes } from '../../routes/web';
 import { RootState } from '../../store';
 
 const Redirect = () => {
-  const admin = useSelector((state: RootState) => state.admin);
+  const admin = useSelector((state: RootState) => state.auth);
 
   return (
-    <Navigate to={admin ? webRoutes.dashboard : webRoutes.login} replace />
+    <Navigate to={admin ? webRoutes.home : webRoutes.login} replace />
   );
 };
 
