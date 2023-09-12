@@ -15,7 +15,7 @@ const http = axios.create();
 http.interceptors.request.use(
   (config) => {
     const state: RootState = store.getState();
-    const apiToken = state.admin?.token;
+    const apiToken = state.auth?.token;
 
     if (apiToken) {
       config.headers.Authorization = `Bearer ${apiToken}`;
