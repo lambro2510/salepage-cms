@@ -33,6 +33,9 @@ const CreateProduct = loadable(() => import('../components/products/CreateCard')
 const UpdateProduct = loadable(() => import('../components/products/UpdateCard'), {
   fallback: fallbackElement,
 });
+const UploadImageProduct = loadable(() => import('../components/products/UploadImageCard'), {
+  fallback: fallbackElement,
+});
 
 const Stores = loadable(() => import('../components/stores'), {
   fallback: fallbackElement,
@@ -95,6 +98,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.products}/create`,
             element: <CreateProduct />
+          },
+          {
+            path: `${webRoutes.products}/:id/upload`,
+            element: <UploadImageProduct />
           },
         ]
       },

@@ -14,11 +14,13 @@ import Icon, { EllipsisOutlined, WarningOutlined, DownOutlined, UpOutlined, Dele
 import LazyImage from "../lazy-image";
 import { ProductTransactionState } from "../../interfaces/enum/ProdTransactionState";
 import { CiCircleMore } from "react-icons/ci";
-import { BiPlus } from "react-icons/bi";
+import { BiPlus, BiUpload } from "react-icons/bi";
+import { MdUpdate } from "react-icons/md";
 
 enum ActionKey {
     DELETE = 'delete',
-    UPDATE = 'update'
+    UPDATE = 'update',
+    UPLOAD = 'upload',
 }
 
 const breadcrumb: BreadcrumbProps = {
@@ -108,8 +110,9 @@ const ViewCard = () => {
         if (key === ActionKey.DELETE) {
             showDeleteConfirmation(product);
         } else if (key === ActionKey.UPDATE) {
-            
             navigate(`${webRoutes.products}/${product.productId}`);
+        }else if (key === ActionKey.UPLOAD) {
+            navigate(`${webRoutes.products}/${product.productId}/upload`);
         }
     };
 
@@ -242,7 +245,7 @@ const ViewCard = () => {
         },
 
         {
-            title: 'Action',
+            title: 'Chức năng',
             align: 'center',
             key: 'option',
             fixed: 'right',
@@ -252,20 +255,30 @@ const ViewCard = () => {
                     onSelect={(key) => handleActionOnSelect(key, row)}
                     menus={[
                         {
+                            key: ActionKey.UPLOAD,
+                            name: (
+                                <Space>
+                                    <BiUpload />
+                                    Tải ảnh cho sản phẩm
+                                </Space>
+                            ),
+                        },
+
+                        {
+                            key: ActionKey.UPDATE,
+                            name: (
+                                <Space>
+                                    <MdUpdate />
+                                    Cập nhật sản phẩm
+                                </Space>
+                            ),
+                        },
+                        {
                             key: ActionKey.DELETE,
                             name: (
                                 <Space>
                                     <DeleteOutlined />
                                     Xóa
-                                </Space>
-                            ),
-                        },
-                        {
-                            key: ActionKey.UPDATE,
-                            name: (
-                                <Space>
-                                    <DeleteOutlined />
-                                    Cập nhật
                                 </Space>
                             ),
                         },
