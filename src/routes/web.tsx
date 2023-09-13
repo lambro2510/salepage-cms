@@ -8,4 +8,5 @@ export const webRoutes = {
   products: '/products',
   vouchers : '/vouchers',
   stores : '/stores',
+  categories: '/categories',
 };

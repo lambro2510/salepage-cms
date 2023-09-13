@@ -43,10 +43,17 @@ const Login = () => {
         password: values.password,
       })
       .then((response) => {
-        const admin: Admin = {
-          token: response.data.data.token,
-        };
-        dispatch(login(admin));
+        if(!response?.data?.error){
+          const admin: Admin = {
+            token: response?.data?.data?.token,
+          };
+          dispatch(login(admin));
+        }else{
+          throw Error(response.data.message)
+        }
+        
+        
+        
       })
       .catch((error) => {
         handleErrorResponse(error);
@@ -66,14 +73,6 @@ const Login = () => {
         onFinish={onSubmit}
         layout={'vertical'}
         requiredMark={false}
-        initialValues={
-          import.meta.env.VITE_DEMO_MODE === 'true'
-            ? {
-                username: 'eve.holt@reqres.in',
-                password: 'password',
-              }
-            : {}
-        }
       >
         <div>
           <Form.Item

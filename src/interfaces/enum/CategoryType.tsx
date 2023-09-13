@@ -1,5 +1,7 @@
 export enum CategoryType {
-    SMALL,
-    BIG,
-    LARGE
+    VERY_SMALL = 'Rất nhỏ',
+    SMALL = 'Nhỏ',
+    BIG = 'Lớn',
+    LARGE = 'Rất lớn',
+    SUPPER_LARGE = 'Cực kỳ lớn'
 }

@@ -32,6 +32,8 @@ http.interceptors.response.use(
     if(!response?.data?.error){
       return response;
     }
+    console.log(response);
+    
     throw Error(response?.data?.message)
   },
   (error) => {

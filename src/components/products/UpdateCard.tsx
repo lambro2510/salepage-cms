@@ -22,14 +22,13 @@ import { ProductDetail } from '../../interfaces/models/product';
 import { Category } from '../../interfaces/models/category';
 import { Store } from '../../interfaces/models/store';
 
-const CreateProduct = () => {
+const UpdateProduct = () => {
     const navigate = useNavigate();
     const { id, } = useParams();
     const [product, setProduct] = useState<ProductDetail>();
     const [stores, setStores] = useState<Store[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState<boolean>(true)
-    const [options, setOptions] = useState([])
     const loadProduct = () => {
         http.get(`${apiRoutes.products}/detail/${id}`)
             .then((response) => {
@@ -72,26 +71,6 @@ const CreateProduct = () => {
                 handleErrorResponse(error);
             })
     };
-
-    const getAddressOptions = debounce((value : any) => {
-        console.log('debonce');
-        
-        if (value) {
-          // Gọi lên server ở đây, bạn có thể sử dụng fetch hoặc axios hoặc thư viện gọi API khác
-          http.get(apiRoutes.maps, {
-            params: {
-              address: value,
-            },
-          })
-          .then((response) => {
-            setProduct({ ...product, sellingAddress: value });
-            setOptions(response?.data?.data.map((data: string) => ({ value: data })));
-          })
-          .catch((error) => {
-            handleErrorResponse(error);
-          });
-        }
-      }, 800);
 
     useEffect(() => {
         Promise.all([loadStores(), loadCategories(), loadProduct()])
@@ -189,24 +168,6 @@ const CreateProduct = () => {
                     label='Giá tiền'
                     customSymbol="đ"
                 />
-                <ProFormText
-                    name='sellingAddress'
-                    label='Địa chỉ bản hàng'
-                    fieldProps={{
-                        onChange: (value) => {
-                            getAddressOptions(value)
-                        }
-                    }}
-
-                    children={
-                    <AutoComplete
-                        style={{ width: '100%' }}
-                        options={options}
-                        placeholder='Địa chỉ bán hàng'
-                        disabled={false}
-                    />
-                }
-                />
                 <ProFormTextArea
                     name="description"
                     label="Mô tả"
@@ -218,4 +179,4 @@ const CreateProduct = () => {
     );
 };
 
-export default CreateProduct;
+export default UpdateProduct;
