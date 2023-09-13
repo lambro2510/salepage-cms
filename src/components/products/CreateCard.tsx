@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ProForm, ProFormText, ProFormTextArea, ProFormCheckbox, ProFormDigit, ProFormSelect } from '@ant-design/pro-form';
+import { ProForm, ProFormText, ProFormTextArea, ProFormCheckbox, ProFormDigit, ProFormSelect, ProFormMoney } from '@ant-design/pro-form';
 import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
 import { showNotification } from '../../utils';
@@ -14,13 +14,13 @@ import { webRoutes } from '../../routes/web';
 import BasePageContainer from '../layout/PageContainer';
 
 enum Size {
-    CENTIMES = 'cm',
-    MES = 'm'
+    CENTIMES = 'centimes',
+    MES = 'met'
 }
 
 enum WEIGHT {
-    KILOGRAM = 'kg',
-    GRAM = 'g'
+    KILOGRAM = 'kilogram',
+    GRAM = 'gram'
 }
 interface ProductProps {
     productName: string;
@@ -83,11 +83,7 @@ const CreateProduct = () => {
             }
         })
             .then((response) => {
-                setCategories(response?.data?.data?.map((data: string) => {
-                    return {
-                        value: data
-                    }
-                }));
+                setCategories(response?.data?.data);
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -135,7 +131,7 @@ const CreateProduct = () => {
                         }
                     })}
                 />
-                <ProFormDigit name="productPrice" label="Giá sản phẩm" />
+                <ProFormMoney name="productPrice" label="Giá sản phẩm" />
                 <ProFormSelect
                     name='storeId'
                     label="Cửa hàng bán sản phẩm"
@@ -149,8 +145,8 @@ const CreateProduct = () => {
                 />
                 <ProFormText name="origin" label="Xuất xứ" />
                 <ProFormCheckbox name="isForeign" label="Sản phẩm nhập khẩu" />
-                <ProFormSelect valueEnum={Size} name="size" label="Kích thước" />
-                <ProFormText name="sizeType" label="Đơn vị kích thước" />
+                <ProFormDigit  name="size" label="Kích thước" />
+                <ProFormSelect valueEnum={Size} name="sizeType" label="Đơn vị kích thước" />
                 <ProFormDigit name="weight" label="Trọng lượng" />
                 <ProFormSelect valueEnum={WEIGHT} name="weightType" label="Đơn vị trọng lượng" />
                 <ProFormSelect
