@@ -112,7 +112,7 @@ const CreateCategory = () => {
                     loading={loading}
                     type="primary"
                     size="large"
-                    htmlType={'submit'}>Tạo mới
+                    htmlType={'submit'}>Xác nhận
                 </Button>
             </ProForm>
         </BasePageContainer>

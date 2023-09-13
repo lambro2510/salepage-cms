@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ProForm, ProFormText, ProFormTextArea, ProFormCheckbox, ProFormDigit, ProFormSelect, ProFormMoney } from '@ant-design/pro-form';
+import { ProForm, ProFormText, ProFormTextArea, ProFormCheckbox, ProFormDigit, ProFormSelect, ProFormMoney, ProFormSwitch } from '@ant-design/pro-form';
 import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
 import { showNotification } from '../../utils';
@@ -9,11 +9,11 @@ import { handleErrorResponse } from '../../utils';
 import { debounce } from 'lodash';
 import { Store } from 'antd/es/form/interface';
 import { Category } from '../../interfaces/models/category';
-import { BreadcrumbProps } from 'antd';
+import { BreadcrumbProps, Button, Form } from 'antd';
 import { webRoutes } from '../../routes/web';
 import BasePageContainer from '../layout/PageContainer';
 
-enum Size {
+enum SIZE {
     CENTIMES = 'centimes',
     MES = 'met'
 }
@@ -55,6 +55,7 @@ const breadcrumb: BreadcrumbProps = {
 const CreateProduct = () => {
     const navigate = useNavigate();
 
+    const [form] = Form.useForm();
     const [stores, setStores] = useState<Store[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState<boolean>(true)
@@ -104,11 +105,13 @@ const CreateProduct = () => {
     }, [])
 
     const handleFinish = async (values: ProductProps) => {
+        setLoading(true);
         http
             .post(apiRoutes.products, { ...values })
             .then((response) => {
-                showNotification(response?.data?.message, NotificationType.SUCCESS);
+                setLoading(false);
                 navigate(-1);
+                showNotification(response?.data?.message, NotificationType.SUCCESS);
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -116,26 +119,35 @@ const CreateProduct = () => {
     };
 
     return (
-        <BasePageContainer breadcrumb={breadcrumb} loading={loading}>
+        <BasePageContainer breadcrumb={breadcrumb}>
 
-            <ProForm onFinish={(values: ProductProps) => handleFinish(values)}>
-                <ProFormText name="productName" label="Tên sản phẩm" />
-                <ProFormTextArea name="description" label="Mô tả" />
-                <ProFormSelect
-                    name="categoryId"
-                    label="Loại sản phẩm"
-                    options={categories.map((category) => {
-                        return {
-                            label: category.categoryName,
-                            value: category.categoryId
-                        }
-                    })}
+            <ProForm
+                onFinish={(values: ProductProps) => handleFinish(values)}
+                form={form}
+                submitter={false}
+            >
+                <ProFormText
+                    name="productName"
+                    label="Tên sản phẩm"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Vui lòng nhập tên sản phẩm',
+                        },
+                    ]}
                 />
-                <ProFormMoney name="productPrice" label="Giá sản phẩm" />
+
+                <ProFormTextArea name="description" label="Mô tả" />
                 <ProFormSelect
                     name='storeId'
                     label="Cửa hàng bán sản phẩm"
                     mode='multiple'
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Vui lòng chọn cửa hàng',
+                        },
+                    ]}
                     options={stores.map(((store) => {
                         return {
                             label: store.storeName,
@@ -143,24 +155,63 @@ const CreateProduct = () => {
                         }
                     }))}
                 />
-                <ProFormText name="origin" label="Xuất xứ" />
-                <ProFormCheckbox name="isForeign" label="Sản phẩm nhập khẩu" />
-                <ProFormDigit  name="size" label="Kích thước" />
-                <ProFormSelect valueEnum={Size} name="sizeType" label="Đơn vị kích thước" />
-                <ProFormDigit name="weight" label="Trọng lượng" />
-                <ProFormSelect valueEnum={WEIGHT} name="weightType" label="Đơn vị trọng lượng" />
                 <ProFormSelect
-                    name="colors"
-                    label="Màu sắc"
-                    mode="multiple"
-                    options={[
-                        { label: 'Đen', value: 'đen' },
-                        { label: 'Trắng', value: 'trắng' },
-                        { label: 'Xanh', value: 'xanh' },
+                    name="categoryId"
+                    label="Loại sản phẩm"
+                    options={categories.map((category) => {
+                        return {
+                            label: category.categoryName,
+                            value: category.categoryId,
+                        };
+                    })}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Vui lòng chọn loại sản phẩm',
+                        },
                     ]}
+                    initialValue={categories.length > 0 ? categories[0].categoryId : undefined}
                 />
-                <ProFormCheckbox name="isGuarantee" label="Bảo hành" />
-                <ProFormDigit name="quantity" label="Số lượng" />
+                <ProForm.Item>
+                    <ProForm.Group >
+                        <ProFormMoney name="productPrice" placeholder="Giá sản phẩm" />
+                        <ProFormText name="origin" placeholder="Xuất xứ" />
+                    </ProForm.Group >
+                </ProForm.Item>
+                <ProForm.Item >
+                    <ProForm.Group>
+                        <ProForm.Group grid>
+                            <ProFormDigit name="size" placeholder={'Kích thước'} />
+                            <ProFormSelect valueEnum={SIZE} initialValue={SIZE.CENTIMES} name="sizeType" />
+                        </ProForm.Group>
+
+                        <ProForm.Group grid>
+                            <ProFormDigit name="weight" placeholder="Trọng lượng" />
+                            <ProFormSelect valueEnum={WEIGHT} initialValue={WEIGHT.GRAM} name="weightType" />
+                        </ProForm.Group>
+                        <ProFormSelect
+                            name="colors"
+                            placeholder="Màu sắc"
+                            mode="multiple"
+                            options={[
+                                { label: 'Đen', value: 'đen' },
+                                { label: 'Trắng', value: 'trắng' },
+                                { label: 'Xanh', value: 'xanh' },
+                            ]}
+                        />
+                    </ProForm.Group>
+                </ProForm.Item>
+                <ProFormDigit name="quantity" placeholder="Số lượng sản phẩm bán" />
+                <ProFormSwitch label='Được bảo hành' name="isGuarantee" />
+                <ProFormSwitch name="isForeign" label="Sản phẩm cần nhập khẩu" />
+                <Button
+                    className="mt-4 bg-primary"
+                    block
+                    loading={loading}
+                    type="primary"
+                    size="large"
+                    htmlType={'submit'}>Xác nhận
+                </Button>
             </ProForm>
         </BasePageContainer>
     );

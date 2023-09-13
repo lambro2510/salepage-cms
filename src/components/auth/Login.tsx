@@ -78,7 +78,7 @@ const Login = () => {
           <Form.Item
             name="username"
             label={
-              <p className="block text-sm font-medium text-gray-900">Email</p>
+              <p className="block text-sm font-medium text-gray-900">Tên đăng nhập</p>
             }
             rules={[
               {
