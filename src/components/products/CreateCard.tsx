@@ -140,7 +140,7 @@ const CreateProduct = () => {
 
                 <ProFormTextArea name="description" label="Mô tả" />
                 <ProFormSelect
-                    name='storeId'
+                    name='storeIds'
                     label="Cửa hàng bán sản phẩm"
                     mode='multiple'
                     rules={[
