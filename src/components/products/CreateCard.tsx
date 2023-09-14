@@ -114,6 +114,7 @@ const CreateProduct = () => {
                 showNotification(response?.data?.message, NotificationType.SUCCESS);
             })
             .catch((error) => {
+                setLoading(false);
                 handleErrorResponse(error);
             });
     };
@@ -182,12 +183,12 @@ const CreateProduct = () => {
                     <ProForm.Group>
                         <ProForm.Group grid>
                             <ProFormDigit name="size" placeholder={'Kích thước'} />
-                            <ProFormSelect valueEnum={SIZE} initialValue={SIZE.CENTIMES} name="sizeType" />
+                            <ProFormSelect valueEnum={SIZE} name="sizeType" />
                         </ProForm.Group>
 
                         <ProForm.Group grid>
                             <ProFormDigit name="weight" placeholder="Trọng lượng" />
-                            <ProFormSelect valueEnum={WEIGHT} initialValue={WEIGHT.GRAM} name="weightType" />
+                            <ProFormSelect valueEnum={WEIGHT} name="weightType" />
                         </ProForm.Group>
                         <ProFormSelect
                             name="colors"

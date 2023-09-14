@@ -6,11 +6,14 @@ import { handleErrorResponse } from "../../utils";
 import { Upload } from "antd";
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const UploadImageProduct = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState<boolean>(true);
     const [fileList, setFileList] = useState<any[]>([]);
+    const admin = useSelector((state: RootState) => state.admin);
 
     const loadImages = async () => {
         await http.get(`${apiRoutes.products}/images/${id}`)
@@ -82,19 +85,20 @@ const UploadImageProduct = () => {
 
 
     return (
-        <ImgCrop rotationSlider>
+        <ImgCrop >
             <Upload
+                headers={{ Authorization: 'Bearer ' + admin }}
+                action={`${apiRoutes.products}/upload/${id}`}
                 method="post"
                 listType="picture-card"
                 fileList={fileList}
-                onChange={onChange}
                 onPreview={onPreview}
                 customRequest={({ file }) => handleUploadImage(file)}
             >
                 {fileList.length < 5 && '+ Upload'}
             </Upload>
-
         </ImgCrop>
+
     )
 }
 

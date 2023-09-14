@@ -335,7 +335,7 @@ const ViewCard = () => {
                 }}
                 toolBarRender={() => [
                     <Button icon={<BiPlus/>} type="primary">
-                        <Link to={'create'} >Tạo mới</Link>
+                        <Link to={`${webRoutes.products}/create`} >Tạo mới</Link>
                     </Button>
                 ]}
             />
