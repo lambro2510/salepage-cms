@@ -6,22 +6,14 @@ import { showNotification } from '../../utils';
 import { NotificationType } from '../../utils';
 import { Link, useNavigate } from 'react-router-dom';
 import { handleErrorResponse } from '../../utils';
-import { debounce } from 'lodash';
 import { Store } from 'antd/es/form/interface';
 import { Category } from '../../interfaces/models/category';
 import { BreadcrumbProps, Button, Form } from 'antd';
 import { webRoutes } from '../../routes/web';
 import BasePageContainer from '../layout/PageContainer';
+import { SizeType, WeightType } from '../../interfaces/enum/ProductType';
 
-enum SIZE {
-    CENTIMES = 'centimes',
-    MES = 'met'
-}
 
-enum WEIGHT {
-    KILOGRAM = 'kilogram',
-    GRAM = 'gram'
-}
 interface ProductProps {
     productName: string;
     description: string;
@@ -121,7 +113,6 @@ const CreateProduct = () => {
 
     return (
         <BasePageContainer breadcrumb={breadcrumb}>
-
             <ProForm
                 onFinish={(values: ProductProps) => handleFinish(values)}
                 form={form}
@@ -183,12 +174,12 @@ const CreateProduct = () => {
                     <ProForm.Group>
                         <ProForm.Group grid>
                             <ProFormDigit name="size" placeholder={'Kích thước'} />
-                            <ProFormSelect valueEnum={SIZE} name="sizeType" />
+                            <ProFormSelect valueEnum={SizeType} name="sizeType" />
                         </ProForm.Group>
 
                         <ProForm.Group grid>
                             <ProFormDigit name="weight" placeholder="Trọng lượng" />
-                            <ProFormSelect valueEnum={WEIGHT} name="weightType" />
+                            <ProFormSelect valueEnum={WeightType} name="weightType" />
                         </ProForm.Group>
                         <ProFormSelect
                             name="colors"

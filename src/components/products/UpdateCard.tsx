@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
     ProForm,
+    ProFormDigit,
     ProFormMoney,
     ProFormSelect,
+    ProFormSwitch,
     ProFormText,
     ProFormTextArea, // Import ProForm components you need
 } from '@ant-design/pro-components';
-import { AutoComplete, BreadcrumbProps, Skeleton, Spin } from 'antd';
+import { AutoComplete, BreadcrumbProps, Button, Form, Skeleton, Spin } from 'antd';
 import debounce from 'lodash/debounce';
 import { webRoutes } from '../../routes/web';
 import BasePageContainer from '../layout/PageContainer';
@@ -21,25 +23,51 @@ import {
 import { ProductDetail } from '../../interfaces/models/product';
 import { Category } from '../../interfaces/models/category';
 import { Store } from '../../interfaces/models/store';
+import { SizeType, WeightType } from '../../interfaces/enum/ProductType';
+
+interface ProductProps {
+    productName: string;
+    description: string;
+    categoryId: string;
+    productPrice: number;
+    storeIds: any[];
+    origin: string;
+    isForeign: boolean;
+    size: number;
+    sizeType: string;
+    weight: number;
+    weightType: string;
+    colors: string[];
+    isGuarantee: boolean;
+    quantity: number;
+    discountPercent: number;
+}
 
 const UpdateProduct = () => {
     const navigate = useNavigate();
+    const [form] = Form.useForm();
     const { id, } = useParams();
-    const [product, setProduct] = useState<ProductDetail>();
+    const [product, setProduct] = useState<ProductDetail>({});
     const [stores, setStores] = useState<Store[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState<boolean>(true)
-    const loadProduct = () => {
-        http.get(`${apiRoutes.products}/detail/${id}`)
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const loadProduct = async () => {
+        await http.get(`${apiRoutes.products}/detail/${id}`)
             .then((response) => {
-                setProduct(response?.data?.data);
+                let res = response?.data?.data as ProductDetail;
+                console.log(res);
+
+                setProduct(res);
+                return (res)
             })
             .catch((error) => {
                 handleErrorResponse(error);
             })
-    }
-    const loadStores = () => {
-        http.get(apiRoutes.stores, {
+    };
+
+    const loadStores = async () => {
+        await http.get(apiRoutes.stores, {
             params: {
                 page: 0,
                 size: 100
@@ -53,19 +81,15 @@ const UpdateProduct = () => {
             })
     };
 
-    const loadCategories = () => {
-        http.get(apiRoutes.categories, {
+    const loadCategories = async () => {
+        await http.get(apiRoutes.categories, {
             params: {
                 page: 0,
                 size: 100
             }
         })
             .then((response) => {
-                setCategories(response?.data?.data?.map((data: string) => {
-                    return {
-                        value: data
-                    }
-                }));
+                setCategories(response?.data?.data);
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -75,9 +99,6 @@ const UpdateProduct = () => {
     useEffect(() => {
         Promise.all([loadStores(), loadCategories(), loadProduct()])
             .then(() => {
-
-                console.log(product);
-
                 setTimeout(() => {
                     setLoading(false);
                 }, 1000)
@@ -88,7 +109,7 @@ const UpdateProduct = () => {
             });
     }, [])
 
-    const handleFinish = (values: any) => {
+    const handleFinish = (values: ProductProps) => {
         setLoading(true)
         http.put(`${apiRoutes.products}/${id}`, {
             ...values
@@ -117,45 +138,34 @@ const UpdateProduct = () => {
     };
 
     return (
-        <BasePageContainer breadcrumb={breadcrumb} loading={loading}>
+        <BasePageContainer breadcrumb={breadcrumb} loading={loading} >
             <ProForm
-                onFinish={async (values) => handleFinish(values)}
-                onReset={() => navigate(-1)}
                 initialValues={product}
-                submitter={
-                    {
-                        searchConfig:
-                        {
-                            submitText: 'Cập nhật',
-                            resetText: 'Hủy bỏ',
-                        }
-                    }
-                }
+                onFinish={async (values: ProductProps) => handleFinish(values)}
+                submitter={false}
             >
                 <ProFormText
                     name="productName"
                     label="Tên sản phẩm"
-                    placeholder="Nhập tên sản phẩm"
                     rules={[
                         {
                             required: true,
-                            message: 'Tên sản phẩm không được bỏ trống',
+                            message: 'Vui lòng nhập tên sản phẩm',
                         },
                     ]}
                 />
+
+                <ProFormTextArea name="description" label="Mô tả" />
                 <ProFormSelect
-                    name="categoryId"
-                    label="Loại sản phẩm"
-                    options={categories.map((category) => {
-                        return {
-                            label: category.categoryName,
-                            value: category.categoryId
-                        }
-                    })}
-                />
-                <ProFormSelect
-                    name='storeId'
+                    name='storeIds'
                     label="Cửa hàng bán sản phẩm"
+                    mode='multiple'
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Vui lòng chọn cửa hàng',
+                        },
+                    ]}
                     options={stores.map(((store) => {
                         return {
                             label: store.storeName,
@@ -163,17 +173,63 @@ const UpdateProduct = () => {
                         }
                     }))}
                 />
-                <ProFormMoney
-                    name='productPrice'
-                    label='Giá tiền'
-                    customSymbol="đ"
+                <ProFormSelect
+                    name="categoryId"
+                    label="Loại sản phẩm"
+                    options={categories.map((category) => {
+                        return {
+                            label: category.categoryName,
+                            value: category.categoryId,
+                        };
+                    })}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Vui lòng chọn loại sản phẩm',
+                        },
+                    ]}
                 />
-                <ProFormTextArea
-                    name="description"
-                    label="Mô tả"
-                    placeholder="Nhập mô tả sản phẩm"
-                />
+                <ProForm.Item>
+                    <ProForm.Group >
+                        <ProFormMoney name="productPrice" placeholder="Giá sản phẩm" />
+                        <ProFormDigit name="discountPercent" placeholder={'% giảm giá sản phẩm'} />
+                        <ProFormText name="origin" placeholder="Xuất xứ" />
+                    </ProForm.Group >
+                </ProForm.Item>
+                <ProForm.Item >
+                    <ProForm.Group>
+                        <ProForm.Group grid>
+                            <ProFormDigit name="size" placeholder={'Kích thước'} />
+                            <ProFormSelect valueEnum={SizeType} name="sizeType" />
+                        </ProForm.Group>
 
+                        <ProForm.Group grid>
+                            <ProFormDigit name="weight" placeholder="Trọng lượng" />
+                            <ProFormSelect valueEnum={WeightType} name="weightType" />
+                        </ProForm.Group>
+                        <ProFormSelect
+                            name="colors"
+                            placeholder="Màu sắc"
+                            mode="multiple"
+                            options={[
+                                { label: 'Đen', value: 'đen' },
+                                { label: 'Trắng', value: 'trắng' },
+                                { label: 'Xanh', value: 'xanh' },
+                            ]}
+                        />
+                    </ProForm.Group>
+                </ProForm.Item>
+                <ProFormDigit name="quantity" placeholder="Số lượng sản phẩm bán" />
+                <ProFormSwitch label='Được bảo hành' name="isGuarantee" />
+                <ProFormSwitch name="isForeign" label="Sản phẩm cần nhập khẩu" />
+                <Button
+                    className="mt-4 bg-primary"
+                    block
+                    loading={loading}
+                    type="primary"
+                    size="large"
+                    htmlType={'submit'}>Xác nhận
+                </Button>
             </ProForm>
         </BasePageContainer>
     );
