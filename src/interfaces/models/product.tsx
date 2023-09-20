@@ -1,3 +1,5 @@
+import { Store } from "antd/es/form/interface";
+
 export interface Product {
   productId: string;
   productName: string;
@@ -35,7 +37,7 @@ export interface ProductDetail {
   storeName?: string;
   sellingAddress?: string;
   imageUrl?: string;
-  storeId?: string;
+  stores: Store[];
   categoryId?: string;
   isHot?: boolean;
 }
