@@ -45,9 +45,8 @@ interface ProductProps {
 
 const UpdateProduct = () => {
     const navigate = useNavigate();
-    const [form] = Form.useForm();
     const { id, } = useParams();
-    const [product, setProduct] = useState<ProductDetail>({});
+    const [product, setProduct] = useState<ProductDetail>();
     const [stores, setStores] = useState<Store[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -101,7 +100,7 @@ const UpdateProduct = () => {
             .then(() => {
                 setTimeout(() => {
                     setLoading(false);
-                }, 1000)
+                }, 100)
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -140,7 +139,10 @@ const UpdateProduct = () => {
     return (
         <BasePageContainer breadcrumb={breadcrumb} loading={loading} >
             <ProForm
-                initialValues={product}
+                initialValues={{
+                    ...product, 
+                    storeIds : product?.stores?.map((store) => store.storeId)
+                }}
                 onFinish={async (values: ProductProps) => handleFinish(values)}
                 submitter={false}
             >
