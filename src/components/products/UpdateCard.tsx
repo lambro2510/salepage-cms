@@ -52,7 +52,7 @@ const UpdateProduct = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const loadProduct = async () => {
-        await http.get(`${apiRoutes.products}/detail/${id}`)
+        await http.get(`${apiRoutes.products}/${id}`)
             .then((response) => {
                 let res = response?.data?.data as ProductDetail;
                 console.log(res);
