@@ -82,7 +82,7 @@ const CONFIG = {
   helpLink: 'https://github.com/arifszn/reforge',
   enablePWA: true,
   theme: {
-    accentColor: '#818cf8',
+    accentColor: '#FF6666',
     sidebarLayout: 'mix',
     showBreadcrumb: true,
   },

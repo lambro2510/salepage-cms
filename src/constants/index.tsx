@@ -5,6 +5,7 @@ export const antdConfig: ConfigProviderProps = {
   theme: {
     token: {
       colorPrimary: CONFIG.theme.accentColor,
+      borderRadius: 0,
     },
   },
   locale: enUSIntl,

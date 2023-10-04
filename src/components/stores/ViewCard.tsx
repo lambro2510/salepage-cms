@@ -2,7 +2,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import BasePageContainer from "../layout/PageContainer";
 import { useEffect, useRef, useState } from "react";
 import { ActionType, ProColumns, ProDescriptions, ProTable, RequestData, TableDropdown } from "@ant-design/pro-components";
-import { Avatar, BreadcrumbProps, Button, Modal, Space } from "antd";
+import { Avatar, BreadcrumbProps, Button, Modal, Space, Tag } from "antd";
 import { Store } from "antd/es/form/interface";
 import { CategoryType } from "../../interfaces/enum/CategoryType";
 import { NotificationType, handleErrorResponse, showNotification } from "../../utils";
@@ -27,9 +27,9 @@ const breadcrumb: BreadcrumbProps = {
     items: [
         {
             key: webRoutes.products,
-            title: <Link to={webRoutes.products}>Loại sản phẩm</Link>,
+            title: <Link to={webRoutes.products}>Sản phẩm</Link>,
         },
-        
+
     ],
 };
 
@@ -39,18 +39,36 @@ const ViewCard = () => {
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, modalContextHolder] = Modal.useModal();
+    const [stores, setStores] = useState<SellerStoreResponse[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
-    const [productType, setProductTypes] = useState<ProductTypeResponse[]>([])
+
     useEffect(() => {
         Promise.all([loadCategories()])
             .then(() => {
-                
+
             })
             .catch((error) => {
                 handleErrorResponse(error);
             });
     }, []);
 
+    const loadStores = async (params: any) => {
+
+
+        let response = await http.get(apiRoutes.stores, {
+            params: {
+                page: params.current - 1,
+                size: params.pageSize
+            }
+        });
+        const stores: [SellerStoreResponse] = response.data.data.data;
+        return {
+            data: stores,
+            success: true,
+            total: response.data.data.metadata.total,
+        } as RequestData<SellerStoreResponse>;
+
+    }
 
     const loadCategories = () => {
         return http.get(apiRoutes.categories)
@@ -61,47 +79,21 @@ const ViewCard = () => {
                 handleErrorResponse(error);
             })
     }
-    
-    const loadProduct = (params: any) => {
-        return http
-            .get(apiRoutes.products, {
-                params: {
-                    storeName: params.storeName,
-                },
-            })
-            .then((response) => {
-                const products: [Product] = response.data.data.data;
-
-                return {
-                    data: products,
-                    success: true,
-                    total: response.data.data.metadata.total,
-                } as RequestData<Product>;
-            })
-            .catch((error) => {
-                handleErrorResponse(error);
-
-                return {
-                    data: [],
-                    success: false,
-                } as RequestData<Product>;
-            });
-    };
 
 
-    const handleActionOnSelect = (key: string, product: Product) => {
+    const handleActionOnSelect = (key: string, store: SellerStoreResponse) => {
         if (key === ActionKey.DELETE) {
-            showDeleteConfirmation(product);
+            showDeleteConfirmation(store);
         } else if (key === ActionKey.UPDATE) {
-            navigate(`${webRoutes.products}/${product.productId}`);
-        }else if (key === ActionKey.UPLOAD) {
-            navigate(`${webRoutes.products}/${product.productId}/upload`);
+            navigate(`${webRoutes.stores}/${store.id}`);
+        } else if (key === ActionKey.UPLOAD) {
+            navigate(`${webRoutes.stores}/${store.id}/upload`);
         }
     };
 
-    const showDeleteConfirmation = (product: Product) => {
+    const showDeleteConfirmation = (product: SellerStoreResponse) => {
         modal.confirm({
-            title: 'Bạn có chắc chắn mua xóa sản phẩm này?',
+            title: 'Bạn có chắc chắn mua cửa hàng này?',
             icon: <WarningOutlined />,
             type: 'warn',
             content: (
@@ -110,7 +102,7 @@ const ViewCard = () => {
                         {product.imageUrl}
                     </ProDescriptions.Item>
                     <ProDescriptions.Item valueType="text" label="Tên sản phẩm">
-                        {product.productName}
+                        {product.storeName}
                     </ProDescriptions.Item>
                     <ProDescriptions.Item valueType="text" label="Tên cửa hàng">
                         {product.storeName}
@@ -122,7 +114,7 @@ const ViewCard = () => {
             },
             onOk: () => {
                 return http
-                    .delete(`${apiRoutes.products}/${product.productId}`)
+                    .delete(`${apiRoutes.products}/${product.id}`)
                     .then(() => {
                         showNotification(
                             'Thành công',
@@ -140,14 +132,14 @@ const ViewCard = () => {
     };
 
 
-    const columns: ProColumns<Product>[] = [
+    const columns: ProColumns<SellerStoreResponse>[] = [
         {
-            title: 'Ảnh sản phẩm',
-            dataIndex: 'productImage',
+            title: 'Ảnh cửa hàng',
+            dataIndex: 'imageUrl',
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Product) =>
+            render: (_, row: SellerStoreResponse) =>
                 row.imageUrl ? (
                     <Avatar
                         shape="circle"
@@ -161,78 +153,53 @@ const ViewCard = () => {
                     />
                 ) : (
                     <Avatar shape="circle" size="small">
-                        {row.productName.charAt(0).toUpperCase()}
+                        {row.imageUrl?.charAt(0)?.toUpperCase()}
                     </Avatar>
                 ),
         },
         {
-            title: 'Tên sản phẩm',
-            dataIndex: 'productName',
+            title: 'Tên cửa hàng',
+            dataIndex: 'storeName',
             align: 'center',
             sorter: false,
             filterMode: 'menu',
             filtered: false,
             filterDropdownOpen: false,
-            render: (_, row: Product) => row.productName,
+            render: (_, row: SellerStoreResponse) => row.storeName,
 
-        },
-        {
-            title: 'Giá tiền',
-            dataIndex: 'productPrice',
-            align: 'center',
-            sorter: true,
-            search: false,
-            valueType: 'money',
-            render: (_, row: Product) => row.productPrice
-        },
-        {
-            title: 'Loại sản phẩm',
-            dataIndex: 'categoryName',
-            align: 'center',
-            sorter: false,
-            search: false,
-            render: (_, row: Product) => row.categoryName
-        },
-        {
-            title: 'Cửa hàng',
-            dataIndex: 'storeName',
-            align: 'center',
-            sorter: false,
-            render: (_, row: Product) => row.storeName
         },
         {
             title: 'Mô tả',
             dataIndex: 'description',
             align: 'center',
-            sorter: false,
+            sorter: true,
             search: false,
-            render: (_, row: Product) => row.description
+            valueType: 'money',
+            render: (_, row: SellerStoreResponse) => row.description
         },
         {
-            title: 'Đia chỉ bán hàng',
-            dataIndex: 'sellingAddress',
+            title: 'Loại sản phẩm',
+            dataIndex: 'status',
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Product) => row.sellingAddress
+            render: (_, row: SellerStoreResponse) => (
+                row.status === "ACTIVE" ? <Tag color="green">Đang hoạt động</Tag> : <Tag color="red">Không hoạt động</Tag>
+              )
         },
         {
-            title: 'Trạng thái đơn hàng',
-            dataIndex: 'productTransactionState',
+            title: 'Địa chỉ cửa hàng',
+            dataIndex: 'address',
             align: 'center',
             sorter: false,
-            search: false,
-            filters: true,
-            onFilter: true,
-            valueEnum: ProductTransactionState,
+            render: (_, row: SellerStoreResponse) => row.address
         },
-
         {
             title: 'Chức năng',
             align: 'center',
             key: 'option',
             fixed: 'right',
-            render: (_, row: Product) => [
+            render: (_, row: SellerStoreResponse) => [
                 <TableDropdown
                     key="actionGroup"
                     onSelect={(key) => handleActionOnSelect(key, row)}
@@ -242,7 +209,7 @@ const ViewCard = () => {
                             name: (
                                 <Space>
                                     <BiUpload />
-                                    Tải ảnh cho sản phẩm
+                                    Tải ảnh cho cửa hàng
                                 </Space>
                             ),
                         },
@@ -252,7 +219,7 @@ const ViewCard = () => {
                             name: (
                                 <Space>
                                     <MdUpdate />
-                                    Cập nhật sản phẩm
+                                    Cập nhật cửa hàng
                                 </Space>
                             ),
                         },
@@ -261,7 +228,7 @@ const ViewCard = () => {
                             name: (
                                 <Space>
                                     <DeleteOutlined />
-                                    Xóa
+                                    Xóa cửa hàng
                                 </Space>
                             ),
                         },
@@ -273,7 +240,7 @@ const ViewCard = () => {
         },
     ]
 
-    return(
+    return (
         <BasePageContainer breadcrumb={breadcrumb}>
             <ProTable
                 columns={columns}
@@ -289,35 +256,12 @@ const ViewCard = () => {
                 }}
                 actionRef={actionRef}
                 request={(params, sort) => {
-                    return loadProduct(params);
+                    return loadStores(params);
                 }}
                 dateFormatter="number"
-                search={{
-                    labelWidth: 'auto',
-                    filterType: 'query',
-                    showHiddenNum: true,
-                    searchText: 'Tìm kiếm',
-                    resetText: 'Xóa bộ lọc',
-                    collapseRender(collapsed, props, intl, hiddenNum) {
-                        if (collapsed) {
-                            return [
-                                <Link to={'#'}>
-                                    Mở rộng({props.hiddenNum})
-                                    <DownOutlined />
-                                </Link>
-                            ]
-                        } else {
-                            return [
-                                <Link to={'#'}>
-                                    Thu nhỏ
-                                    <UpOutlined />
-                                </Link>
-                            ]
-                        }
-                    },
-                }}
+                search={false}
                 toolBarRender={() => [
-                    <Button icon={<BiPlus/>} type="primary" onClick={() => navigate(`${webRoutes.categories}/create`)}>
+                    <Button icon={<BiPlus />} type="primary" onClick={() => navigate(`${webRoutes.stores}/create`)}>
                         Tạo mới
                     </Button>
                 ]}

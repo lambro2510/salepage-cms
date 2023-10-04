@@ -14,7 +14,7 @@ interface CategoryInfo {
     categoryName: string,
     categoryType: CategoryType,
     description: string,
-    productType: string,
+    productTypeId: string,
     rangeAge: string
 }
 
@@ -35,29 +35,21 @@ const CreateCategory = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(true);
-    const [productTypes, setProductTypes] = useState<[]>([]);
+    const [productTypes, setProductTypes] = useState<ProductTypeResponse[]>([]);
 
-    const loadProductType = () => {
-        http.get(apiRoutes.productTypes)
-            .then((response) => {
-                setProductTypes(response?.data?.data);
-            })
-            .catch((error) => {
-                handleErrorResponse(error);
-            })
+    const loadProductType = async (name : string | undefined) => {
+        const response = await http.get(`${apiRoutes.productTypes}`, {
+            params : {
+                productTypeName : name
+            }
+        })
+        setLoading(false)
+        let productType = response.data.data as ProductTypeResponse[];
+        setProductTypes(productType)
     };
 
     useEffect(() => {
-        Promise.all([loadProductType()])
-            .then(() => {
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1000)
-            })
-            .catch((error) => {
-                handleErrorResponse(error);
-                setLoading(false)
-            });
+        loadProductType(undefined);
     }, [])
 
     const handleFinish = async (values: CategoryInfo) => {
@@ -89,7 +81,7 @@ const CreateCategory = () => {
                     label='Tên hàng hóa'
                 />
                 <ProFormSelect
-                    name='productType'
+                    name='productTypeId'
                     label='Loại mặt hàng'
                     options={productTypes}
                 />

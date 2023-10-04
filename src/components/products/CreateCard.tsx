@@ -14,23 +14,6 @@ import BasePageContainer from '../layout/PageContainer';
 import { SizeType, WeightType } from '../../interfaces/enum/ProductType';
 
 
-interface ProductProps {
-    productName: string;
-    description: string;
-    categoryId: string;
-    productPrice: number;
-    storeIds: string[];
-    origin: string;
-    isForeign: boolean;
-    size: number;
-    sizeType: string;
-    weight: number;
-    weightType: string;
-    colors: string[];
-    isGuarantee: boolean;
-    quantity: number;
-}
-
 const breadcrumb: BreadcrumbProps = {
     items: [
         {
@@ -96,7 +79,7 @@ const CreateProduct = () => {
             });
     }, [])
 
-    const handleFinish = async (values: ProductProps) => {
+    const handleFinish = async (values: ProductDto) => {
         setLoading(true);
         http
             .post(apiRoutes.products, { ...values })
@@ -114,7 +97,7 @@ const CreateProduct = () => {
     return (
         <BasePageContainer breadcrumb={breadcrumb}>
             <ProForm
-                onFinish={(values: ProductProps) => handleFinish(values)}
+                onFinish={(values: ProductDto) => handleFinish(values)}
                 form={form}
                 submitter={false}
             >
@@ -164,38 +147,6 @@ const CreateProduct = () => {
                     ]}
                     initialValue={categories.length > 0 ? categories[0].categoryId : undefined}
                 />
-                <ProForm.Item>
-                    <ProForm.Group >
-                        <ProFormMoney name="productPrice" placeholder="Giá sản phẩm" />
-                        <ProFormText name="origin" placeholder="Xuất xứ" />
-                    </ProForm.Group >
-                </ProForm.Item>
-                <ProForm.Item >
-                    <ProForm.Group>
-                        <ProForm.Group grid>
-                            <ProFormDigit name="size" placeholder={'Kích thước'} />
-                            <ProFormSelect valueEnum={SizeType} name="sizeType" />
-                        </ProForm.Group>
-
-                        <ProForm.Group grid>
-                            <ProFormDigit name="weight" placeholder="Trọng lượng" />
-                            <ProFormSelect valueEnum={WeightType} name="weightType" />
-                        </ProForm.Group>
-                        <ProFormSelect
-                            name="colors"
-                            placeholder="Màu sắc"
-                            mode="multiple"
-                            options={[
-                                { label: 'Đen', value: 'đen' },
-                                { label: 'Trắng', value: 'trắng' },
-                                { label: 'Xanh', value: 'xanh' },
-                            ]}
-                        />
-                    </ProForm.Group>
-                </ProForm.Item>
-                <ProFormDigit name="quantity" placeholder="Số lượng sản phẩm bán" />
-                <ProFormSwitch label='Được bảo hành' name="isGuarantee" />
-                <ProFormSwitch name="isForeign" label="Sản phẩm cần nhập khẩu" />
                 <Button
                     className="mt-4 bg-primary"
                     block

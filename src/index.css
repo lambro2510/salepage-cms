@@ -25,6 +25,7 @@
   animation: icon-spin 1s infinite linear;
 }
 
+
 @keyframes fadeIn {
   0% {
     opacity: 0;

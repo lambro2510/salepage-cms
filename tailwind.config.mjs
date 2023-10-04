@@ -10,5 +10,8 @@ export default {
       },
     },
   },
+  button : {
+    className: 'bg-cyan-500'
+  },
   plugins: [],
 };

@@ -9,4 +9,5 @@ export const webRoutes = {
   vouchers : '/vouchers',
   stores : '/stores',
   categories: '/categories',
+  productType: '/product/type',
 };

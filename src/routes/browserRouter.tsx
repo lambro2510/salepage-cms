@@ -40,7 +40,13 @@ const UploadImageProduct = loadable(() => import('../components/products/UploadI
 const Stores = loadable(() => import('../components/stores'), {
   fallback: fallbackElement,
 });
+const ViewStores = loadable(() => import('../components/stores/ViewCard'), {
+  fallback: fallbackElement,
+});
 const CreateStore = loadable(() => import('../components/stores/CreateCard'), {
+  fallback: fallbackElement,
+});
+const UpdateStore = loadable(() => import('../components/stores/UpdateCard'), {
   fallback: fallbackElement,
 });
 
@@ -48,6 +54,9 @@ const Categories = loadable(() => import('../components/categories'), {
   fallback: fallbackElement,
 });
 const CreateCategory = loadable(() => import('../components/categories/CreateCard'), {
+  fallback: fallbackElement,
+});
+const ViewCategory = loadable(() => import('../components/categories/ViewCard'), {
   fallback: fallbackElement,
 });
 
@@ -112,6 +121,17 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.stores}/create`,
             element: <CreateStore />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.stores}`,
+            element: <ViewStores />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.stores}/:id`,
+            element: <UpdateStore />,
+            errorElement: errorElement
           }
         ]
       },
@@ -123,6 +143,12 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.categories}/create`,
             element: <CreateCategory />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.categories}`,
+            element: <ViewCategory />,
+            errorElement: errorElement
           }
         ]
       },

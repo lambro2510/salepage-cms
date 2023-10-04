@@ -30,6 +30,11 @@ declare const CONFIG: {
     accentColor: string;
 
     /**
+     * Sub color
+     */
+    subColor: string;
+
+    /**
      * Sidebar layout
      */
     sidebarLayout: LayoutType;
