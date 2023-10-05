@@ -56,6 +56,9 @@ const Categories = loadable(() => import('../components/categories'), {
 const CreateCategory = loadable(() => import('../components/categories/CreateCard'), {
   fallback: fallbackElement,
 });
+const UpdateCategory = loadable(() => import('../components/categories/UpdateCard'), {
+  fallback: fallbackElement,
+});
 const ViewCategory = loadable(() => import('../components/categories/ViewCard'), {
   fallback: fallbackElement,
 });
@@ -148,6 +151,11 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.categories}`,
             element: <ViewCategory />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.categories}/:id`,
+            element: <UpdateCategory />,
             errorElement: errorElement
           }
         ]

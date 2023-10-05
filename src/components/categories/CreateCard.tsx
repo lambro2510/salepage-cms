@@ -86,6 +86,7 @@ const CreateCategory = () => {
                     options={productTypes}
                 />
                 <ProFormSelect
+                    name='categoryType'
                     label='Kích cỡ loại hàng hóa'
                     valueEnum={CategoryType}
                 />

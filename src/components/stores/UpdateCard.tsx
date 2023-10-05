@@ -1,6 +1,6 @@
 import { AutoComplete, BreadcrumbProps, Button, Form } from "antd";
 import { webRoutes } from "../../routes/web";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import BasePageContainer from "../layout/PageContainer";
 import { useEffect, useState } from "react";
 import { ProForm, ProFormText, ProFormTextArea, ProFormSwitch } from "@ant-design/pro-components";
@@ -17,6 +17,15 @@ interface StoreInfo {
     location: string;
 }
 
+const UpdateCard = () => {
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [options, setOptions] = useState<string[]>([]);
+    const [store, setStore] = useState<SellerStoreResponse>();
+
+
 const breadcrumb: BreadcrumbProps = {
     items: [
         {
@@ -24,18 +33,12 @@ const breadcrumb: BreadcrumbProps = {
             title: <Link to={webRoutes.stores}>Cửa hàng</Link>,
         },
         {
-            key: `${webRoutes.stores}/create`,
-            title: 'Tạo mới'
+            key: `${webRoutes.stores}/update`,
+            title: store?.storeName
         },
     ],
 };
 
-const CreateStore = () => {
-    const { id } = useParams();
-    const [form] = Form.useForm();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [options, setOptions] = useState<string[]>([]);
-    const [store, setStore] = useState<SellerStoreResponse>();
     const getAddressOptions = debounce((value: string) => {
         if (value) {
             http.get(apiRoutes.maps, {
@@ -59,36 +62,43 @@ const CreateStore = () => {
             status: values.status == true ? 'ACTIVE' : 'INACTIVE'
         })
             .then((response) => {
-                setLoading(false);
                 showNotification(response?.data?.message, NotificationType.SUCCESS);
+                navigate(-1);
             })
             .catch((error) => {
-                setLoading(false);
                 handleErrorResponse(error);
             });
     };
 
     const loadStore = async () => {
+        
         try {
-            let response = await http.get(`${apiRoutes.stores}/${id}`);
-            let store = response?.data?.data as SellerStoreResponse;
+            const response = await http.get(`${apiRoutes.stores}/${id}`);
+            let store = response?.data?.data as SellerStoreResponse;    
             setStore(store);
         } catch (error) {
             handleErrorResponse(error);
-            return [];
         }
     };
 
     useEffect(() => {
-        loadStore();
-    })
+        Promise.all([loadStore()])
+        .then(() => {
+            
+        })
+        .catch((err) => {
+            handleErrorResponse(err);
+        }).finally(() => {
+            setLoading(false);
+        })
+    }, [])
     return (
         <BasePageContainer breadcrumb={breadcrumb} loading={loading}>
             <ProForm
                 initialValues={store}
                 onFinish={(values: StoreInfo) => handleFinish(values)}
-                form={form}
                 submitter={false}
+                form={form}
             >
 
                 <ProFormText
@@ -134,4 +144,4 @@ const CreateStore = () => {
     );
 }
 
-export default CreateStore;
+export default UpdateCard;

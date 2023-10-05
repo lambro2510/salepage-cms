@@ -91,7 +91,7 @@ const ViewCard = () => {
         }
     };
 
-    const showDeleteConfirmation = (product: SellerStoreResponse) => {
+    const showDeleteConfirmation = (store: SellerStoreResponse) => {
         modal.confirm({
             title: 'Bạn có chắc chắn mua cửa hàng này?',
             icon: <WarningOutlined />,
@@ -99,13 +99,10 @@ const ViewCard = () => {
             content: (
                 <ProDescriptions column={1} title=" ">
                     <ProDescriptions.Item valueType="avatar" label="Ảnh">
-                        {product.imageUrl}
-                    </ProDescriptions.Item>
-                    <ProDescriptions.Item valueType="text" label="Tên sản phẩm">
-                        {product.storeName}
+                        {store.imageUrl}
                     </ProDescriptions.Item>
                     <ProDescriptions.Item valueType="text" label="Tên cửa hàng">
-                        {product.storeName}
+                        {store.storeName}
                     </ProDescriptions.Item>
                 </ProDescriptions>
             ),
@@ -114,12 +111,12 @@ const ViewCard = () => {
             },
             onOk: () => {
                 return http
-                    .delete(`${apiRoutes.products}/${product.id}`)
+                    .delete(`${apiRoutes.stores}/${store.id}`)
                     .then(() => {
                         showNotification(
                             'Thành công',
                             NotificationType.SUCCESS,
-                            `${product} đã được xóa`
+                            `${store.storeName} đã được xóa`
                         );
 
                         actionRef.current?.reloadAndRest?.();

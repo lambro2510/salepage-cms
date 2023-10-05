@@ -1,12 +1,18 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2023-10-04 21:14:21.
+// Generated using typescript-generator version 3.2.1263 on 2023-10-05 21:59:53.
 
 interface CartDto {
     productDetailId: string;
     quantity: number;
     storeId: string;
     voucherId: string;
+}
+
+interface CartPaymentDto {
+    comboId: string;
+    note: string;
+    transaction: ProductTransactionDto[];
 }
 
 interface ConfigDto {
@@ -118,10 +124,10 @@ interface CreateProductInfoDto {
 
 interface ProductDetailDto {
     productId: string;
-    type: string;
-    color: string;
+    type: ProductDetailType;
     quantity: number;
     originPrice: number;
+    sellPrice: number;
     discountPercent: number;
 }
 
@@ -129,7 +135,6 @@ interface ProductDto {
     productName: string;
     description: string;
     categoryId: string;
-    sellerUsername: string;
     sellerStoreIds: string[];
     productInfos: ProductInfo[];
 }
@@ -172,7 +177,7 @@ interface ListTransactionDto {
 interface ProductTransactionDto extends ProductTransactionInfoDto {
     productDetailId: string;
     storeId: string;
-    voucherCode: string;
+    voucherCodeId: string;
 }
 
 interface ProductTransactionInfoDto {
@@ -287,6 +292,8 @@ interface CartByStoreResponse {
     storeId: string;
     storeName: string;
     cartResponses: CartResponse[];
+    combos: ProductComboDetailResponse[];
+    bestCombo: ProductComboDetailResponse;
 }
 
 interface CartResponse {
@@ -350,6 +357,8 @@ interface ProductCategoryResponse {
     description: string;
     categoryType: CategoryType;
     productType: string;
+    productTypeId: string;
+    productTypeName: string;
     rangeAge: string;
 }
 
@@ -407,6 +416,37 @@ interface ProductDetailResponse {
 interface ProductTypeResponse {
     value: string;
     label: string;
+}
+
+interface SellerProductDetailResponse {
+    id: string;
+    productName: string;
+    defaultImageUrl: string;
+    rate: Rate;
+    productInfos: ProductInfo[];
+    categoryId: string;
+    productCategory: ProductCategoryResponse;
+    sellerStoreIds: string[];
+    stores: SellerStoreResponse[];
+    typeDetails: TypeDetailResponse[];
+    isHot: boolean;
+}
+
+interface SellerProductResponse {
+    id: string;
+    productName: string;
+    defaultImageUrl: string;
+    rate: Rate;
+    productInfos: ProductInfo[];
+    categoryId: string;
+    productCategory: ProductCategoryResponse;
+    sellerStoreIds: string[];
+    stores: SellerStoreResponse[];
+    isHot: boolean;
+}
+
+interface TypeDetailResponse {
+    typeName: string;
 }
 
 interface TotalProductStatisticResponse {
@@ -531,9 +571,14 @@ interface VoucherStoreResponse {
     value: number;
 }
 
+interface ProductDetailType {
+    type: string;
+    color: string;
+}
+
 interface ProductInfo {
+    label: string;
     value: string;
-    description: string;
 }
 
 interface Transaction {
@@ -555,8 +600,19 @@ interface Transaction {
     docId: string;
 }
 
+interface ProductComboDetailResponse {
+    id: string;
+    canUse: boolean;
+    totalPrice: number;
+    comboName: string;
+    type: DiscountType;
+    value: number;
+    quantityToUse: number;
+    maxDiscount: number;
+}
+
 interface VoucherInfo {
-    voucherCode: string;
+    code: string;
     voucherStoreType: VoucherStoreType;
     discountType: DiscountType;
     totalDiscount: number;
@@ -564,6 +620,7 @@ interface VoucherInfo {
     priceAfter: number;
     value: number;
     voucherName: string;
+    isUse: boolean;
 }
 
 interface Rate {
