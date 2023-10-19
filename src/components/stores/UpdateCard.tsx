@@ -130,6 +130,8 @@ const breadcrumb: BreadcrumbProps = {
                 <ProFormSwitch
                     name='status'
                     label='Trạng thái'
+                    checkedChildren
+                    unCheckedChildren
                 />
 
                 <Button
@@ -138,7 +140,8 @@ const breadcrumb: BreadcrumbProps = {
                     loading={loading}
                     type="primary"
                     size="large"
-                    htmlType={'submit'}>Tạo mới</Button>
+                    htmlType={'submit'}>Tạo mới
+                </Button>
             </ProForm>
         </BasePageContainer>
     );

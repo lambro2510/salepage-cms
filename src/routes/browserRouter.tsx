@@ -27,6 +27,9 @@ const Products = loadable(() => import('../components/products'), {
 const ViewProduct = loadable(() => import('../components/products/ViewCard'), {
   fallback: fallbackElement,
 });
+const ViewDetailProduct = loadable(() => import('../components/products/ViewDetailCard'), {
+  fallback: fallbackElement,
+});
 const CreateProduct = loadable(() => import('../components/products/CreateCard'), {
   fallback: fallbackElement,
 });
@@ -102,6 +105,10 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.products}`,
             element: <ViewProduct />
+          },
+          {
+            path: `${webRoutes.products}/detail/:id`,
+            element: <ViewDetailProduct />
           },
           {
             path: `${webRoutes.products}/:id`,

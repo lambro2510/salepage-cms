@@ -2,7 +2,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import BasePageContainer from "../layout/PageContainer";
 import { useEffect, useRef, useState } from "react";
 import { ActionType, ProColumns, ProDescriptions, ProTable, RequestData, TableDropdown } from "@ant-design/pro-components";
-import { Avatar, BreadcrumbProps, Button, Modal, Space } from "antd";
+import { Avatar, BreadcrumbProps, Button, Dropdown, Menu, Modal, Space } from "antd";
 import { Store } from "antd/es/form/interface";
 import { CategoryType } from "../../interfaces/enum/CategoryType";
 import { NotificationType, handleErrorResponse, showNotification } from "../../utils";
@@ -15,10 +15,11 @@ import LazyImage from "../lazy-image";
 import { ProductTransactionState } from "../../interfaces/enum/ProdTransactionState";
 import { CiCircleMore } from "react-icons/ci";
 import { BiPlus, BiUpload } from "react-icons/bi";
-import { MdUpdate } from "react-icons/md";
+import { MdUpdate, MdViewAgenda } from "react-icons/md";
 
 enum ActionKey {
     DELETE = 'delete',
+    DETAIL = 'detail',
     UPDATE = 'update',
     UPLOAD = 'upload',
 }
@@ -87,13 +88,13 @@ const ViewCard = () => {
                 },
             })
             .then((response) => {
-                const products: [Product] = response.data.data.data;
+                const products: [SellerProductResponse] = response.data.data.data;
 
                 return {
                     data: products,
                     success: true,
                     total: response.data.data.metadata.total,
-                } as RequestData<Product>;
+                } as RequestData<SellerProductResponse>;
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -101,22 +102,24 @@ const ViewCard = () => {
                 return {
                     data: [],
                     success: false,
-                } as RequestData<Product>;
+                } as RequestData<SellerProductResponse>;
             });
     };
 
 
-    const handleActionOnSelect = (key: string, product: Product) => {
+    const handleActionOnSelect = (key: string, product: SellerProductResponse) => {
         if (key === ActionKey.DELETE) {
             showDeleteConfirmation(product);
         } else if (key === ActionKey.UPDATE) {
-            navigate(`${webRoutes.products}/${product.productId}`);
+            navigate(`${webRoutes.products}/${product.id}`);
         }else if (key === ActionKey.UPLOAD) {
-            navigate(`${webRoutes.products}/${product.productId}/upload`);
+            navigate(`${webRoutes.products}/${product.id}/upload`);
+        }else if (key === ActionKey.DETAIL) {
+            navigate(`${webRoutes.products}/detail/${product.id}`);
         }
     };
 
-    const showDeleteConfirmation = (product: Product) => {
+    const showDeleteConfirmation = (product: SellerProductResponse) => {
         modal.confirm({
             title: 'Bạn có chắc chắn mua xóa sản phẩm này?',
             icon: <WarningOutlined />,
@@ -124,13 +127,10 @@ const ViewCard = () => {
             content: (
                 <ProDescriptions column={1} title=" ">
                     <ProDescriptions.Item valueType="avatar" label="Ảnh">
-                        {product.imageUrl}
+                        {product.defaultImageUrl}
                     </ProDescriptions.Item>
                     <ProDescriptions.Item valueType="text" label="Tên sản phẩm">
                         {product.productName}
-                    </ProDescriptions.Item>
-                    <ProDescriptions.Item valueType="text" label="Tên cửa hàng">
-                        {product.storeName}
                     </ProDescriptions.Item>
                 </ProDescriptions>
             ),
@@ -139,7 +139,7 @@ const ViewCard = () => {
             },
             onOk: () => {
                 return http
-                    .delete(`${apiRoutes.products}/${product.productId}`)
+                    .delete(`${apiRoutes.products}/${product.id}`)
                     .then(() => {
                         showNotification(
                             'Thành công',
@@ -157,30 +157,19 @@ const ViewCard = () => {
     };
 
 
-    const columns: ProColumns<Product>[] = [
+    const columns: ProColumns<SellerProductResponse>[] = [
         {
             title: 'Ảnh sản phẩm',
-            dataIndex: 'productImage',
+            dataIndex: 'defaultImageUrl',
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Product) =>
-                row.imageUrl ? (
-                    <Avatar
-                        shape="circle"
-                        size="small"
-                        src={
-                            <LazyImage
-                                src={row.imageUrl}
-                                placeholder={<div className="bg-gray-100 h-full w-full" />}
-                            />
-                        }
-                    />
-                ) : (
-                    <Avatar shape="circle" size="small">
-                        {row.productName.charAt(0).toUpperCase()}
-                    </Avatar>
-                ),
+            render: (_ : any, row: SellerProductResponse) => 
+                <LazyImage
+                    src={row.defaultImageUrl || row.defaultImageUrl}
+                    placeholder={<div className="bg-gray-100 h-full w-full" />}
+                />
+            
         },
         {
             title: 'Tên sản phẩm',
@@ -190,17 +179,7 @@ const ViewCard = () => {
             filterMode: 'menu',
             filtered: false,
             filterDropdownOpen: false,
-            render: (_, row: Product) => row.productName,
-
-        },
-        {
-            title: 'Giá tiền',
-            dataIndex: 'productPrice',
-            align: 'center',
-            sorter: true,
-            search: false,
-            valueType: 'money',
-            render: (_, row: Product) => row.productPrice
+            render: (_ : any, row: SellerProductResponse) => row.productName,
         },
         {
             title: 'Loại sản phẩm',
@@ -208,48 +187,34 @@ const ViewCard = () => {
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Product) => row.categoryName
+            render: (_ : any, row: SellerProductResponse) => row.productCategory.categoryName
         },
         {
             title: 'Cửa hàng',
-            dataIndex: 'storeName',
+            dataIndex: 'stores',
             align: 'center',
             sorter: false,
-            render: (_, row: Product) => row.storeName
+            render: (_ : any, row: SellerProductResponse) => {
+                if (row.stores && row.stores.length > 0) {
+                    return (
+                        <div>
+                            {row.stores.map((store: SellerStoreResponse) => (
+                                <Button type="ghost" onClick={() => navigate(`${webRoutes.stores}/${store.id}`)} key={store.id}>
+                                    {store.storeName}
+                                </Button>
+                            ))}
+                        </div>
+                    );
+                }
+                return '-';
+            },
         },
-        {
-            title: 'Mô tả',
-            dataIndex: 'description',
-            align: 'center',
-            sorter: false,
-            search: false,
-            render: (_, row: Product) => row.description
-        },
-        {
-            title: 'Đia chỉ bán hàng',
-            dataIndex: 'sellingAddress',
-            align: 'center',
-            sorter: false,
-            search: false,
-            render: (_, row: Product) => row.sellingAddress
-        },
-        {
-            title: 'Trạng thái đơn hàng',
-            dataIndex: 'productTransactionState',
-            align: 'center',
-            sorter: false,
-            search: false,
-            filters: true,
-            onFilter: true,
-            valueEnum: ProductTransactionState,
-        },
-
         {
             title: 'Chức năng',
             align: 'center',
             key: 'option',
             fixed: 'right',
-            render: (_, row: Product) => [
+            render: (_, row: SellerProductResponse) => [
                 <TableDropdown
                     key="actionGroup"
                     onSelect={(key) => handleActionOnSelect(key, row)}
@@ -263,13 +228,21 @@ const ViewCard = () => {
                                 </Space>
                             ),
                         },
-
                         {
                             key: ActionKey.UPDATE,
                             name: (
                                 <Space>
                                     <MdUpdate />
                                     Cập nhật sản phẩm
+                                </Space>
+                            ),
+                        },
+                        {
+                            key: ActionKey.DETAIL,
+                            name: (
+                                <Space>
+                                    <MdViewAgenda />
+                                    Chi tiết sản phẩm
                                 </Space>
                             ),
                         },
@@ -287,8 +260,9 @@ const ViewCard = () => {
                     <Icon component={CiCircleMore} className="text-primary text-xl" />
                 </TableDropdown>,
             ],
-        },
-    ]
+        }
+        
+    ];
 
     return(
         <BasePageContainer breadcrumb={breadcrumb}>

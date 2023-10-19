@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ProForm, ProFormText, ProFormTextArea, ProFormCheckbox, ProFormDigit, ProFormSelect, ProFormMoney, ProFormSwitch } from '@ant-design/pro-form';
+import { ProForm, ProFormText, ProFormTextArea, ProFormCheckbox, ProFormDigit, ProFormSelect, ProFormMoney, ProFormSwitch, ProFormList } from '@ant-design/pro-form';
 import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
 import { showNotification } from '../../utils';
@@ -12,6 +12,7 @@ import { BreadcrumbProps, Button, Form } from 'antd';
 import { webRoutes } from '../../routes/web';
 import BasePageContainer from '../layout/PageContainer';
 import { SizeType, WeightType } from '../../interfaces/enum/ProductType';
+import { ProCard } from '@ant-design/pro-components';
 
 
 const breadcrumb: BreadcrumbProps = {
@@ -31,8 +32,8 @@ const CreateProduct = () => {
     const navigate = useNavigate();
 
     const [form] = Form.useForm();
-    const [stores, setStores] = useState<Store[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [stores, setStores] = useState<SellerStoreResponse[]>([]);
+    const [categories, setCategories] = useState<ProductCategoryResponse[]>([]);
     const [loading, setLoading] = useState<boolean>(true)
     const [options, setOptions] = useState([])
 
@@ -114,7 +115,7 @@ const CreateProduct = () => {
 
                 <ProFormTextArea name="description" label="Mô tả" />
                 <ProFormSelect
-                    name='storeIds'
+                    name='sellerStoreIds'
                     label="Cửa hàng bán sản phẩm"
                     mode='multiple'
                     rules={[
@@ -126,7 +127,7 @@ const CreateProduct = () => {
                     options={stores.map(((store) => {
                         return {
                             label: store.storeName,
-                            value: store.storeId
+                            value: store.id
                         }
                     }))}
                 />
@@ -136,7 +137,7 @@ const CreateProduct = () => {
                     options={categories.map((category) => {
                         return {
                             label: category.categoryName,
-                            value: category.categoryId,
+                            value: category.id,
                         };
                     })}
                     rules={[
@@ -145,7 +146,33 @@ const CreateProduct = () => {
                             message: 'Vui lòng chọn loại sản phẩm',
                         },
                     ]}
-                    initialValue={categories.length > 0 ? categories[0].categoryId : undefined}
+                    initialValue={categories.length > 0 ? categories[0].id : undefined}
+                />
+                <ProFormList
+                    name="productInfos" 
+                    label="Thông tin sản phẩm"
+                    creatorButtonProps={{
+                        creatorButtonText: 'Thêm thông tin',
+                    }}
+                    copyIconProps={false}
+                    itemRender={({ listDom, action }, { index }) => (
+                        <ProCard
+                            bordered
+                            title={`Thông tin sản phẩm ${index + 1}`}
+                            style={{ marginBottom: 8 }}
+                            extra={action}
+                            bodyStyle={{ paddingBottom: 0 }}
+                        >
+                            <ProFormText
+                                name="label" 
+                                placeholder="Thông tin sản phẩm"
+                            />
+                            <ProFormText
+                                name="value"
+                                placeholder="Chi tiết thông tin"
+                            />
+                        </ProCard>
+                    )}
                 />
                 <Button
                     className="mt-4 bg-primary"

@@ -13,6 +13,8 @@ export const apiRoutes = {
 
   products: `${API_URL}/seller/product`,
 
+  product_detail: `${API_URL}/seller/product-detail`,
+
   stores: `${API_URL}/seller/store`,
 
   categories: `${API_URL}/seller/product-category`,

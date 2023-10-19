@@ -384,9 +384,8 @@ interface ProductDataResponse {
 
 interface ProductDetailInfoResponse {
     productDetailId: string;
-    productId: string;
-    type: string;
-    color: string;
+    productId: string | undefined;
+    type: ProductDetailType;
     quantity: number;
     originPrice: number;
     sellPrice: number;
