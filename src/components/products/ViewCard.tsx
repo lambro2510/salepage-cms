@@ -85,6 +85,7 @@ const ViewCard = () => {
             .get(apiRoutes.products, {
                 params: {
                     storeName: params.storeName,
+                    productName :  params.productName,
                 },
             })
             .then((response) => {

@@ -572,7 +572,7 @@ interface VoucherStoreResponse {
 
 interface ProductDetailType {
     type: string;
-    color: string;
+    color: string | undefined;
 }
 
 interface ProductInfo {

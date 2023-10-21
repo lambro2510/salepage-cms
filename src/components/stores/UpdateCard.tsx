@@ -26,18 +26,18 @@ const UpdateCard = () => {
     const [store, setStore] = useState<SellerStoreResponse>();
 
 
-const breadcrumb: BreadcrumbProps = {
-    items: [
-        {
-            key: webRoutes.stores,
-            title: <Link to={webRoutes.stores}>Cửa hàng</Link>,
-        },
-        {
-            key: `${webRoutes.stores}/update`,
-            title: store?.storeName
-        },
-    ],
-};
+    const breadcrumb: BreadcrumbProps = {
+        items: [
+            {
+                key: webRoutes.stores,
+                title: <Link to={webRoutes.stores}>Cửa hàng</Link>,
+            },
+            {
+                key: `${webRoutes.stores}/update`,
+                title: store?.storeName
+            },
+        ],
+    };
 
     const getAddressOptions = debounce((value: string) => {
         if (value) {
@@ -71,10 +71,10 @@ const breadcrumb: BreadcrumbProps = {
     };
 
     const loadStore = async () => {
-        
+
         try {
             const response = await http.get(`${apiRoutes.stores}/${id}`);
-            let store = response?.data?.data as SellerStoreResponse;    
+            let store = response?.data?.data as SellerStoreResponse;
             setStore(store);
         } catch (error) {
             handleErrorResponse(error);
@@ -83,14 +83,14 @@ const breadcrumb: BreadcrumbProps = {
 
     useEffect(() => {
         Promise.all([loadStore()])
-        .then(() => {
-            
-        })
-        .catch((err) => {
-            handleErrorResponse(err);
-        }).finally(() => {
-            setLoading(false);
-        })
+            .then(() => {
+
+            })
+            .catch((err) => {
+                handleErrorResponse(err);
+            }).finally(() => {
+                setLoading(false);
+            })
     }, [])
     return (
         <BasePageContainer breadcrumb={breadcrumb} loading={loading}>
@@ -130,8 +130,9 @@ const breadcrumb: BreadcrumbProps = {
                 <ProFormSwitch
                     name='status'
                     label='Trạng thái'
-                    checkedChildren
-                    unCheckedChildren
+                    fieldProps={{
+                        defaultChecked: store?.status == 'ACTIVE' ? true : false
+                    }}
                 />
 
                 <Button

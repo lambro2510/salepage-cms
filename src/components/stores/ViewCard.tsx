@@ -175,7 +175,7 @@ const ViewCard = () => {
             render: (_, row: SellerStoreResponse) => row.description
         },
         {
-            title: 'Loại sản phẩm',
+            title: 'Trạng thái cửa hàng',
             dataIndex: 'status',
             align: 'center',
             sorter: false,

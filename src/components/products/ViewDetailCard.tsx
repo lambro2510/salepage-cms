@@ -19,13 +19,6 @@ const DetailCard = () => {
     const [details, setDetails] = useState<ProductDetailInfoResponse[]>([]);
     const [loading, setLoading] = useState<boolean>(false)
 
-    const waitTime = (time: number = 100) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, time);
-        });
-    };
 
     const breadcrumb: BreadcrumbProps = {
         items: [
@@ -36,16 +29,6 @@ const DetailCard = () => {
 
         ],
     };
-
-    const createDetail = async (value: ProductDetailInfoResponse) => {
-        try {
-            const response = await http.post(`${apiRoutes.product_detail}`, value);
-            showNotification(response.data.message)
-            return response;
-        } catch (error) {
-            handleErrorResponse(error)
-        }
-    }
 
     const deleteDetail = async (productDetailId: string) => {
         try {
@@ -64,7 +47,8 @@ const DetailCard = () => {
                 response = await http.put(`${apiRoutes.product_detail}/${productDetailId}`, value);
                 showNotification(response.data.message)
             } else {
-                response = createDetail(value);
+                response = await http.post(`${apiRoutes.product_detail}`, value);
+                showNotification(response.data.message)
             }
         } catch (error) {
             handleErrorResponse(error)
@@ -103,42 +87,49 @@ const DetailCard = () => {
             dataIndex: "productDetailId",
             valueType: "text",
             align: "center",
-            width: "20%",
-            editable: false, // Make this field non-editable
+            editable: false,
         },
         {
             title: "Loại sản phẩm",
             dataIndex: ['type', 'type'],
             valueType: "text",
             align: "center",
-            width: "20%",
         },
         {
             title: "Màu hiển thị",
             dataIndex: ['type', 'color'],
-            valueType: "text",
+            valueType: "color",
             align: "center",
-            width: "10%",
         },
         {
             title: "Số lượng",
             dataIndex: "quantity",
             valueType: "digit",
             align: "center",
-            width: "20%",
         },
         {
-            title: "Giá gốc",
+            title: "Giá gốc (VND)",
             dataIndex: "originPrice",
             valueType: "digit",
             align: "center",
-            width: "20%",
+        },
+        {
+            title: "Phần trăm giảm giá (%)",
+            dataIndex: "discountPercent",
+            valueType: "digit",
+            align: "center",
+        },
+        {
+            title: "Giá bán (VND)",
+            dataIndex: "sellPrice",
+            valueType: "digit",
+            align: "center",
+            editable: false
         },
         {
             title: "Hành động",
             valueType: "option",
             align: "center",
-            width: "20%",
             render: (text, record, _, action) => [
                 <a
                     key="editable"
@@ -191,10 +182,10 @@ const DetailCard = () => {
 
 
                 <EditableProTable<ProductDetailInfoResponse>
-                    request={() => getProductDetail()}
+                    request={async () => getProductDetail()}
                     columns={columns}
                     actionRef={actionRef}
-                    
+
                     recordCreatorProps={{
                         position: 'bottom',
                         record: (index, dataSource) => ({
@@ -220,7 +211,7 @@ const DetailCard = () => {
                         cancelText: "Huỷ bỏ",
                         saveText: "Lưu",
                         deleteText: 'Xoá',
-                        type: 'single',
+                        type: 'multiple',
                         editableKeys,
                         deletePopconfirmMessage: 'Xác nhận xoá',
                         onlyOneLineEditorAlertMessage: 'Vui lòng hoàn thành chỉnh sửa',
