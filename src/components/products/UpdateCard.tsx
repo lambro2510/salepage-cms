@@ -16,7 +16,7 @@ const UpdateProduct = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState<ProductDetail | null>(null);
-    const [stores, setStores] = useState<Store[]>([]);
+    const [stores, setStores] = useState<SellerStoreResponse[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -25,7 +25,15 @@ const UpdateProduct = () => {
             const response = await http.get(`${apiRoutes.products}/${id}`);
             const res = response?.data?.data as ProductDetail;
             setProduct(res);
-            return res;
+            return {
+                ...res,
+                stores : res.stores.map((store) => {
+                    return {
+                        label: store.storeName,
+                        value: store.id,
+                    };
+                })
+            };
         } catch (error) {
             handleErrorResponse(error);
         }
@@ -71,9 +79,12 @@ const UpdateProduct = () => {
     const handleFinish = async (values: any): Promise<boolean> => {
         setLoading(true);
         try {
+            console.log(values);
+            
             const response = await http.put(`${apiRoutes.products}/${id}`, {
                 ...values,
-            });
+                sellerStoreIds : values.stores
+            } as ProductDto);
             setLoading(false);
             showNotification(response?.data?.message, NotificationType.SUCCESS);
             navigate(-1);
@@ -139,7 +150,7 @@ const UpdateProduct = () => {
                 />
 
                 <ProFormSelect
-                    name="sellerStoreIds"
+                    name="stores"
                     label="Cửa hàng bán sản phẩm"
                     mode="multiple"
                     rules={[
@@ -151,7 +162,7 @@ const UpdateProduct = () => {
                     options={stores.map((store) => {
                         return {
                             label: store.storeName,
-                            value: store.storeId,
+                            value: store.id,
                         };
                     })}
                 />

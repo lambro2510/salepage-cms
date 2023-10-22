@@ -37,7 +37,7 @@ export interface ProductDetail {
   storeName?: string;
   sellingAddress?: string;
   imageUrl?: string;
-  stores: Store[];
+  stores: SellerStoreResponse[];
   categoryId?: string;
   isHot?: boolean;
 }
