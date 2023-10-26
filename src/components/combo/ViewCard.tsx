@@ -2,21 +2,19 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import BasePageContainer from "../layout/PageContainer";
 import { useEffect, useRef, useState } from "react";
 import { ActionType, ProColumns, ProDescriptions, ProTable, RequestData, TableDropdown } from "@ant-design/pro-components";
-import { Avatar, BreadcrumbProps, Button, Dropdown, Menu, Modal, Space } from "antd";
+import { Avatar, BreadcrumbProps, Button, Dropdown, Menu, Modal, Space, Switch } from "antd";
 import { Store } from "antd/es/form/interface";
 import { CategoryType } from "../../interfaces/enum/CategoryType";
 import { NotificationType, handleErrorResponse, showNotification } from "../../utils";
 import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
-import { Product } from "../../interfaces/models/product";
 import { webRoutes } from "../../routes/web";
 import Icon, { EllipsisOutlined, WarningOutlined, DownOutlined, UpOutlined, DeleteOutlined } from '@ant-design/icons';
 import LazyImage from "../lazy-image";
-import { ProductTransactionState } from "../../interfaces/enum/ProdTransactionState";
 import { CiCircleMore } from "react-icons/ci";
 import { BiPlus, BiUpload } from "react-icons/bi";
 import { MdUpdate, MdViewAgenda } from "react-icons/md";
-import { SellerProductResponse, SellerStoreResponse } from "../../interfaces/Interface";
+import { ComboDto, ProductComboDetailResponse, SellerProductResponse, SellerStoreResponse } from "../../interfaces/Interface";
 
 enum ActionKey {
     DELETE = 'delete',
@@ -31,7 +29,7 @@ const breadcrumb: BreadcrumbProps = {
             key: webRoutes.products,
             title: <Link to={webRoutes.products}>Sản phẩm</Link>,
         },
-        
+
     ],
 };
 
@@ -40,14 +38,37 @@ const ViewCard = () => {
     const navigate = useNavigate();
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [productCombos, setProductCombos] = useState<ProductComboDetailResponse[]>([]);
     const [modal, modalContextHolder] = Modal.useModal();
     const [stores, setStores] = useState<Store[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
 
+    const loadProductCombos = async (params : any) => {
+        try {
+            const productCombo = await http.get(`${apiRoutes.combos}`);
+            const data = productCombo.data.data as ProductComboDetailResponse[];
+            setProductCombos(productCombo.data.data);
+            return {
+                data : data,
+                success: true,
+                total : data.length
+            } as RequestData<ProductComboDetailResponse>
+        } catch (error) {
+            handleErrorResponse(error);
+            setProductCombos([]);
+            return {
+                data : [],
+                success: false,
+                total : 0
+            } as RequestData<ProductComboDetailResponse>
+        }
+
+    };
+
     useEffect(() => {
         Promise.all([loadStores(), loadCategories()])
             .then(() => {
-                
+
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -81,47 +102,20 @@ const ViewCard = () => {
 
 
 
-    const loadProduct = (params: any) => {
-        return http
-            .get(apiRoutes.products, {
-                params: {
-                    storeName: params.storeName,
-                    productName :  params.productName,
-                },
-            })
-            .then((response) => {
-                const products: [SellerProductResponse] = response.data.data.data;
 
-                return {
-                    data: products,
-                    success: true,
-                    total: response.data.data.metadata.total,
-                } as RequestData<SellerProductResponse>;
-            })
-            .catch((error) => {
-                handleErrorResponse(error);
-
-                return {
-                    data: [],
-                    success: false,
-                } as RequestData<SellerProductResponse>;
-            });
-    };
-
-
-    const handleActionOnSelect = (key: string, product: SellerProductResponse) => {
+    const handleActionOnSelect = (key: string, combo: ProductComboDetailResponse) => {
         if (key === ActionKey.DELETE) {
-            showDeleteConfirmation(product);
+            showDeleteConfirmation(combo);
         } else if (key === ActionKey.UPDATE) {
-            navigate(`${webRoutes.products}/${product.id}`);
-        }else if (key === ActionKey.UPLOAD) {
-            navigate(`${webRoutes.products}/${product.id}/upload`);
-        }else if (key === ActionKey.DETAIL) {
-            navigate(`${webRoutes.products}/detail/${product.id}`);
+            navigate(`${webRoutes.product_combo}/${combo.id}`);
+        } else if (key === ActionKey.UPLOAD) {
+            navigate(`${webRoutes.product_combo}/${combo.id}/upload`);
+        } else if (key === ActionKey.DETAIL) {
+            navigate(`${webRoutes.product_combo}/detail/${combo.id}`);
         }
     };
 
-    const showDeleteConfirmation = (product: SellerProductResponse) => {
+    const showDeleteConfirmation = (combo: ProductComboDetailResponse) => {
         modal.confirm({
             title: 'Bạn có chắc chắn mua xóa sản phẩm này?',
             icon: <WarningOutlined />,
@@ -129,10 +123,10 @@ const ViewCard = () => {
             content: (
                 <ProDescriptions column={1} title=" ">
                     <ProDescriptions.Item valueType="avatar" label="Ảnh">
-                        {product.defaultImageUrl}
+                        {combo.id}
                     </ProDescriptions.Item>
                     <ProDescriptions.Item valueType="text" label="Tên sản phẩm">
-                        {product.productName}
+                        {combo.comboName}
                     </ProDescriptions.Item>
                 </ProDescriptions>
             ),
@@ -141,12 +135,12 @@ const ViewCard = () => {
             },
             onOk: () => {
                 return http
-                    .delete(`${apiRoutes.products}/${product.id}`)
+                    .delete(`${apiRoutes.products}/${combo.id}`)
                     .then(() => {
                         showNotification(
                             'Thành công',
                             NotificationType.SUCCESS,
-                            `${product} đã được xóa`
+                            `${combo.comboName} đã được xóa`
                         );
 
                         actionRef.current?.reloadAndRest?.();
@@ -159,64 +153,59 @@ const ViewCard = () => {
     };
 
 
-    const columns: ProColumns<SellerProductResponse>[] = [
+    const columns: ProColumns<ProductComboDetailResponse>[] = [
         {
-            title: 'Ảnh sản phẩm',
-            dataIndex: 'defaultImageUrl',
+            title: 'Trạng thái',
+            dataIndex: 'state',
             align: 'center',
             sorter: false,
             search: false,
-            render: (_ : any, row: SellerProductResponse) => 
-                <LazyImage
-                    src={row.defaultImageUrl || row.defaultImageUrl}
-                    placeholder={<div className="bg-gray-100 h-full w-full" />}
-                />
-            
+            render: (_: any, row: ProductComboDetailResponse) =>
+                <Switch checked={row.state == 'ACTIVE'} />
+
         },
         {
-            title: 'Tên sản phẩm',
-            dataIndex: 'productName',
+            title: 'Tên khuyến mãi',
+            dataIndex: 'comboName',
             align: 'center',
             sorter: false,
             filterMode: 'menu',
             filtered: false,
+            search: false,
             filterDropdownOpen: false,
-            render: (_ : any, row: SellerProductResponse) => row.productName,
+            render: (_: any, row: ProductComboDetailResponse) => row.comboName,
         },
         {
-            title: 'Loại sản phẩm',
-            dataIndex: 'categoryName',
+            title: 'Số tiền giảm giá tối đa',
+            dataIndex: 'maxDiscount',
             align: 'center',
             sorter: false,
             search: false,
-            render: (_ : any, row: SellerProductResponse) => row.productCategory.categoryName
+            render: (_: any, row: ProductComboDetailResponse) => row.maxDiscount
         },
         {
-            title: 'Cửa hàng',
-            dataIndex: 'stores',
+            title: 'Giá trị giảm',
+            dataIndex: 'type',
             align: 'center',
             sorter: false,
-            render: (_ : any, row: SellerProductResponse) => {
-                if (row.stores && row.stores.length > 0) {
-                    return (
-                        <div>
-                            {row.stores.map((store: SellerStoreResponse) => (
-                                <Button type="ghost" onClick={() => navigate(`${webRoutes.stores}/${store.id}`)} key={store.id}>
-                                    {store.storeName}
-                                </Button>
-                            ))}
-                        </div>
-                    );
-                }
-                return '-';
-            },
+            search: false,
+            render: (_: any, row: ProductComboDetailResponse) => row.type == "PERCENT" ? row.value + " % " : row.value
+        },
+        {
+            title: 'Số lượng sản phẩm yêu cầu trên 1 lần thanh toán',
+            dataIndex: 'quantityToUse',
+            align: 'center',
+            sorter: false,
+            search: false,
+            render: (_: any, row: ProductComboDetailResponse) => row.quantityToUse
         },
         {
             title: 'Chức năng',
             align: 'center',
             key: 'option',
+            search: false,
             fixed: 'right',
-            render: (_, row: SellerProductResponse) => [
+            render: (_, row: ProductComboDetailResponse) => [
                 <TableDropdown
                     key="actionGroup"
                     onSelect={(key) => handleActionOnSelect(key, row)}
@@ -263,10 +252,10 @@ const ViewCard = () => {
                 </TableDropdown>,
             ],
         }
-        
+
     ];
 
-    return(
+    return (
         <BasePageContainer breadcrumb={breadcrumb}>
             <ProTable
                 columns={columns}
@@ -282,35 +271,12 @@ const ViewCard = () => {
                 }}
                 actionRef={actionRef}
                 request={(params, sort) => {
-                    return loadProduct(params);
+                    return loadProductCombos(params);
                 }}
                 dateFormatter="number"
-                search={{
-                    labelWidth: 'auto',
-                    filterType: 'query',
-                    showHiddenNum: true,
-                    searchText: 'Tìm kiếm',
-                    resetText: 'Xóa bộ lọc',
-                    collapseRender(collapsed, props, intl, hiddenNum) {
-                        if (collapsed) {
-                            return [
-                                <Link to={'#'}>
-                                    Mở rộng({props.hiddenNum})
-                                    <DownOutlined />
-                                </Link>
-                            ]
-                        } else {
-                            return [
-                                <Link to={'#'}>
-                                    Thu nhỏ
-                                    <UpOutlined />
-                                </Link>
-                            ]
-                        }
-                    },
-                }}
+                search={false}
                 toolBarRender={() => [
-                    <Button icon={<BiPlus/>} type="primary" onClick={() => navigate(`${webRoutes.products}/create`)}>
+                    <Button icon={<BiPlus />} type="primary" onClick={() => navigate(`${webRoutes.product_combo}/create`)}>
                         Tạo mới
                     </Button>
                 ]}

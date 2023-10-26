@@ -7,6 +7,7 @@ import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
 import { ActionType, EditableProTable, ProCard, ProColumns, ProForm, ProFormDigit, ProFormDigitRange, ProFormList, ProFormText, ProTable, RequestData } from "@ant-design/pro-components";
 import { handleErrorResponse, showNotification } from "../../utils";
+import { ProductDetailInfoResponse, SellerProductResponse } from "../../interfaces/Interface";
 
 const { Title, Text } = Typography;
 
@@ -134,7 +135,7 @@ const DetailCard = () => {
                 <a
                     key="editable"
                     onClick={() => {
-                        action?.startEditable?.(record.productDetailId);
+                        action?.startEditable?.(record.id);
                     }}
                 >
                     Chỉnh sửa
@@ -142,7 +143,7 @@ const DetailCard = () => {
                 <a
                     key="delete"
                     onClick={() => {
-                        deleteDetail(record.productDetailId)
+                        deleteDetail(record.id)
                     }}
                 >
                     Xoá
@@ -189,7 +190,7 @@ const DetailCard = () => {
                     recordCreatorProps={{
                         position: 'bottom',
                         record: (index, dataSource) => ({
-                            productDetailId: ' ',
+                            id: ' ',
                             productId: product?.id,
                             type: {
                                 type: '',

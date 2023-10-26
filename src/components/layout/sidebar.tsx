@@ -34,6 +34,12 @@ export const sidebar = [
     icon: <ShopOutlined />,
   },
   {
+    path: webRoutes.product_combo,
+    key: webRoutes.product_combo,
+    name: 'Khuyến mãi',
+    icon: <ShopOutlined />,
+  },
+  {
     path: webRoutes.categories,
     key: webRoutes.categories,
     name: 'Danh sách loại sản phẩm',

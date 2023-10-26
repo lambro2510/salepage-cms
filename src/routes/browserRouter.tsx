@@ -65,6 +65,21 @@ const UpdateCategory = loadable(() => import('../components/categories/UpdateCar
 const ViewCategory = loadable(() => import('../components/categories/ViewCard'), {
   fallback: fallbackElement,
 });
+const Combo = loadable(() => import('../components/combo'), {
+  fallback: fallbackElement,
+});
+
+const ViewCombo = loadable(() => import('../components/combo/ViewCard'), {
+  fallback: fallbackElement,
+});
+
+const CreateCombo = loadable(() => import('../components/combo/CreateCard'), {
+  fallback: fallbackElement,
+});
+
+const UpdateCombo = loadable(() => import('../components/combo/UpdateCard'), {
+  fallback: fallbackElement,
+});
 
 export const browserRouter = createBrowserRouter([
   {
@@ -145,7 +160,28 @@ export const browserRouter = createBrowserRouter([
           }
         ]
       },
-
+      {
+        path: webRoutes.product_combo,
+        element: <Combo />,
+        errorElement: errorElement,
+        children: [
+          {
+            path: `${webRoutes.product_combo}`,
+            element: <ViewCombo />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.product_combo}/create`,
+            element: <CreateCombo />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.product_combo}/:id`,
+            element: <UpdateCombo />,
+            errorElement: errorElement
+          }
+        ]
+      },
       {
         path: webRoutes.categories,
         element: <Categories />,

@@ -1,52 +1,52 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2023-10-05 21:59:53.
+// Generated using typescript-generator version 3.2.1263 on 2023-10-24 20:01:05.
 
-interface CartDto {
+export interface CartDto {
     productDetailId: string;
     quantity: number;
     storeId: string;
     voucherId: string;
 }
 
-interface CartPaymentDto {
+export interface CartPaymentDto {
     comboId: string;
     note: string;
     transaction: ProductTransactionDto[];
 }
 
-interface ConfigDto {
+export interface ConfigDto {
     key: string;
     value: string;
 }
 
-interface CreatePaymentDto {
+export interface CreatePaymentDto {
     bankAccountId: string;
     amount: number;
 }
 
-interface UserFavoriteDto {
+export interface UserFavoriteDto {
     refId: string;
     favoriteType: FavoriteType;
     isLike: boolean;
 }
 
-interface CheckInDto {
+export interface CheckInDto {
     longitude: string;
     latitude: string;
     username: string;
 }
 
-interface LoginDto {
+export interface LoginDto {
     username: string;
     password: string;
 }
 
-interface LogoutDto {
+export interface LogoutDto {
     refreshToken: string;
 }
 
-interface SignUpDto {
+export interface SignUpDto {
     username: string;
     password: string;
     confirmPassword: string;
@@ -54,17 +54,17 @@ interface SignUpDto {
     userRole: UserRole;
 }
 
-interface BankAccountInfoRequest {
+export interface BankAccountInfoRequest {
     bin: string;
     accountNumber: string;
 }
 
-interface BankDto {
+export interface BankDto {
     error: number;
     data: TransactionData[];
 }
 
-interface GenQrCodeDto {
+export interface GenQrCodeDto {
     accountNo: string;
     accountName: string;
     acqId: string;
@@ -74,7 +74,7 @@ interface GenQrCodeDto {
     template: string;
 }
 
-interface Oath2CassoDto {
+export interface Oath2CassoDto {
     scope: string;
     state: string;
     client_id: string;
@@ -82,7 +82,7 @@ interface Oath2CassoDto {
     response_type: string;
 }
 
-interface TransactionData {
+export interface TransactionData {
     postingDate: Date;
     transactionDate: Date;
     accountNo: string;
@@ -98,7 +98,7 @@ interface TransactionData {
     benAccountNo: string;
 }
 
-interface ComboDto {
+export interface ComboDto {
     comboName: string;
     type: DiscountType;
     state: ActiveState;
@@ -107,7 +107,7 @@ interface ComboDto {
     maxDiscount: number;
 }
 
-interface CreateProductCategoryTypeDto {
+export interface CreateProductCategoryTypeDto {
     categoryName: string;
     categoryType: CategoryType;
     description: string;
@@ -115,23 +115,22 @@ interface CreateProductCategoryTypeDto {
     productType: string;
 }
 
-interface CreateProductInfoDto {
+export interface CreateProductInfoDto {
     productName: string;
     description: string;
     categoryId: string;
     storeIds: string[];
 }
 
-interface ProductDetailDto {
+export interface ProductDetailDto {
     productId: string;
     type: ProductDetailType;
     quantity: number;
     originPrice: number;
-    sellPrice: number;
     discountPercent: number;
 }
 
-interface ProductDto {
+export interface ProductDto {
     productName: string;
     description: string;
     categoryId: string;
@@ -139,34 +138,34 @@ interface ProductDto {
     productInfos: ProductInfo[];
 }
 
-interface ProductInfoDto extends CreateProductInfoDto {
+export interface ProductInfoDto extends CreateProductInfoDto {
     imageUrl: string;
 }
 
-interface ProductTypeDetailDto {
+export interface ProductTypeDetailDto {
     productId: string;
     typeName: string;
     typeDetailName: string;
     note: string;
 }
 
-interface ProductTypeDto {
+export interface ProductTypeDto {
     productType: string;
     typeName: string;
     description: string;
     status: ProductTypeStatus;
 }
 
-interface UpdateProductCategoryTypeDto extends CreateProductCategoryTypeDto {
+export interface UpdateProductCategoryTypeDto extends CreateProductCategoryTypeDto {
     id: string;
 }
 
-interface UpdateTypeDetailStatusDto {
+export interface UpdateTypeDetailStatusDto {
     id: string;
     status: ProductTypeDetailStatus;
 }
 
-interface ListTransactionDto {
+export interface ListTransactionDto {
     transactionId: string;
     note: string;
     quantity: number;
@@ -174,19 +173,21 @@ interface ListTransactionDto {
     voucherCode: string;
 }
 
-interface ProductTransactionDto extends ProductTransactionInfoDto {
+export interface ProductTransactionDto {
     productDetailId: string;
     storeId: string;
     voucherCodeId: string;
+    note: string;
+    address: string;
 }
 
-interface ProductTransactionInfoDto {
+export interface ProductTransactionInfoDto {
     quantity: number;
     note: string;
     address: string;
 }
 
-interface SellerStoreDto {
+export interface SellerStoreDto {
     storeName: string;
     address: string;
     description: string;
@@ -194,21 +195,21 @@ interface SellerStoreDto {
     status: StoreStatus;
 }
 
-interface UpdateSellerStoreDto extends SellerStoreDto {
+export interface UpdateSellerStoreDto extends SellerStoreDto {
     storeId: string;
 }
 
-interface UserInfoDto {
+export interface UserInfoDto {
     displayName: string;
     phoneNumber: string;
     imageUrl: string;
 }
 
-interface CreateVoucherStoreDto extends UpdateVoucherStoreDto {
+export interface CreateVoucherStoreDto extends UpdateVoucherStoreDto {
     refId: string;
 }
 
-interface UpdateVoucherStoreDto {
+export interface UpdateVoucherStoreDto {
     voucherStoreName: string;
     voucherStoreType: VoucherStoreType;
     discountType: DiscountType;
@@ -220,11 +221,11 @@ interface UpdateVoucherStoreDto {
     maxVoucherPerUser: number;
 }
 
-interface BankAccountData {
+export interface BankAccountData {
     accountName: string;
 }
 
-interface BankAccountResponse {
+export interface BankAccountResponse {
     bankAccountId: string;
     username: string;
     accountNo: string;
@@ -239,7 +240,7 @@ interface BankAccountResponse {
     moneyOut: number;
 }
 
-interface BankListData {
+export interface BankListData {
     id: number;
     name: string;
     code: string;
@@ -257,38 +258,38 @@ interface BankListData {
     swift_code: string;
 }
 
-interface BankPaymentResponse {
+export interface BankPaymentResponse {
     bin: string;
     bankName: string;
     bankShortName: string;
     bankAccount: string;
 }
 
-interface MbBankTransaction {
+export interface MbBankTransaction {
     success: boolean;
     message: string;
     data: Transaction[];
 }
 
-interface QrData {
+export interface QrData {
     qrCode: string;
     qrDataURL: string;
 }
 
-interface VietQrResponse<T> {
+export interface VietQrResponse<T> {
     code: string;
     desc: string;
     data: T;
 }
 
-interface BaseResponse<T> {
+export interface BaseResponse<T> {
     errorCode: number;
     error: boolean;
     message: string;
     data: T;
 }
 
-interface CartByStoreResponse {
+export interface CartByStoreResponse {
     storeId: string;
     storeName: string;
     cartResponses: CartResponse[];
@@ -296,9 +297,10 @@ interface CartByStoreResponse {
     bestCombo: ProductComboDetailResponse;
 }
 
-interface CartResponse {
+export interface CartResponse {
     cartId: string;
     canPayment: boolean;
+    productDetailId: string;
     productId: string;
     storeId: string;
     storeName: string;
@@ -310,40 +312,41 @@ interface CartResponse {
     imageUrl: string;
     productName: string;
     quantity: number;
+    limit: number;
     productNote: string;
     voucherNote: string;
     voucherInfo: VoucherInfo;
     totalPrice: number;
 }
 
-interface FavoriteResponse {
+export interface FavoriteResponse {
     type: FavoriteType;
     refId: string;
     name: string;
 }
 
-interface InfoResponse {
+export interface InfoResponse {
     code: number;
     message: string;
 }
 
-interface JwtResponse {
+export interface JwtResponse {
     username: string;
     token: string;
     role: UserRole;
 }
 
-interface Metadata {
+export interface Metadata {
     total: number;
     totalPages: number;
 }
 
-interface PageResponse<T> {
+export interface PageResponse<T> {
     data: T[];
     metadata: Metadata;
 }
 
-interface PaymentResponse {
+export interface PaymentResponse {
     paymentId: string;
     bankName: string;
     bankAccountName: string;
@@ -351,39 +354,36 @@ interface PaymentResponse {
     createdAt: Date;
 }
 
-interface ProductCategoryResponse {
+export interface ProductCategoryResponse {
     id: string;
     categoryName: string;
     description: string;
     categoryType: CategoryType;
-    productType: string;
     productTypeId: string;
+    productType: string;
     productTypeName: string;
     rangeAge: string;
 }
 
-interface ProductDataResponse {
+export interface ProductDataResponse {
     productId: string;
     productName: string;
-    productPrice: number;
-    categoryName: string;
-    description: string;
-    productTypes: string[];
     productRate: Rate;
     sellerUsername: string;
-    discountPercent: number;
-    sellPrice: number;
+    minSellPrice: number;
+    maxSellPrice: number;
+    minOriginPrice: number;
+    maxOriginPrice: number;
     totalSell: number;
     totalView: number;
     imageUrl: string;
-    stores: SellerStoreResponse[];
     categoryId: string;
     createdAt: number;
     isHot: boolean;
 }
 
-interface ProductDetailInfoResponse {
-    productDetailId: string;
+export interface ProductDetailInfoResponse {
+    id: string;
     productId: string | undefined;
     type: ProductDetailType;
     quantity: number;
@@ -392,7 +392,7 @@ interface ProductDetailInfoResponse {
     discountPercent: number;
 }
 
-interface ProductDetailResponse {
+export interface ProductDetailResponse {
     productId: string;
     productName: string;
     productPrice: number;
@@ -407,17 +407,24 @@ interface ProductDetailResponse {
     categoryName: string;
     totalSell: number;
     totalView: number;
-    productDetails: ProductDetailResponse[];
+    productInfos: ProductInfo[];
+    productDetails: ProductDetailInfoResponse[];
     isLike: boolean;
     is_hot: boolean;
 }
 
-interface ProductTypeResponse {
+export interface ProductInfoResponse {
+    id: string;
+    productName: string;
+    defaultImageUrl: string;
+}
+
+export interface ProductTypeResponse {
     value: string;
     label: string;
 }
 
-interface SellerProductDetailResponse {
+export interface SellerProductDetailResponse {
     id: string;
     productName: string;
     defaultImageUrl: string;
@@ -431,7 +438,7 @@ interface SellerProductDetailResponse {
     isHot: boolean;
 }
 
-interface SellerProductResponse {
+export interface SellerProductResponse {
     id: string;
     productName: string;
     defaultImageUrl: string;
@@ -444,11 +451,11 @@ interface SellerProductResponse {
     isHot: boolean;
 }
 
-interface TypeDetailResponse {
+export interface TypeDetailResponse {
     typeName: string;
 }
 
-interface TotalProductStatisticResponse {
+export interface TotalProductStatisticResponse {
     productId: string;
     productName: string;
     totalUser: number;
@@ -456,10 +463,10 @@ interface TotalProductStatisticResponse {
     totalView: number;
     totalBuy: number;
     totalShipCod: number;
-    dailies: Daily[];
+    productDetails: ProductDetailStatistic[];
 }
 
-interface UploadImageData {
+export interface UploadImageData {
     uid: string;
     name: string;
     status: string;
@@ -467,21 +474,21 @@ interface UploadImageData {
     thumbUrl: string;
 }
 
-interface UserResponse {
+export interface UserResponse {
 }
 
-interface NotificationDetailResponse extends NotificationResponse {
+export interface NotificationDetailResponse extends NotificationResponse {
     content: string;
 }
 
-interface NotificationResponse {
+export interface NotificationResponse {
     id: string;
     title: string;
     created: Date;
     status: NotificationStatus;
 }
 
-interface SellerStoreResponse {
+export interface SellerStoreResponse {
     id: string;
     storeName: string;
     address: string;
@@ -491,11 +498,11 @@ interface SellerStoreResponse {
     imageUrl: string;
 }
 
-interface DistinctProductResponse {
+export interface DistinctProductResponse {
     productId: string;
 }
 
-interface PaymentTransactionResponse {
+export interface PaymentTransactionResponse {
     paymentId: string;
     status: PaymentStatus;
     bankName: string;
@@ -506,7 +513,7 @@ interface PaymentTransactionResponse {
     created: Date;
 }
 
-interface ProductTransactionResponse {
+export interface ProductTransactionResponse {
     transactionId: string;
     productId: string;
     productName: string;
@@ -526,19 +533,19 @@ interface ProductTransactionResponse {
     created_at: Date;
 }
 
-interface TotalStatisticResponse {
+export interface TotalStatisticResponse {
     totalPrice: number;
     quantity: number;
 }
 
-interface ListVoucherCodeResponse {
+export interface ListVoucherCodeResponse {
     voucherCodes: VoucherCodeResponse[];
     voucherStoreId: string;
     voucherStoreName: string;
     voucherStoreStatus: VoucherStoreStatus;
 }
 
-interface UserVoucherResponse {
+export interface UserVoucherResponse {
     voucherStoreName: string;
     voucherCodeId: string;
     voucherCode: string;
@@ -550,7 +557,7 @@ interface UserVoucherResponse {
     dayToExpireTime: number;
 }
 
-interface VoucherCodeResponse {
+export interface VoucherCodeResponse {
     voucherCode: string;
     voucherCodeStatus: VoucherCodeStatus;
     usedBy: string;
@@ -558,7 +565,7 @@ interface VoucherCodeResponse {
     expireTime: Date;
 }
 
-interface VoucherStoreResponse {
+export interface VoucherStoreResponse {
     voucherStoreId: string;
     voucherStoreName: string;
     totalQuantity: number;
@@ -570,17 +577,17 @@ interface VoucherStoreResponse {
     value: number;
 }
 
-interface ProductDetailType {
+export interface ProductDetailType {
     type: string;
-    color: string | undefined;
+    color: string;
 }
 
-interface ProductInfo {
+export interface ProductInfo {
     label: string;
     value: string;
 }
 
-interface Transaction {
+export interface Transaction {
     postingDate: string;
     transactionDate: string;
     dueDate: Date;
@@ -599,18 +606,20 @@ interface Transaction {
     docId: string;
 }
 
-interface ProductComboDetailResponse {
+export interface ProductComboDetailResponse {
     id: string;
     canUse: boolean;
     totalPrice: number;
     comboName: string;
     type: DiscountType;
+    products: ProductInfoResponse[];
     value: number;
+    state: ActiveState;
     quantityToUse: number;
     maxDiscount: number;
 }
 
-interface VoucherInfo {
+export interface VoucherInfo {
     code: string;
     voucherStoreType: VoucherStoreType;
     discountType: DiscountType;
@@ -622,13 +631,24 @@ interface VoucherInfo {
     isUse: boolean;
 }
 
-interface Rate {
+export interface Rate {
     totalPoint: number;
     totalRate: number;
     avgPoint: number;
 }
 
-interface Daily {
+export interface ProductDetailStatistic {
+    productDetailId: string;
+    daily: Date;
+    totalUser: number;
+    totalPurchase: number;
+    totalView: number;
+    totalBuy: number;
+    totalShipCod: number;
+    dailies: Daily[];
+}
+
+export interface Daily {
     daily: Date;
     totalUser: number;
     totalPurchase: number;
@@ -637,34 +657,34 @@ interface Daily {
     totalShipCod: number;
 }
 
-type FavoriteType = "PRODUCT" | "STORE" | "SELLER" | "SHIPPER";
+export type FavoriteType = "PRODUCT" | "STORE" | "SELLER" | "SHIPPER";
 
-type UserRole = "ADMIN" | "OPERATOR" | "SHIPPER" | "USER" | "SELLER";
+export type UserRole = "ADMIN" | "OPERATOR" | "SHIPPER" | "USER" | "SELLER";
 
-type DiscountType = "PERCENT" | "TOTAL" | "PER_PRODUCT";
+export type DiscountType = "PERCENT" | "TOTAL" | "PER_PRODUCT";
 
-type ActiveState = "ACTIVE" | "INACTIVE";
+export type ActiveState = "ACTIVE" | "INACTIVE";
 
-type CategoryType = "VERY_SMALL" | "SMALL" | "BIG" | "LARGE" | "SUPPER_LARGE";
+export type CategoryType = "VERY_SMALL" | "SMALL" | "BIG" | "LARGE" | "SUPPER_LARGE";
 
-type ProductTypeStatus = "ACTIVE" | "INACTIVE";
+export type ProductTypeStatus = "ACTIVE" | "INACTIVE";
 
-type ProductTypeDetailStatus = "ACTIVE" | "WAITING" | "DENY" | "INACTIVE";
-
-type StoreStatus = "ACTIVE" | "INACTIVE";
-
-type VoucherStoreType = "PRODUCT" | "STORE";
-
-type VoucherStoreStatus = "ACTIVE" | "INACTIVE";
-
-type BankStatus = "ACTIVE" | "INACTIVE" | "DISCONNECT";
-
-type NotificationStatus = "SEEN" | "NOT_SEEN";
-
-type PaymentStatus = "WAITING" | "RESOLVE" | "PENDING" | "CANCEL";
-
-type PaymentType = "IN" | "OUT";
-
-type ProductTransactionState = "IN_CART" | "WAITING_STORE" | "ACCEPT_STORE" | "WAITING_SHIPPER" | "SHIPPER_PROCESSING" | "SHIPPER_COMPLETE" | "ALL_COMPLETE" | "CANCEL";
-
-type VoucherCodeStatus = "NEW" | "OWNER" | "USED" | "EXPIRE";
+export type ProductTypeDetailStatus = "ACTIVE" | "WAITING" | "DENY" | "INACTIVE";
+ 
+export type StoreStatus = "ACTIVE" | "INACTIVE";
+ 
+export type VoucherStoreType = "PRODUCT" | "STORE";
+ 
+export type VoucherStoreStatus = "ACTIVE" | "INACTIVE";
+ 
+export type BankStatus = "ACTIVE" | "INACTIVE" | "DISCONNECT";
+ 
+export type NotificationStatus = "SEEN" | "NOT_SEEN";
+ 
+export type PaymentStatus = "WAITING" | "RESOLVE" | "PENDING" | "CANCEL";
+ 
+export type PaymentType = "IN" | "OUT";
+ 
+export type ProductTransactionState = "IN_CART" | "WAITING_STORE" | "ACCEPT_STORE" | "WAITING_SHIPPER" | "SHIPPER_PROCESSING" | "SHIPPER_COMPLETE" | "ALL_COMPLETE" | "CANCEL";
+ 
+export type VoucherCodeStatus = "NEW" | "OWNER" | "USED" | "EXPIRE";
