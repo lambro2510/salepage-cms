@@ -73,14 +73,6 @@ const ViewCombo = loadable(() => import('../components/combo/ViewCard'), {
   fallback: fallbackElement,
 });
 
-const CreateCombo = loadable(() => import('../components/combo/CreateCard'), {
-  fallback: fallbackElement,
-});
-
-const UpdateCombo = loadable(() => import('../components/combo/UpdateCard'), {
-  fallback: fallbackElement,
-});
-
 export const browserRouter = createBrowserRouter([
   {
     path: webRoutes.home,
@@ -168,16 +160,6 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.product_combo}`,
             element: <ViewCombo />,
-            errorElement: errorElement
-          },
-          {
-            path: `${webRoutes.product_combo}/create`,
-            element: <CreateCombo />,
-            errorElement: errorElement
-          },
-          {
-            path: `${webRoutes.product_combo}/:id`,
-            element: <UpdateCombo />,
             errorElement: errorElement
           }
         ]

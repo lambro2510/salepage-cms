@@ -200,7 +200,7 @@ const DetailCard = () => {
                             originPrice: 0,
                             sellPrice: 0,
                             discountPercent: 0,
-                        }),
+                        } as ProductDetailInfoResponse),
                         creatorButtonText: "Thêm mới",
                     }}
                     dataSource={details}

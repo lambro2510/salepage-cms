@@ -384,7 +384,7 @@ export interface ProductDataResponse {
 
 export interface ProductDetailInfoResponse {
     id: string;
-    productId: string | undefined;
+    productId: string;
     type: ProductDetailType;
     quantity: number;
     originPrice: number;
@@ -606,6 +606,17 @@ export interface Transaction {
     docId: string;
 }
 
+
+export interface ProductComboResponse {
+    id: string;
+    comboName: string;
+    type: DiscountType;
+    state: ActiveState;
+    value: number;
+    quantityToUse: number;
+    maxDiscount: number;
+}
+
 export interface ProductComboDetailResponse {
     id: string;
     canUse: boolean;
@@ -614,7 +625,6 @@ export interface ProductComboDetailResponse {
     type: DiscountType;
     products: ProductInfoResponse[];
     value: number;
-    state: ActiveState;
     quantityToUse: number;
     maxDiscount: number;
 }
@@ -670,21 +680,21 @@ export type CategoryType = "VERY_SMALL" | "SMALL" | "BIG" | "LARGE" | "SUPPER_LA
 export type ProductTypeStatus = "ACTIVE" | "INACTIVE";
 
 export type ProductTypeDetailStatus = "ACTIVE" | "WAITING" | "DENY" | "INACTIVE";
- 
+
 export type StoreStatus = "ACTIVE" | "INACTIVE";
- 
+
 export type VoucherStoreType = "PRODUCT" | "STORE";
- 
+
 export type VoucherStoreStatus = "ACTIVE" | "INACTIVE";
- 
+
 export type BankStatus = "ACTIVE" | "INACTIVE" | "DISCONNECT";
- 
+
 export type NotificationStatus = "SEEN" | "NOT_SEEN";
- 
+
 export type PaymentStatus = "WAITING" | "RESOLVE" | "PENDING" | "CANCEL";
- 
+
 export type PaymentType = "IN" | "OUT";
- 
+
 export type ProductTransactionState = "IN_CART" | "WAITING_STORE" | "ACCEPT_STORE" | "WAITING_SHIPPER" | "SHIPPER_PROCESSING" | "SHIPPER_COMPLETE" | "ALL_COMPLETE" | "CANCEL";
- 
+
 export type VoucherCodeStatus = "NEW" | "OWNER" | "USED" | "EXPIRE";
