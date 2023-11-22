@@ -25,6 +25,7 @@ import { Category } from '../../interfaces/models/category';
 import { Store } from '../../interfaces/models/store';
 import { SizeType, WeightType } from '../../interfaces/enum/ProductType';
 import { CategoryType } from '../../interfaces/enum/CategoryType';
+import { CreateProductCategoryTypeDto, ProductCategoryResponse, ProductTypeResponse } from '../../interfaces/Interface';
 
 const UpdateCard = () => {
     const navigate = useNavigate();
