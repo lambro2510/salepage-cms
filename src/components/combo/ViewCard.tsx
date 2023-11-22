@@ -7,7 +7,7 @@ import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
 import { ActionType, EditableProTable, ProCard, ProColumns, ProDescriptions, ProForm, ProFormDigit, ProFormDigitRange, ProFormList, ProFormText, ProTable, RequestData } from "@ant-design/pro-components";
 import { handleErrorResponse, showNotification } from "../../utils";
-import { ProductComboResponse } from "../../interfaces/Interface";
+import { ProductComboResponse } from "../../interfaces/interface";
 import { ActiveState, DiscountType } from "../../interfaces/enum/Type";
 import { FaInfo } from "react-icons/fa";
 

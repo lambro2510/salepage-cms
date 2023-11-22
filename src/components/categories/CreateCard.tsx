@@ -9,7 +9,7 @@ import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
 import { NotificationType, handleErrorResponse, showNotification } from "../../utils";
 import { CategoryType } from "../../interfaces/enum/CategoryType";
-import { ProductTypeResponse } from "../../interfaces/Interface";
+import { ProductTypeResponse } from "../../interfaces/interface";
 
 interface CategoryInfo {
     categoryName: string,

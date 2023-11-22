@@ -16,7 +16,7 @@ import { ProductTransactionState } from "../../interfaces/enum/ProdTransactionSt
 import { CiCircleMore } from "react-icons/ci";
 import { BiPlus, BiUpload } from "react-icons/bi";
 import { MdUpdate, MdViewAgenda } from "react-icons/md";
-import { SellerProductResponse, SellerStoreResponse } from "../../interfaces/Interface";
+import { SellerProductResponse, SellerStoreResponse } from "../../interfaces/interface";
 
 enum ActionKey {
     DELETE = 'delete',

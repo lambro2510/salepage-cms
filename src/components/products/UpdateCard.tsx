@@ -11,7 +11,7 @@ import { handleErrorResponse, NotificationType, showNotification } from '../../u
 import { ProductDetail } from '../../interfaces/models/product';
 import { Category } from '../../interfaces/models/category';
 import { Store } from '../../interfaces/models/store';
-import { ProductDto, SellerStoreResponse } from '../../interfaces/Interface';
+import { ProductDto, SellerStoreResponse } from '../../interfaces/interface';
 
 const UpdateProduct = () => {
     const { id } = useParams();

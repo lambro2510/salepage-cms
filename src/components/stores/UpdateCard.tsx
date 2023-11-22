@@ -8,7 +8,7 @@ import { debounce } from "lodash";
 import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
 import { NotificationType, handleErrorResponse, showNotification } from "../../utils";
-import { SellerStoreResponse } from "../../interfaces/Interface";
+import { SellerStoreResponse } from "../../interfaces/interface";
 
 interface StoreInfo {
     storeName: string;

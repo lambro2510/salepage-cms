@@ -1,5 +1,5 @@
 import { Store } from "antd/es/form/interface";
-import { SellerStoreResponse } from "../Interface";
+import { SellerStoreResponse } from "../interface";
 
 export interface Product {
   productId: string;

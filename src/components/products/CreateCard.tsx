@@ -13,7 +13,7 @@ import { webRoutes } from '../../routes/web';
 import BasePageContainer from '../layout/PageContainer';
 import { SizeType, WeightType } from '../../interfaces/enum/ProductType';
 import { ProCard } from '@ant-design/pro-components';
-import { ProductCategoryResponse, ProductDto, SellerStoreResponse } from '../../interfaces/Interface';
+import { ProductCategoryResponse, ProductDto, SellerStoreResponse } from '../../interfaces/interface';
 
 
 const breadcrumb: BreadcrumbProps = {
