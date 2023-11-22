@@ -45,8 +45,11 @@ const Layout = () => {
         {...defaultProps}
         token={{
           sider: {
-            colorMenuBackground: 'white',
+            colorMenuBackground: '#f5f5f5',
           },
+          header: {
+            colorBgHeader: '#f5f5f5'
+          }
         }}
         location={location}
         onMenuHeaderClick={() => navigate(webRoutes.dashboard)}

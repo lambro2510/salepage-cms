@@ -11,8 +11,8 @@ const CONFIG = {
   helpLink: 'https://github.com/lambro2510/salepage-portal.git',
   enablePWA: true,
   theme: {
-    accentColor: '#FF6666',
-    subColor: '#FFCCCC',
+    accentColor: '#7EB2DD',
+    subColor: '#80BD9E',
     sidebarLayout: LayoutType.MIX,
     showBreadcrumb: true,
   },

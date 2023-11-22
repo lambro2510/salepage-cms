@@ -26,6 +26,8 @@ import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
 import { handleErrorResponse } from '../../utils';
 import { Review } from '../../interfaces/models/review';
+import Chart from '../layout/Chart';
+import ChartData from '../layout/Chart';
 
 const breadcrumb: BreadcrumbProps = {
   items: [
@@ -40,59 +42,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-
-  useEffect(() => {
-    Promise.all([loadUsers(), loadReviews()])
-      .then(() => {
-        setLoading(false);
-      })
-      .catch((error) => {
-        handleErrorResponse(error);
-      });
-  }, []);
-
-  const loadUsers = () => {
-    return http
-      .get(apiRoutes.users, {
-        params: {
-          per_page: 4,
-        },
-      })
-      .then((response) => {
-        setUsers(response.data.data);
-      })
-      .catch((error) => {
-        handleErrorResponse(error);
-      });
-  };
-
-  const loadReviews = () => {
-    return http
-      .get(apiRoutes.reviews, {
-        params: {
-          per_page: 5,
-        },
-      })
-      .then((response) => {
-        setReviews(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          response.data.data.map((rawReview: any) => {
-            const review: Review = {
-              id: rawReview.id,
-              title: rawReview.name,
-              color: rawReview.color,
-              year: rawReview.year,
-              star: Math.floor(Math.random() * 5) + 1,
-            };
-
-            return review;
-          })
-        );
-      })
-      .catch((error) => {
-        handleErrorResponse(error);
-      });
-  };
 
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
@@ -259,6 +208,18 @@ const Dashboard = () => {
                 },
               ]}
             />
+          </Card>
+        </Col>
+        <Col
+          xl={24}
+          lg={24}
+          md={24}
+          sm={24}
+          xs={24}
+          style={{ marginBottom: 24 }}
+        >
+          <Card bordered={false} className="w-full h-full cursor-default">
+           <ChartData />
           </Card>
         </Col>
       </Row>
