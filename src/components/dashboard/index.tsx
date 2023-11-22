@@ -27,6 +27,7 @@ import { apiRoutes } from '../../routes/api';
 import { handleErrorResponse } from '../../utils';
 import { Review } from '../../interfaces/models/review';
 import Chart from '../layout/Chart';
+import { ChartDataInfo } from '../../interfaces/models/chart';
 import ChartData from '../layout/Chart';
 
 const breadcrumb: BreadcrumbProps = {
@@ -42,6 +43,21 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [chartDatas, setChartDatas] = useState<ChartDataInfo[]>([])
+
+  const getProductStatistic = async () => {
+    const response =await http.get(`${apiRoutes.statistic}`, {
+      params : {
+        lte : 1700935746000,
+        gte: 1700503746000,
+      }
+  })
+    setChartDatas(response.data.data);
+  };
+
+  useEffect(() => {
+    getProductStatistic()
+  }, [])
 
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
@@ -210,18 +226,22 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col
-          xl={24}
-          lg={24}
-          md={24}
-          sm={24}
-          xs={24}
-          style={{ marginBottom: 24 }}
-        >
-          <Card bordered={false} className="w-full h-full cursor-default">
-           <ChartData />
-          </Card>
-        </Col>
+        {chartDatas.map((data) => (
+          <Col
+            xl={24}
+            lg={24}
+            md={24}
+            sm={24}
+            xs={24}
+            style={{ marginBottom: 24 }}
+            key={data.productId}
+          >
+            <Card bordered={false} className="w-full h-full cursor-default">
+              <ChartData data={data}/>
+            </Card>
+          </Col>
+        ))}
+
       </Row>
     </BasePageContainer>
   );
