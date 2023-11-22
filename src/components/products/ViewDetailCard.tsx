@@ -84,11 +84,11 @@ const DetailCard = () => {
 
     const columns: ProColumns<ProductDetailInfoResponse>[] = [
         {
+            hideInTable: true,
             title: "ID",
-            dataIndex: "productDetailId",
+            dataIndex: "id",
             valueType: "text",
             align: "center",
-            editable: false,
         },
         {
             title: "Loại sản phẩm",
@@ -154,7 +154,7 @@ const DetailCard = () => {
 
 
     useEffect(() => {
-        getProductDetail();
+        // getProductDetail();
         getProduct()
     }, [])
 
@@ -204,7 +204,7 @@ const DetailCard = () => {
                         creatorButtonText: "Thêm mới",
                     }}
                     dataSource={details}
-                    rowKey="productDetailId"
+                    rowKey="id"
                     options={false}
                     pagination={false}
 
