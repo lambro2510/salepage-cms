@@ -38,7 +38,7 @@ const ChartData = ({data} : {data : ChartDataInfo}) => {
                     },
                     y: {
                         type: 'linear',
-                        position: 'left'
+                        position: 'left',
                     }
                 },
                 plugins: {

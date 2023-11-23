@@ -10,6 +10,7 @@ import {
   Rate,
   Row,
   Table,
+  Tabs,
   Tag,
 } from 'antd';
 import { webRoutes } from '../../routes/web';
@@ -29,6 +30,7 @@ import { Review } from '../../interfaces/models/review';
 import Chart from '../layout/Chart';
 import { ChartDataInfo } from '../../interfaces/models/chart';
 import ChartData from '../layout/Chart';
+import TabPane from 'antd/es/tabs/TabPane';
 
 const breadcrumb: BreadcrumbProps = {
   items: [
@@ -46,12 +48,12 @@ const Dashboard = () => {
   const [chartDatas, setChartDatas] = useState<ChartDataInfo[]>([])
 
   const getProductStatistic = async () => {
-    const response =await http.get(`${apiRoutes.statistic}`, {
-      params : {
-        lte : 1700935746000,
+    const response = await http.get(`${apiRoutes.statistic}`, {
+      params: {
+        lte: 1700935746000,
         gte: 1700503746000,
       }
-  })
+    })
     setChartDatas(response.data.data);
   };
 
@@ -226,21 +228,28 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        {chartDatas.map((data) => (
-          <Col
-            xl={24}
-            lg={24}
-            md={24}
-            sm={24}
-            xs={24}
-            style={{ marginBottom: 24 }}
-            key={data.productId}
-          >
-            <Card bordered={false} className="w-full h-full cursor-default">
-              <ChartData data={data}/>
-            </Card>
-          </Col>
-        ))}
+        <Col
+          xl={24}
+          lg={24}
+          md={24}
+          sm={24}
+          xs={24}
+          style={{ marginBottom: 24 }}
+        >
+          <Card>
+            <Tabs defaultActiveKey="1" tabPosition="top" >
+              {chartDatas.map((data, index) => (
+                <TabPane tab={data.productName} key={data.productId} >
+                  <Row gutter={24}>
+                    <Col xl={24} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
+                      <Chart data={data} />
+                    </Col>
+                  </Row>
+                </TabPane>
+              ))}
+            </Tabs>
+          </Card>
+        </Col>
 
       </Row>
     </BasePageContainer>
