@@ -7,7 +7,6 @@ import {
     Title,
     Tooltip,
     Legend,
-    ChartOptions
 } from 'chart.js'
 import { Line } from 'react-chartjs-2';
 import { ChartDataInfo } from '../../interfaces/models/chart';
@@ -30,11 +29,11 @@ const ChartData = ({data} : {data : ChartDataInfo}) => {
                 datasets: data.datasets
             }}
             options={{
-                maintainAspectRatio: false, // Add this line to prevent maintaining aspect ratio
-                responsive: true, // Add this line for responsiveness
+                maintainAspectRatio: false,
+                responsive: true,
                 scales: {
                     x: {
-                        type: 'linear',
+                        type: 'category',
                         position: 'bottom'
                     },
                     y: {
@@ -45,7 +44,7 @@ const ChartData = ({data} : {data : ChartDataInfo}) => {
                 plugins: {
                     title: {
                         display: true,
-                        text: "World population per region (in millions)"
+                        text: `Sản phẩm ${data.productName}`
                     },
                     legend: {
                         display: true,
@@ -54,15 +53,16 @@ const ChartData = ({data} : {data : ChartDataInfo}) => {
                 },
                 layout: {
                     padding: {
-                        left: 50,
-                        right: 50,
-                        top: 50,
-                        bottom: 50
+                        left: 30,
+                        right: 30,
+                        top: 30,
+                        bottom: 30
                     }
                 }
             }}
-            height={600}
-            width={'100%'}
+            height={400}
+            width={'80%'}
+            
         />
     );
 };
