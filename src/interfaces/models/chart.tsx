@@ -13,5 +13,13 @@ export interface ChartDataInfo {
 export interface DataSets {
     label: string,
     borderColor: string,
-    data: number[]
+    data: DataSetsInfo[]
+}
+
+export interface DataSetsInfo {
+    totalUser: number,
+    totalPurchase: number,
+    totalView: number,
+    totalBuy: number,
+    totalShipCod: number,
 }

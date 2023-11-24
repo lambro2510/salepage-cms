@@ -5,6 +5,7 @@ import {
   BreadcrumbProps,
   Card,
   Col,
+  DatePicker,
   List,
   Progress,
   Rate,
@@ -29,8 +30,9 @@ import { handleErrorResponse } from '../../utils';
 import { Review } from '../../interfaces/models/review';
 import Chart from '../layout/Chart';
 import { ChartDataInfo } from '../../interfaces/models/chart';
-import ChartData from '../layout/Chart';
+import dayjs, { Dayjs } from 'dayjs';
 import TabPane from 'antd/es/tabs/TabPane';
+import RangeDate from '../layout/RangeDate';
 
 const breadcrumb: BreadcrumbProps = {
   items: [
@@ -42,6 +44,7 @@ const breadcrumb: BreadcrumbProps = {
 };
 
 const Dashboard = () => {
+  const [rangeDate, setRangeDate] = useState<Dayjs[]>([dayjs().subtract(7, 'days'), dayjs()]);
   const [loading, setLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -50,8 +53,8 @@ const Dashboard = () => {
   const getProductStatistic = async () => {
     const response = await http.get(`${apiRoutes.statistic}`, {
       params: {
-        lte: 1700935746000,
-        gte: 1700503746000,
+        gte: rangeDate[0]?.valueOf(),
+        lte: rangeDate[1]?.valueOf(),
       }
     })
     setChartDatas(response.data.data);
@@ -59,7 +62,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getProductStatistic()
-  }, [])
+  }, [rangeDate])
 
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
@@ -236,8 +239,10 @@ const Dashboard = () => {
           xs={24}
           style={{ marginBottom: 24 }}
         >
+          <RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate}/>
           <Card>
-            <Tabs defaultActiveKey="1" tabPosition="top" >
+            
+            <Tabs defaultActiveKey="1" tabPosition="top" type="card" >
               {chartDatas.map((data, index) => (
                 <TabPane tab={data.productName} key={data.productId} >
                   <Row gutter={24}>
