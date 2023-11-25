@@ -3,6 +3,7 @@ export interface ChartDataInfo {
     productName: string,
     totalUser: number,
     totalPurchase: number,
+    totalProduct: number,
     totalView: number,
     totalBuy: number,
     totalShipCod: number,
@@ -19,6 +20,7 @@ export interface DataSets {
 export interface DataSetsInfo {
     totalUser: number,
     totalPurchase: number,
+    totalProduct: number,
     totalView: number,
     totalBuy: number,
     totalShipCod: number,

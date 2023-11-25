@@ -88,7 +88,7 @@ const Login = () => {
             ]}
           >
             <Input
-              placeholder="lambro25102001"
+              placeholder="taikhoanbanhang"
               className="bg-gray-50 text-gray-900 sm:text-sm py-1.5"
             />
           </Form.Item>
@@ -109,7 +109,7 @@ const Login = () => {
             ]}
           >
             <Input.Password
-              placeholder="••••••••"
+              placeholder="Banhmy09@"
               visibilityToggle={false}
               className="bg-gray-50 text-gray-900 sm:text-sm py-1.5"
             />

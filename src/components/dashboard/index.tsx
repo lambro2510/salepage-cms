@@ -10,9 +10,12 @@ import {
   Progress,
   Rate,
   Row,
+  Select,
+  Statistic,
   Table,
   Tabs,
   Tag,
+  Tooltip,
 } from 'antd';
 import { webRoutes } from '../../routes/web';
 import { Link } from 'react-router-dom';
@@ -26,7 +29,7 @@ import LazyImage from '../lazy-image';
 import { User } from '../../interfaces/models/user';
 import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
-import { handleErrorResponse } from '../../utils';
+import { handleErrorResponse, roundedNumber } from '../../utils';
 import { Review } from '../../interfaces/models/review';
 import Chart from '../layout/Chart';
 import { ChartDataInfo } from '../../interfaces/models/chart';
@@ -43,12 +46,38 @@ const breadcrumb: BreadcrumbProps = {
   ],
 };
 
+const type = [
+  {
+    name: "totalBuy",
+    value: "Số sản phẩm đã bán"
+  },
+  {
+    name: "totalUser",
+    value: "Số người mua"
+  },
+  {
+    name: "totalProduct",
+    value: "Số đơn hàng"
+  },
+  {
+    name: "totalView",
+    value: "Số lượt xem"
+  },
+  {
+    name: "totalPurchase",
+    value: "Số tiền"
+  },
+  {
+    name: "totalShipperCod",
+    value: "Số phí vận chuyển"
+  },
+]
+
 const Dashboard = () => {
   const [rangeDate, setRangeDate] = useState<Dayjs[]>([dayjs().subtract(7, 'days'), dayjs()]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [users, setUsers] = useState<User[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
   const [chartDatas, setChartDatas] = useState<ChartDataInfo[]>([])
+  const [selectedChartType, setSelectedChartType] = useState<string>(type[0].name);
 
   const getProductStatistic = async () => {
     const response = await http.get(`${apiRoutes.statistic}`, {
@@ -61,86 +90,127 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getProductStatistic()
+    setLoading(true);
+    try {
+      getProductStatistic()
+    } catch (err) {
+      handleErrorResponse(err);
+    }
+    setLoading(false)
   }, [rangeDate])
+
+  const getMaxViewProduct = () => {
+    let name = chartDatas[0]?.productName;
+    let maxView = 0;
+    for (let data of chartDatas) {
+      if (data.totalView > maxView) {
+        name = data.productName;
+        maxView = data.totalView;
+      }
+    }
+    return {
+      name: name,
+      view: maxView
+    }
+  };
+
+  const renderTabPanel = (data: ChartDataInfo) => {
+
+    const maxProductNameLength = 20;
+
+    const truncatedProductName =
+      data.productName.length > maxProductNameLength
+        ? data.productName.substring(0, maxProductNameLength - 3) + '...'
+        : data.productName;
+
+    return (
+      <Tooltip title={data.productName}>
+        <Row>
+          <Col span={24}>
+            
+              <p>{truncatedProductName}</p>
+          </Col>
+          <Col >
+            <StatisticCard
+              className='bg-inherit p-0 m-0'
+              statistic={{
+                title: 'Tỉ lệ mua hàng',
+                value: loading ? 0 : (data.totalView === 0 ? 100 : roundedNumber(data.totalProduct * 100 / data.totalView)) + "%"
+              }}
+              chart={
+                <Progress
+                  className="text-primary"
+                  percent={loading ? 0 : (data.totalView === 0 ? 100 : roundedNumber(data.totalProduct * 100 / data.totalView))}
+                  type="circle"
+                  status='normal'
+                  size={'small'}
+                  strokeColor={CONFIG.theme.accentColor}
+                  showInfo={false}
+                  strokeWidth={10}
+                />
+              }
+
+              chartPlacement="right"
+            />
+          </Col>
+        </Row>
+      </Tooltip>
+    )
+  }
+
 
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
       <Row gutter={24}>
-        <Col xl={6} lg={6} md={12} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <StatCard
-            loading={loading}
-            icon={<Icon component={AiOutlineTeam} />}
-            title="Users"
-            number={12}
-          />
-        </Col>
-        <Col xl={6} lg={6} md={12} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <StatCard
-            loading={loading}
-            icon={<Icon component={MdOutlineArticle} />}
-            title="Posts"
-            number={100}
-          />
-        </Col>
-        <Col xl={6} lg={6} md={12} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <StatCard
-            loading={loading}
-            icon={<Icon component={BiPhotoAlbum} />}
-            title="Albums"
-            number={100}
-          />
-        </Col>
-        <Col xl={6} lg={6} md={12} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <StatCard
-            loading={loading}
-            icon={<Icon component={MdOutlinePhoto} />}
-            title="Photos"
-            number={500}
-          />
-        </Col>
-        <Col xl={6} lg={6} md={12} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <StatCard
-            loading={loading}
-            icon={<Icon component={BiCommentDetail} />}
-            title="Comments"
-            number={500}
-          />
-        </Col>
-        <Col xl={6} lg={6} md={12} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <StatCard
-            loading={loading}
-            icon={<Icon component={AiOutlineStar} />}
-            title="Reviews"
-            number={100}
-          />
-        </Col>
         <Col
-          xl={12}
-          lg={12}
+          xl={24}
+          lg={24}
           md={24}
           sm={24}
           xs={24}
-          style={{ marginBottom: 24 }}
+          style={{ marginBottom: 5 }}
         >
+          <Card className='w-full flex justify-between'>
+            <Select
+              className='mr-10 '
+              defaultValue={type[0].name}
+              onChange={(value: string) => setSelectedChartType(value)}
+            >
+              {type.map((t) => (
+                <Select.Option key={t.name} value={t.name}>
+                  {t.value}
+                </Select.Option>
+              ))}
+            </Select>
+            <RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate} />
+          </Card>
+        </Col>
+        <Col span={24} className='mb-2'>
           <Card bordered={false} className="w-full h-full cursor-default">
             <StatisticCard.Group direction="row">
               <StatisticCard
                 statistic={{
-                  title: 'XYZ',
-                  value: loading ? 0 : 123,
+                  title: 'Tổng tiền',
+                  value: loading ? 0 : chartDatas.reduce((acc, data) => acc + data.totalPurchase, 0),
                 }}
               />
               <StatisticCard
                 statistic={{
-                  title: 'Progress',
-                  value: 'ABC',
+                  title: `Sản phẩm xem nhiều nhất ${getMaxViewProduct().name}`,
+                  value: loading ? 0 : getMaxViewProduct().view,
+                }}
+              />
+              <StatisticCard
+                statistic={{
+                  title: 'Tỉ lệ mua hàng',
+                  value: `${chartDatas.reduce((acc, data) => acc + data.totalProduct, 0)} / ${chartDatas.reduce((acc, data) => acc + data.totalView, 0)}`,
                 }}
                 chart={
                   <Progress
                     className="text-primary"
-                    percent={loading ? 0 : 75}
+                    percent={loading ? 0 : chartDatas.reduce((acc, data) => acc + data.totalProduct, 0) * 100 / chartDatas.reduce((acc, data) => acc + data.totalView, 0)}
                     type="circle"
+                    status='normal'
                     size={'small'}
                     strokeColor={CONFIG.theme.accentColor}
                   />
@@ -150,104 +220,14 @@ const Dashboard = () => {
             </StatisticCard.Group>
           </Card>
         </Col>
-        <Col
-          xl={12}
-          lg={12}
-          md={12}
-          sm={24}
-          xs={24}
-          style={{ marginBottom: 24 }}
-        >
-          <Card bordered={false} className="w-full h-full cursor-default">
-            <List
-              loading={loading}
-              itemLayout="horizontal"
-              dataSource={users}
-              renderItem={(user) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        shape="circle"
-                        size="small"
-                        src={
-                          <LazyImage
-                            src={user.avatar}
-                            placeholder={
-                              <div className="bg-gray-100 h-full w-full" />
-                            }
-                          />
-                        }
-                      />
-                    }
-                    title={`${user.first_name} ${user.last_name}`}
-                    description={user.email}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-        <Col
-          xl={12}
-          lg={12}
-          md={12}
-          sm={24}
-          xs={24}
-          style={{ marginBottom: 24 }}
-        >
-          <Card bordered={false} className="w-full h-full cursor-default">
-            <Table
-              loading={loading}
-              pagination={false}
-              showHeader={false}
-              dataSource={reviews}
-              columns={[
-                {
-                  title: 'Title',
-                  dataIndex: 'title',
-                  key: 'title',
-                  align: 'left',
-                },
-                {
-                  title: 'Year',
-                  dataIndex: 'year',
-                  key: 'year',
-                  align: 'center',
-                  render: (_, row: Review) => (
-                    <Tag color={row.color}>{row.year}</Tag>
-                  ),
-                },
-                {
-                  title: 'Star',
-                  dataIndex: 'star',
-                  key: 'star',
-                  align: 'center',
-                  render: (_, row: Review) => (
-                    <Rate disabled defaultValue={row.star} />
-                  ),
-                },
-              ]}
-            />
-          </Card>
-        </Col>
-        <Col
-          xl={24}
-          lg={24}
-          md={24}
-          sm={24}
-          xs={24}
-          style={{ marginBottom: 24 }}
-        >
-          <RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate}/>
+        <Col>
           <Card>
-            
-            <Tabs defaultActiveKey="1" tabPosition="top" type="card" >
+            <Tabs defaultActiveKey="1" tabPosition="top" >
               {chartDatas.map((data, index) => (
-                <TabPane tab={data.productName} key={data.productId} >
+                <TabPane tab={renderTabPanel(data)} key={data.productId} >
                   <Row gutter={24}>
                     <Col xl={24} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
-                      <Chart data={data} />
+                      <Chart data={data} loading={loading} selectedChartType={selectedChartType} />
                     </Col>
                   </Row>
                 </TabPane>
@@ -255,7 +235,6 @@ const Dashboard = () => {
             </Tabs>
           </Card>
         </Col>
-
       </Row>
     </BasePageContainer>
   );

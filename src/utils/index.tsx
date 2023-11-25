@@ -23,6 +23,9 @@ export const showNotification = (
   });
 };
 
+export const roundedNumber = (number : number, fixed = 2) => {
+  return parseFloat(number.toFixed(fixed));
+}
 export const handleErrorResponse = (
   error: any,
   callback?: () => void,
@@ -57,4 +60,6 @@ export const handleErrorResponse = (
   if (callback) {
     return callback();
   }
+
+
 };
