@@ -105,6 +105,7 @@ const Dashboard = () => {
     fetchData();
   }, [rangeDate]);
 
+
   const getMaxViewProduct = () => {
     let name = chartDatas[0]?.productName;
     let maxView = 0;
@@ -136,10 +137,10 @@ const Dashboard = () => {
       })
     })
 
-    setComparePrice([totalPurchaseToday, totalPurchaseYesterday]);
     console.log('[totalPurchaseToday, totalPurchaseYesterday]: ', [totalPurchaseToday, totalPurchaseYesterday]);
-    setCompareQuantity([totalQuantityToday, totalQuantityYesterday]);
     console.log('[totalQuantityToday, totalQuantityYesterday]: ', [totalQuantityToday, totalQuantityYesterday]);
+    setComparePrice([totalPurchaseToday, totalPurchaseYesterday]);
+    setCompareQuantity([totalQuantityToday, totalQuantityYesterday]);
   }
 
   const renderTabPanel = (data: ChartDataInfo) => {
@@ -179,8 +180,26 @@ const Dashboard = () => {
   }
 
 
-  const renderDoughnutChart = () => {
+  const renderDoughnutChart = (chart: ChartDataInfo[]) => {
 
+    const getDataDaily = (chart: ChartDataInfo[]) => {
+      let lb: any[] = [];
+      let value: number[] = [];
+
+      chart.forEach((data) => {
+        let totalPurchase = 0;
+        lb = data.labels;
+        data.datasets.forEach((dataSet) => {
+          for (let i = 0; i < lb.length; i++) {
+            let total = value[i] | 0;
+            value[i] = total + dataSet.data[i]?.totalPurchase | 0
+          }
+        });
+      });
+      console.log({ lb, value });
+
+      return { lb, value };
+    };
     return (
       <RcResizeObserver
         key="resize-observer"
@@ -210,8 +229,8 @@ const Dashboard = () => {
                         description: (
                           <Statistic
                             layout='vertical'
-                            title={(comparePrice[0] - comparePrice[1]) > 0 ? `Tăng ${comparePrice[0] - comparePrice[1]}` : `Giảm ${comparePrice[1] - comparePrice[0]}`}
-                            value={(comparePrice[1] === comparePrice[2] || comparePrice[1] == 0) ?  ((comparePrice[1] - comparePrice[0]) * 100 / comparePrice[1]).toFixed(2) : 0}
+                            title={(comparePrice[0] - comparePrice[1]) > 0 ? `Tăng ${comparePrice[0] - comparePrice[1]}` : `Giảm ${Math.abs(comparePrice[1] - comparePrice[0])}`}
+                            value={(comparePrice[0] !== comparePrice[1] && comparePrice[1] !== 0) ? (Math.abs(comparePrice[1] - comparePrice[0]) * 100 / comparePrice[1]).toFixed(2) : 0}
                             precision={2}
                             valueStyle={(comparePrice[0] - comparePrice[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
                             prefix={(comparePrice[0] - comparePrice[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -228,8 +247,8 @@ const Dashboard = () => {
                         description: (
                           <Statistic
                             layout='vertical'
-                            title={(compareQuantity[0] - compareQuantity[1]) > 0 ? `Tăng ${compareQuantity[0] - compareQuantity[1]}` : `Giảm ${compareQuantity[1] - compareQuantity[0]}`}
-                            value={(compareQuantity[1] === compareQuantity[2] || compareQuantity[1] == 0) ?  ((compareQuantity[1] - compareQuantity[0]) * 100 / compareQuantity[1]).toFixed(2) : 0}
+                            title={(compareQuantity[0] - compareQuantity[1]) > 0 ? `Tăng ${compareQuantity[0] - compareQuantity[1]}` : `Giảm ${Math.abs(compareQuantity[1] - compareQuantity[0])}`}
+                            value={(compareQuantity[0] !== compareQuantity[1] && compareQuantity[1] !== 0) ? (Math.abs(compareQuantity[1] - compareQuantity[0]) * 100 / compareQuantity[1]).toFixed(2) : 0}
                             precision={2}
                             valueStyle={(compareQuantity[0] - compareQuantity[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
                             prefix={(compareQuantity[0] - compareQuantity[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -239,15 +258,17 @@ const Dashboard = () => {
                       }}
                     />
                   </ProCard>
-                  <ProCard split="vertical" title="Thống kê hôm nay">
-                    
+                  <ProCard split="vertical" title="Lịch sử thay đổi lợi nhuận">
+                    <Col span={11}>
+                      <div className='flex'>
+                        <LineChart datas={getDataDaily(chartDatas)} />
+                      </div>
+                    </Col>
                   </ProCard>
-                  <div className='flex'>
-                  <LineChart />
-                  </div>
+
                 </ProCard>
                 <StatisticCard
-                  title="流量走势"
+
 
                 />
               </ProCard>
@@ -293,7 +314,7 @@ const Dashboard = () => {
         </Col>
 
         <Col span={24} className='mb-2'>
-          {renderDoughnutChart()}
+          {renderDoughnutChart(chartDatas)}
         </Col>
         <Col span={24} className='mb-2'>
           <Card bordered={false} className="w-full h-full cursor-default">

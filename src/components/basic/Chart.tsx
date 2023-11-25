@@ -29,7 +29,6 @@ ChartJS.register(
     TimeScale,
 );
 const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, loading: boolean, selectedChartType: string }) => {
-    const [datasets, setData] = useState<any[]>();
     return (
         <Row className='flex'>
             <Col span={24}>
@@ -61,9 +60,9 @@ const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, 
                         data={{
                             labels: data.labels,
                             datasets: data.datasets.map((value) => {
-
                                 return {
                                     ...value,
+                                    fill: false, 
                                     pointStyle: [],
                                     pointRadius: 1,
                                     data: value.data.map((k) => {
