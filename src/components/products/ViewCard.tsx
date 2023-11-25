@@ -201,9 +201,9 @@ const ViewCard = () => {
                     return (
                         <div>
                             {row.stores.map((store: SellerStoreResponse) => (
-                                <Button type="ghost" onClick={() => navigate(`${webRoutes.stores}/${store.id}`)} key={store.id}>
+                                <a type="" onClick={() => navigate(`${webRoutes.stores}/${store.id}`)} key={store.id}>
                                     {store.storeName}
-                                </Button>
+                                </a>
                             ))}
                         </div>
                     );
