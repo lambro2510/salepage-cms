@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
-
+import dayjs, { Dayjs } from 'dayjs';
 export const API_URL = `https://salepage-server-rherm.appengine.bfcplatform.vn/api/v1`;
 // export const API_URL = `http://localhost:8080/api/v1`;
 
@@ -40,7 +40,7 @@ export const handleErrorResponse = (
       try {
         error = JSON.parse(error);
       } catch (error) {
-        // do nothing
+        
       }
     }
 
@@ -60,6 +60,8 @@ export const handleErrorResponse = (
   if (callback) {
     return callback();
   }
+}
 
-
-};
+export const convertDate = (date :any, format = 'dd-mm-yyyy') => {
+  return dayjs(date, format);
+}

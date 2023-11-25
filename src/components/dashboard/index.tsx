@@ -11,31 +11,32 @@ import {
   Rate,
   Row,
   Select,
-  Statistic,
   Table,
   Tabs,
   Tag,
   Tooltip,
 } from 'antd';
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { webRoutes } from '../../routes/web';
 import { Link } from 'react-router-dom';
-import StatCard from './StatCard';
-import { AiOutlineStar, AiOutlineTeam } from 'react-icons/ai';
-import Icon from '@ant-design/icons';
-import { BiCommentDetail, BiPhotoAlbum } from 'react-icons/bi';
-import { MdOutlineArticle, MdOutlinePhoto } from 'react-icons/md';
-import { StatisticCard } from '@ant-design/pro-components';
-import LazyImage from '../lazy-image';
-import { User } from '../../interfaces/models/user';
+import RcResizeObserver from 'rc-resize-observer';
+
+const { Statistic } = StatisticCard;
+import { ProCard, StatisticCard } from '@ant-design/pro-components';
 import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
 import { handleErrorResponse, roundedNumber } from '../../utils';
 import { Review } from '../../interfaces/models/review';
-import Chart from '../layout/Chart';
+import Chart from '../basic/Chart';
 import { ChartDataInfo } from '../../interfaces/models/chart';
 import dayjs, { Dayjs } from 'dayjs';
 import TabPane from 'antd/es/tabs/TabPane';
 import RangeDate from '../layout/RangeDate';
+import CirleChart from '../basic/DoughnutChart';
+import DoughnutChart from '../basic/DoughnutChart';
+import { AiOutlineUp, AiOutlineUpSquare } from 'react-icons/ai';
+import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa';
+import LineChart from '../basic/LineChart';
 
 const breadcrumb: BreadcrumbProps = {
   items: [
@@ -78,7 +79,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [chartDatas, setChartDatas] = useState<ChartDataInfo[]>([])
   const [selectedChartType, setSelectedChartType] = useState<string>(type[0].name);
-
+  const [comparePrice, setComparePrice] = useState<number[]>([0, 0])
+  const [compareQuantity, setCompareQuantity] = useState<number[]>([0, 0])
   const getProductStatistic = async () => {
     const response = await http.get(`${apiRoutes.statistic}`, {
       params: {
@@ -87,17 +89,21 @@ const Dashboard = () => {
       }
     })
     setChartDatas(response.data.data);
+    return response.data.data;
   };
 
-  useEffect(() => {
-    setLoading(true);
+  const fetchData = async () => {
     try {
-      getProductStatistic()
+      const data = await getProductStatistic();
+      compare(data);
     } catch (err) {
       handleErrorResponse(err);
     }
-    setLoading(false)
-  }, [rangeDate])
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [rangeDate]);
 
   const getMaxViewProduct = () => {
     let name = chartDatas[0]?.productName;
@@ -114,21 +120,35 @@ const Dashboard = () => {
     }
   };
 
+  const compare = (chart: ChartDataInfo[]) => {
+    setComparePrice([0, 0]);
+    setCompareQuantity([0, 0]);
+    let totalPurchaseToday = 0;
+    let totalPurchaseYesterday = 0;
+    let totalQuantityToday = 0;
+    let totalQuantityYesterday = 0;
+    chart.map((data) => {
+      data.datasets.map((dataSet) => {
+        totalPurchaseToday += dataSet.data[dataSet.data.length - 1]?.totalPurchase | 0;
+        totalPurchaseYesterday += dataSet.data[dataSet.data.length - 2]?.totalPurchase | 0;
+        totalQuantityToday += dataSet.data[dataSet.data.length - 1]?.totalBuy | 0;
+        totalQuantityYesterday += dataSet.data[dataSet.data.length - 2]?.totalBuy | 0;
+      })
+    })
+
+    setComparePrice([totalPurchaseToday, totalPurchaseYesterday]);
+    console.log('[totalPurchaseToday, totalPurchaseYesterday]: ', [totalPurchaseToday, totalPurchaseYesterday]);
+    setCompareQuantity([totalQuantityToday, totalQuantityYesterday]);
+    console.log('[totalQuantityToday, totalQuantityYesterday]: ', [totalQuantityToday, totalQuantityYesterday]);
+  }
+
   const renderTabPanel = (data: ChartDataInfo) => {
-
-    const maxProductNameLength = 20;
-
-    const truncatedProductName =
-      data.productName.length > maxProductNameLength
-        ? data.productName.substring(0, maxProductNameLength - 3) + '...'
-        : data.productName;
 
     return (
       <Tooltip title={data.productName}>
         <Row>
           <Col span={24}>
-            
-              <p>{truncatedProductName}</p>
+            <p>{data.productName.substring(0, 30)}</p>
           </Col>
           <Col >
             <StatisticCard
@@ -159,6 +179,93 @@ const Dashboard = () => {
   }
 
 
+  const renderDoughnutChart = () => {
+
+    return (
+      <RcResizeObserver
+        key="resize-observer"
+      >
+        <ProCard
+          title="Thống kê thu nhập"
+          extra={<RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate} />}
+          headerBordered
+          bordered
+        >
+          <Row>
+            <Col
+              xl={16}
+              lg={12}
+              md={24}
+              sm={24}
+              xs={24}
+              style={{ marginBottom: 5 }}>
+              <ProCard split="horizontal">
+                <ProCard split="horizontal">
+                  <ProCard split="vertical" title="So sánh với ngày gần nhất">
+                    <StatisticCard
+                      statistic={{
+                        title: "Lợi nhuận",
+                        value: Math.abs(comparePrice[0]),
+                        suffix: (comparePrice[0] - comparePrice[1]) > 0 ? <FaLongArrowAltUp size={'15px'} color='green' /> : <FaLongArrowAltDown size={'15px'} color='red' />,
+                        description: (
+                          <Statistic
+                            layout='vertical'
+                            title={(comparePrice[0] - comparePrice[1]) > 0 ? `Tăng ${comparePrice[0] - comparePrice[1]}` : `Giảm ${comparePrice[1] - comparePrice[0]}`}
+                            value={(comparePrice[1] === comparePrice[2] || comparePrice[1] == 0) ?  ((comparePrice[1] - comparePrice[0]) * 100 / comparePrice[1]).toFixed(2) : 0}
+                            precision={2}
+                            valueStyle={(comparePrice[0] - comparePrice[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
+                            prefix={(comparePrice[0] - comparePrice[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                            suffix="%"
+                          />
+                        ),
+                      }}
+                    />
+                    <StatisticCard
+                      statistic={{
+                        title: "Sản phẩm bán",
+                        value: Math.abs(compareQuantity[0]),
+                        suffix: (compareQuantity[0] - compareQuantity[1]) > 0 ? <FaLongArrowAltUp size={'15px'} color='green' /> : <FaLongArrowAltDown size={'15px'} color='red' />,
+                        description: (
+                          <Statistic
+                            layout='vertical'
+                            title={(compareQuantity[0] - compareQuantity[1]) > 0 ? `Tăng ${compareQuantity[0] - compareQuantity[1]}` : `Giảm ${compareQuantity[1] - compareQuantity[0]}`}
+                            value={(compareQuantity[1] === compareQuantity[2] || compareQuantity[1] == 0) ?  ((compareQuantity[1] - compareQuantity[0]) * 100 / compareQuantity[1]).toFixed(2) : 0}
+                            precision={2}
+                            valueStyle={(compareQuantity[0] - compareQuantity[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
+                            prefix={(compareQuantity[0] - compareQuantity[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                            suffix="%"
+                          />
+                        ),
+                      }}
+                    />
+                  </ProCard>
+                  <ProCard split="vertical" title="Thống kê hôm nay">
+                    
+                  </ProCard>
+                  <div className='flex'>
+                  <LineChart />
+                  </div>
+                </ProCard>
+                <StatisticCard
+                  title="流量走势"
+
+                />
+              </ProCard>
+            </Col>
+            <Col
+              xl={8}
+              lg={12}
+              md={24}
+              sm={24}
+              xs={24}
+              style={{ marginBottom: 5 }}>
+              <DoughnutChart data={chartDatas} />
+            </Col>
+          </Row>
+        </ProCard>
+      </RcResizeObserver>
+    )
+  }
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
       <Row gutter={24}>
@@ -182,8 +289,11 @@ const Dashboard = () => {
                 </Select.Option>
               ))}
             </Select>
-            <RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate} />
           </Card>
+        </Col>
+
+        <Col span={24} className='mb-2'>
+          {renderDoughnutChart()}
         </Col>
         <Col span={24} className='mb-2'>
           <Card bordered={false} className="w-full h-full cursor-default">

@@ -7,7 +7,7 @@ import {
     Title,
     Tooltip,
     Legend,
-    TimeScale, // Add this line to import TimeScale
+    TimeScale,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { ChartDataInfo } from '../../interfaces/models/chart';
@@ -18,7 +18,6 @@ import { Card, Col, Progress, Row, Select } from 'antd';
 import { StatisticCard } from '@ant-design/pro-components';
 import { roundedNumber } from '../../utils';
 
-// Register the TimeScale module
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -29,10 +28,6 @@ ChartJS.register(
     Legend,
     TimeScale,
 );
-
-
-
-
 const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, loading: boolean, selectedChartType: string }) => {
     const [datasets, setData] = useState<any[]>();
     return (
@@ -56,7 +51,7 @@ const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, 
                                         value: loading ? 0 : data.totalPurchase,
                                     }}
                                 />
-                                
+
                             </StatisticCard.Group>
                         </Card>
                     </Col>
@@ -66,12 +61,11 @@ const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, 
                         data={{
                             labels: data.labels,
                             datasets: data.datasets.map((value) => {
-                                console.log({
-                                    ...value,
-                                });
 
                                 return {
                                     ...value,
+                                    pointStyle: [],
+                                    pointRadius: 1,
                                     data: value.data.map((k) => {
                                         for (let [key, value] of Object.entries(k)) {
                                             if (key === selectedChartType) {
