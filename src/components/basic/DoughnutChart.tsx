@@ -52,7 +52,8 @@ const DoughnutChart = ({ data }: { data: ChartDataInfo[] }) => {
   return (
     <div className='m-auto'>
       <Doughnut 
-      className='h-fit' 
+      width={'100%'}
+      height={'40vh'}
       data={renderChartData()} 
       options={{
         plugins: {

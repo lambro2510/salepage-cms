@@ -107,6 +107,8 @@ const Dashboard = () => {
       compare(data);
     } catch (err) {
       handleErrorResponse(err);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -225,10 +227,6 @@ const Dashboard = () => {
 
       return { lb, value };
     };
-
-    const getSortListByProduct = () => {
-      let sortData = [] as {}[]
-    }
     return (
       <RcResizeObserver
         key="resize-observer"
@@ -288,12 +286,22 @@ const Dashboard = () => {
                 </ProCard>
                 <ProCard split="horizontal" title="Lịch sử thay đổi">
                   <Row>
-                    <Col span={12}>
+                    <Col
+                      xl={12}
+                      lg={24}
+                      md={24}
+                      sm={24}
+                      xs={24}>
                       <div className='flex'>
                         <LineChart title='Lợi nhuận' datas={getPurchaseDaily(chartDatas)} />
                       </div>
                     </Col>
-                    <Col span={12}>
+                    <Col
+                      xl={12}
+                      lg={24}
+                      md={24}
+                      sm={24}
+                      xs={24}>
                       <div className='flex'>
                         <LineChart title='Sản phẩm' datas={getSellProductDaily(chartDatas)} />
                       </div>
@@ -321,24 +329,33 @@ const Dashboard = () => {
 
   const renderBarChart = (data: ChartDataInfo[]) => {
 
-    const getPurchaseDaily = (chart: ChartDataInfo[]) => {
+    const getPurchaseDaily = (chart: ChartDataInfo[], fieldName: string) => {
       let lb: any[] = [];
-      let value: number[] = [];
+      let values: number[] = [];
 
       chart.forEach((data) => {
         lb = data.labels;
         data.datasets.forEach((dataSet) => {
           for (let i = 0; i < lb.length; i++) {
-            let total = value[i] | 0;
-            value[i] = total + dataSet.data[i]?.totalPurchase | 0
+            if(!dataSet?.data[i]){
+              continue;
+            }
+            for (let [key, value] of Object.entries(dataSet?.data[i])) {
+              if (key === fieldName) {
+                if (!values[i]) {
+                  values[i] = 0;
+                }
+                values[i] = values[i] + Number(value);
+              }
+            }
           }
         });
       });
 
-      return { lb, value };
+      return { lb, values };
     };
 
-    const getSortListByProduct = (chart: ChartDataInfo[]) => {
+    const sortByTotalPrice = (chart: ChartDataInfo[]) => {
       const sortData = chart.map((data) => {
         const totalPrice = data.datasets.reduce((acc, dataSet) => {
           return acc + (dataSet.data.reduce((sum, item) => sum + (item?.totalPurchase || 0), 0) || 0);
@@ -364,32 +381,132 @@ const Dashboard = () => {
       });
     };
 
-    return (
-      <ProCard title='Biểu đồ lợi nhuận'>
-        <Row gutter={16}>
-          <Col span={16}>
-            <ProCard>
-              <BarChart datas={getPurchaseDaily(data)} title='Thu nhập' />
-            </ProCard>
-          </Col>
-          <Col span={8}>
-            <div className='flex justify-center'>
-              <ProCard className='flex justify-center' title='Top lợi nhuận' bordered>
-                <List
-                  dataSource={getSortListByProduct(data).slice(0, 8)} // Display only the top 8 products
-                  rowKey="productId"
-                  renderItem={(item) => (
-                    <List.Item style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <p className={`text-xs ${item.isTop ? 'font-bold' : ''}`}>{item.index}</p>
-                      <p className={`text-xs `}>{item.productName}</p>
-                      <p className={`text-xs`}>{item.value}</p>
-                    </List.Item>
-                  )}
-                />
-              </ProCard>
-            </div>
-          </Col>
+    const sortByTotalProduct = (chart: ChartDataInfo[]) => {
+      const sortData = chart.map((data) => {
+        const totalProduct = data.datasets.reduce((acc, dataSet) => {
+          return acc + (dataSet.data.reduce((sum, item) => sum + (item?.totalProduct || 0), 0) || 0);
+        }, 0);
+
+        return {
+          productId: data.productId,
+          productName: data.productName,
+          value: totalProduct,
+        };
+      });
+
+      sortData.sort((a, b) => b.value - a.value);
+
+      let i = 1;
+
+      return sortData.map((data) => {
+        return {
+          ...data,
+          index: i++,
+          isTop: i <= 4,
+        } as ListProductPurchase;
+      });
+    };
+
+    const sortByTotalBuy = (chart: ChartDataInfo[]) => {
+      const sortData = chart.map((data) => {
+        const totalBuy = data.datasets.reduce((acc, dataSet) => {
+          return acc + (dataSet.data.reduce((sum, item) => sum + (item?.totalBuy || 0), 0) || 0);
+        }, 0);
+
+        return {
+          productId: data.productId,
+          productName: data.productName,
+          value: totalBuy,
+        };
+      });
+
+      sortData.sort((a, b) => b.value - a.value);
+
+      let i = 1;
+
+      return sortData.map((data) => {
+        return {
+          ...data,
+          index: i++,
+          isTop: i <= 4,
+        } as ListProductPurchase;
+      });
+    };
+
+    const renderTabContent = (sortFunction: any, title: string) => {
+      const sortedData = sortFunction(data).slice(0, 10);
+
+      return (
+        <Row style={{ height: '100%' }}>
+          {sortedData.map((item: ListProductPurchase) => (
+            <Col span={24} key={item.productId}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div className='flex items-center'>
+                  <div
+                    className={`rounded-full flex items-center justify-center ${item.isTop ? 'bg-slate-500' : 'bg-inherit'}`}
+                    style={{ width: '24px', height: '24px', marginRight: '8px' }}
+                  >
+                    <p className={`${item.isTop ? 'text-white' : ''}`}>{item.index}</p>
+                  </div>
+                  <p className={`text-xs`}>{item.productName}</p>
+                </div>
+                <p className={`text-xs`}>{item.value}</p>
+              </div>
+            </Col>
+          ))}
         </Row>
+      );
+    };
+
+    return (
+      <ProCard title='Biểu đồ lợi nhuận' headerBordered>
+        <Tabs
+          defaultActiveKey='1'
+          tabPosition='top'
+          tabBarExtraContent={<RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate} />}>
+          <TabPane tab='Tổng thu nhập' key='1'>
+            <Row>
+              <Col xl={16} lg={24} md={24} sm={24} xs={24}>
+                <ProCard>
+                  <BarChart datas={getPurchaseDaily(data, "totalPurchase")} title='Thu nhập' />
+                </ProCard>
+              </Col>
+              <Col xl={8} lg={24} md={24} sm={24} xs={24}>
+                <div className='flex justify-center items-center'>
+                  <ProCard className='flex justify-center'>{renderTabContent(sortByTotalPrice, 'Thu nhập')}</ProCard>
+                </div>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tab='Tổng đơn hàng đặt mua' key='2' >
+            <Row>
+              <Col xl={16} lg={24} md={24} sm={24} xs={24}>
+                <ProCard>
+                  <BarChart datas={getPurchaseDaily(data, "totalBuy")} title='Đơn hàng' />
+                </ProCard>
+              </Col>
+              <Col xl={8} lg={24} md={24} sm={24} xs={24}>
+                <div className='flex justify-center items-center'>
+                  <ProCard className='flex justify-center'>{renderTabContent(sortByTotalBuy, 'Đơn hàng')}</ProCard>
+                </div>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tab='Tổng số sản phẩm bán' key='3'>
+            <Row>
+              <Col xl={16} lg={24} md={24} sm={24} xs={24}>
+                <ProCard>
+                  <BarChart datas={getPurchaseDaily(data, "totalProduct")} title='Sản phẩm' />
+                </ProCard>
+              </Col>
+              <Col xl={8} lg={24} md={24} sm={24} xs={24}>
+                <div className='flex justify-center items-center'>
+                  <ProCard className='flex justify-center'>{renderTabContent(sortByTotalProduct, 'Sản phẩm')}</ProCard>
+                </div>
+              </Col>
+            </Row>
+          </TabPane>
+        </Tabs>
       </ProCard>
     );
   }
@@ -397,55 +514,28 @@ const Dashboard = () => {
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
       <Row gutter={24}>
-        <Col
-          xl={24}
-          lg={24}
-          md={24}
-          sm={24}
-          xs={24}
-          style={{ marginBottom: 5 }}
-        >
-          <Card className='w-full flex justify-between'>
-            <Select
-              className='mr-10 '
-              defaultValue={type[0].name}
-              onChange={(value: string) => setSelectedChartType(value)}
-            >
-              {type.map((t) => (
-                <Select.Option key={t.name} value={t.name}>
-                  {t.value}
-                </Select.Option>
-              ))}
-            </Select>
-          </Card>
-        </Col>
-
         <Col span={24} className='mb-2'>
-          {renderBarChart(chartDatas)}
-        </Col>
-
-        <Col span={24} className='mb-2'>
-          {renderDoughnutChart(chartDatas)}
-        </Col>
-        <Col span={24} className='mb-2'>
-          <Card bordered={false} className="w-full h-full cursor-default">
+          <Card bordered={false} className="w-full h-full cursor-default" title={`Thổng kê từ ${rangeDate[0].format('DD-MM-YYYY')} đến ${rangeDate[1].format('DD-MM-YYYY')} `}>
             <StatisticCard.Group direction="row">
               <StatisticCard
                 statistic={{
-                  title: 'Tổng tiền',
+                  title: 'Tổng thu nhập',
                   value: loading ? 0 : chartDatas.reduce((acc, data) => acc + data.totalPurchase, 0),
+                  description: `VNĐ`
                 }}
               />
               <StatisticCard
                 statistic={{
-                  title: `Sản phẩm xem nhiều nhất ${getMaxViewProduct().name}`,
+                  title: `Sản phẩm xem nhiều nhất`,
                   value: loading ? 0 : getMaxViewProduct().view,
+                  description: `${getMaxViewProduct().name}`
                 }}
               />
               <StatisticCard
                 statistic={{
                   title: 'Tỉ lệ mua hàng',
                   value: `${chartDatas.reduce((acc, data) => acc + data.totalProduct, 0)} / ${chartDatas.reduce((acc, data) => acc + data.totalView, 0)}`,
+                  description: `Số đơn hàng / lượt xem sản phẩm`
                 }}
                 chart={
                   <Progress
@@ -462,8 +552,27 @@ const Dashboard = () => {
             </StatisticCard.Group>
           </Card>
         </Col>
+
+        <Col span={24} className='mb-2'>
+          {renderBarChart(chartDatas)}
+        </Col>
+
+        <Col span={24} className='mb-2'>
+          {renderDoughnutChart(chartDatas)}
+        </Col>
         <Col>
           <Card>
+            <Select
+              className='mr-10 '
+              defaultValue={type[0].name}
+              onChange={(value: string) => setSelectedChartType(value)}
+            >
+              {type.map((t) => (
+                <Select.Option key={t.name} value={t.name}>
+                  {t.value}
+                </Select.Option>
+              ))}
+            </Select>
             <Tabs defaultActiveKey="1" tabPosition="top" >
               {chartDatas.map((data, index) => (
                 <TabPane tab={renderTabPanel(data)} key={data.productId} >

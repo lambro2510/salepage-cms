@@ -33,29 +33,6 @@ const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, 
         <Row className='flex'>
             <Col span={24}>
                 <Row>
-
-                    <Col
-                        xl={24}
-                        lg={24}
-                        md={24}
-                        sm={24}
-                        xs={24}
-                        style={{ marginBottom: 24 }}
-                    >
-                        <Card bordered className="w-full h-full cursor-default">
-                            <StatisticCard.Group className='flex justify-between' direction="row">
-                                <StatisticCard
-                                    statistic={{
-                                        title: 'Tổng tiền',
-                                        value: loading ? 0 : data.totalPurchase,
-                                    }}
-                                />
-
-                            </StatisticCard.Group>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row>
                     <Line
                         data={{
                             labels: data.labels,
@@ -98,7 +75,6 @@ const ChartData = ({ data, loading, selectedChartType }: { data: ChartDataInfo, 
                                     type: 'linear',
                                     position: 'left',
                                     min: 0
-
                                 },
                             },
                             plugins: {
