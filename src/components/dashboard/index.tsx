@@ -20,9 +20,7 @@ import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { webRoutes } from '../../routes/web';
 import { Link } from 'react-router-dom';
 import RcResizeObserver from 'rc-resize-observer';
-
-const { Statistic } = StatisticCard;
-import { ProCard, StatisticCard } from '@ant-design/pro-components';
+import { ProCard, ProList, StatisticCard } from '@ant-design/pro-components';
 import http from '../../utils/http';
 import { apiRoutes } from '../../routes/api';
 import { handleErrorResponse, roundedNumber } from '../../utils';
@@ -37,7 +35,18 @@ import DoughnutChart from '../basic/DoughnutChart';
 import { AiOutlineUp, AiOutlineUpSquare } from 'react-icons/ai';
 import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa';
 import LineChart from '../basic/LineChart';
+import BarChart from '../basic/BarChart';
+import React from 'react';
 
+const { Statistic } = StatisticCard;
+
+interface ListProductPurchase {
+  index: number;
+  isTop: boolean;
+  productName: string;
+  productId: string;
+  value: number;
+}
 const breadcrumb: BreadcrumbProps = {
   items: [
     {
@@ -182,30 +191,50 @@ const Dashboard = () => {
 
   const renderDoughnutChart = (chart: ChartDataInfo[]) => {
 
-    const getDataDaily = (chart: ChartDataInfo[]) => {
+    const getPurchaseDaily = (chart: ChartDataInfo[]) => {
       let lb: any[] = [];
       let value: number[] = [];
 
       chart.forEach((data) => {
-        let totalPurchase = 0;
         lb = data.labels;
         data.datasets.forEach((dataSet) => {
           for (let i = 0; i < lb.length; i++) {
             let total = value[i] | 0;
-            value[i] = total + dataSet.data[i]?.totalPurchase | 0
+            value[i] = total + dataSet.data[i]?.totalPurchase | 0;
+            let label = dataSet.label[i];
           }
         });
       });
-      console.log({ lb, value });
 
       return { lb, value };
     };
+
+    const getSellProductDaily = (chart: ChartDataInfo[]) => {
+      let lb: any[] = [];
+      let value: number[] = [];
+
+      chart.forEach((data) => {
+        lb = data.labels;
+        data.datasets.forEach((dataSet) => {
+          for (let i = 0; i < lb.length; i++) {
+            let total = value[i] | 0;
+            value[i] = total + dataSet.data[i]?.totalBuy | 0
+          }
+        });
+      });
+
+      return { lb, value };
+    };
+
+    const getSortListByProduct = () => {
+      let sortData = [] as {}[]
+    }
     return (
       <RcResizeObserver
         key="resize-observer"
       >
         <ProCard
-          title="Thống kê thu nhập"
+          title="Tỉ lệ lợi nhuận"
           extra={<RangeDate rangeDate={rangeDate} setRangeDate={setRangeDate} />}
           headerBordered
           bordered
@@ -219,59 +248,61 @@ const Dashboard = () => {
               xs={24}
               style={{ marginBottom: 5 }}>
               <ProCard split="horizontal">
-                <ProCard split="horizontal">
-                  <ProCard split="vertical" title="So sánh với ngày gần nhất">
-                    <StatisticCard
-                      statistic={{
-                        title: "Lợi nhuận",
-                        value: Math.abs(comparePrice[0]),
-                        suffix: (comparePrice[0] - comparePrice[1]) > 0 ? <FaLongArrowAltUp size={'15px'} color='green' /> : <FaLongArrowAltDown size={'15px'} color='red' />,
-                        description: (
-                          <Statistic
-                            layout='vertical'
-                            title={(comparePrice[0] - comparePrice[1]) > 0 ? `Tăng ${comparePrice[0] - comparePrice[1]}` : `Giảm ${Math.abs(comparePrice[1] - comparePrice[0])}`}
-                            value={(comparePrice[0] !== comparePrice[1] && comparePrice[1] !== 0) ? (Math.abs(comparePrice[1] - comparePrice[0]) * 100 / comparePrice[1]).toFixed(2) : 0}
-                            precision={2}
-                            valueStyle={(comparePrice[0] - comparePrice[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
-                            prefix={(comparePrice[0] - comparePrice[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                            suffix="%"
-                          />
-                        ),
-                      }}
-                    />
-                    <StatisticCard
-                      statistic={{
-                        title: "Sản phẩm bán",
-                        value: Math.abs(compareQuantity[0]),
-                        suffix: (compareQuantity[0] - compareQuantity[1]) > 0 ? <FaLongArrowAltUp size={'15px'} color='green' /> : <FaLongArrowAltDown size={'15px'} color='red' />,
-                        description: (
-                          <Statistic
-                            layout='vertical'
-                            title={(compareQuantity[0] - compareQuantity[1]) > 0 ? `Tăng ${compareQuantity[0] - compareQuantity[1]}` : `Giảm ${Math.abs(compareQuantity[1] - compareQuantity[0])}`}
-                            value={(compareQuantity[0] !== compareQuantity[1] && compareQuantity[1] !== 0) ? (Math.abs(compareQuantity[1] - compareQuantity[0]) * 100 / compareQuantity[1]).toFixed(2) : 0}
-                            precision={2}
-                            valueStyle={(compareQuantity[0] - compareQuantity[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
-                            prefix={(compareQuantity[0] - compareQuantity[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                            suffix="%"
-                          />
-                        ),
-                      }}
-                    />
-                  </ProCard>
-                  <ProCard split="vertical" title="Lịch sử thay đổi lợi nhuận">
-                    <Col span={11}>
+                <ProCard split="vertical" title="So sánh với ngày gần nhất">
+                  <StatisticCard
+                    statistic={{
+                      title: "Lợi nhuận",
+                      value: Math.abs(comparePrice[0]),
+                      suffix: (comparePrice[0] - comparePrice[1]) > 0 ? <FaLongArrowAltUp size={'15px'} color='green' /> : <FaLongArrowAltDown size={'15px'} color='red' />,
+                      description: (
+                        <Statistic
+                          layout='vertical'
+                          title={(comparePrice[0] - comparePrice[1]) > 0 ? `Tăng ${comparePrice[0] - comparePrice[1]}` : `Giảm ${Math.abs(comparePrice[1] - comparePrice[0])}`}
+                          value={(comparePrice[0] !== comparePrice[1] && comparePrice[1] !== 0) ? (Math.abs(comparePrice[1] - comparePrice[0]) * 100 / comparePrice[1]).toFixed(2) : 0}
+                          precision={2}
+                          valueStyle={(comparePrice[0] - comparePrice[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
+                          prefix={(comparePrice[0] - comparePrice[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                          suffix="%"
+                        />
+                      ),
+                    }}
+                  />
+                  <StatisticCard
+                    statistic={{
+                      title: "Sản phẩm bán",
+                      value: Math.abs(compareQuantity[0]),
+                      suffix: (compareQuantity[0] - compareQuantity[1]) > 0 ? <FaLongArrowAltUp size={'15px'} color='green' /> : <FaLongArrowAltDown size={'15px'} color='red' />,
+                      description: (
+                        <Statistic
+                          layout='vertical'
+                          title={(compareQuantity[0] - compareQuantity[1]) > 0 ? `Tăng ${compareQuantity[0] - compareQuantity[1]}` : `Giảm ${Math.abs(compareQuantity[1] - compareQuantity[0])}`}
+                          value={(compareQuantity[0] !== compareQuantity[1] && compareQuantity[1] !== 0) ? (Math.abs(compareQuantity[1] - compareQuantity[0]) * 100 / compareQuantity[1]).toFixed(2) : 0}
+                          precision={2}
+                          valueStyle={(compareQuantity[0] - compareQuantity[1]) > 0 ? { color: '#3f8600' } : { color: '#cf1322' }}
+                          prefix={(compareQuantity[0] - compareQuantity[1]) > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                          suffix="%"
+                        />
+                      ),
+                    }}
+                  />
+                </ProCard>
+                <ProCard split="horizontal" title="Lịch sử thay đổi">
+                  <Row>
+                    <Col span={12}>
                       <div className='flex'>
-                        <LineChart datas={getDataDaily(chartDatas)} />
+                        <LineChart title='Lợi nhuận' datas={getPurchaseDaily(chartDatas)} />
                       </div>
                     </Col>
-                  </ProCard>
-
+                    <Col span={12}>
+                      <div className='flex'>
+                        <LineChart title='Sản phẩm' datas={getSellProductDaily(chartDatas)} />
+                      </div>
+                    </Col>
+                  </Row>
                 </ProCard>
-                <StatisticCard
-
-
-                />
               </ProCard>
+              <StatisticCard
+              />
             </Col>
             <Col
               xl={8}
@@ -286,7 +317,83 @@ const Dashboard = () => {
         </ProCard>
       </RcResizeObserver>
     )
+  };
+
+  const renderBarChart = (data: ChartDataInfo[]) => {
+
+    const getPurchaseDaily = (chart: ChartDataInfo[]) => {
+      let lb: any[] = [];
+      let value: number[] = [];
+
+      chart.forEach((data) => {
+        lb = data.labels;
+        data.datasets.forEach((dataSet) => {
+          for (let i = 0; i < lb.length; i++) {
+            let total = value[i] | 0;
+            value[i] = total + dataSet.data[i]?.totalPurchase | 0
+          }
+        });
+      });
+
+      return { lb, value };
+    };
+
+    const getSortListByProduct = (chart: ChartDataInfo[]) => {
+      const sortData = chart.map((data) => {
+        const totalPrice = data.datasets.reduce((acc, dataSet) => {
+          return acc + (dataSet.data.reduce((sum, item) => sum + (item?.totalPurchase || 0), 0) || 0);
+        }, 0);
+
+        return {
+          productId: data.productId,
+          productName: data.productName,
+          value: totalPrice,
+        };
+      });
+
+      sortData.sort((a, b) => b.value - a.value);
+
+      let i = 1;
+
+      return sortData.map((data) => {
+        return {
+          ...data,
+          index: i++,
+          isTop: i <= 4,
+        } as ListProductPurchase;
+      });
+    };
+
+    return (
+      <ProCard title='Biểu đồ lợi nhuận'>
+        <Row gutter={16}>
+          <Col span={16}>
+            <ProCard>
+              <BarChart datas={getPurchaseDaily(data)} title='Thu nhập' />
+            </ProCard>
+          </Col>
+          <Col span={8}>
+            <div className='flex justify-center'>
+              <ProCard className='flex justify-center' title='Top lợi nhuận' bordered>
+                <List
+                  dataSource={getSortListByProduct(data).slice(0, 8)} // Display only the top 8 products
+                  rowKey="productId"
+                  renderItem={(item) => (
+                    <List.Item style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <p className={`text-xs ${item.isTop ? 'font-bold' : ''}`}>{item.index}</p>
+                      <p className={`text-xs `}>{item.productName}</p>
+                      <p className={`text-xs`}>{item.value}</p>
+                    </List.Item>
+                  )}
+                />
+              </ProCard>
+            </div>
+          </Col>
+        </Row>
+      </ProCard>
+    );
   }
+
   return (
     <BasePageContainer breadcrumb={breadcrumb} transparent={true}>
       <Row gutter={24}>
@@ -311,6 +418,10 @@ const Dashboard = () => {
               ))}
             </Select>
           </Card>
+        </Col>
+
+        <Col span={24} className='mb-2'>
+          {renderBarChart(chartDatas)}
         </Col>
 
         <Col span={24} className='mb-2'>

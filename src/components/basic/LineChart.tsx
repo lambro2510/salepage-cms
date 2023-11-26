@@ -36,13 +36,13 @@ export const options = {
   },
 };
 
-const LineChart = ({ datas} : {datas : {lb : any[] , value : any[]}}) => {
+const LineChart = ({ datas, title} : {title : string, datas : {lb : any[] , value : any[]}}) => {
   const data = {
     labels: datas.lb,
     datasets: [
       {
         fill: true,
-        label: 'Lợi nhuận',
+        label: title,
         data: datas.value,
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
