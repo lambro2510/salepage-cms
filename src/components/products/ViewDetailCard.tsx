@@ -43,12 +43,32 @@ const DetailCard = () => {
 
     const updateDetail = async (value: ProductDetailInfoResponse, productDetailId: any) => {
         try {
+            console.log(value);
+            
             let response;
+            let hexColor = hsvToHexAlt(
+                value.type.color.metaColor.originalInput.h,
+                value.type.color.metaColor.originalInput.s,
+                value.type.color.metaColor.originalInput.v,
+                value.type.color.metaColor.originalInput.a
+                )
             if (productDetailId != ' ') {
-                response = await http.put(`${apiRoutes.product_detail}/${productDetailId}`, value);
+                response = await http.put(`${apiRoutes.product_detail}/${productDetailId}`, {
+                    ...value,
+                    type: {
+                        type: value.type.type,
+                        color: hexColor,
+                    },
+                });
                 showNotification(response.data.message)
             } else {
-                response = await http.post(`${apiRoutes.product_detail}`, value);
+                response = await http.post(`${apiRoutes.product_detail}`, {
+                    ...value,
+                    type: {
+                        type: value.type.type,
+                        color: hexColor,
+                    },
+                });
                 showNotification(response.data.message)
             }
         } catch (error) {
@@ -57,6 +77,44 @@ const DetailCard = () => {
             actionRef.current?.reloadAndRest?.();
         }
     }
+
+    function hsvToHexAlt(h : number, s : number, v : number, a : number) {
+        h = (h + 360) % 360; // Ensure h is in the range [0, 360)
+        s = Math.max(0, Math.min(1, s));
+        v = Math.max(0, Math.min(1, v));
+    
+        const c = v * s;
+        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+        const m = v - c;
+    
+        let r, g, b;
+        if (h >= 0 && h < 60) {
+            r = c; g = x; b = 0;
+        } else if (h >= 60 && h < 120) {
+            r = x; g = c; b = 0;
+        } else if (h >= 120 && h < 180) {
+            r = 0; g = c; b = x;
+        } else if (h >= 180 && h < 240) {
+            r = 0; g = x; b = c;
+        } else if (h >= 240 && h < 300) {
+            r = x; g = 0; b = c;
+        } else {
+            r = c; g = 0; b = x;
+        }
+    
+        r = Math.round((r + m) * 255);
+        g = Math.round((g + m) * 255);
+        b = Math.round((b + m) * 255);
+    
+        const hexR = r.toString(16).padStart(2, '0');
+        const hexG = g.toString(16).padStart(2, '0');
+        const hexB = b.toString(16).padStart(2, '0');
+    
+        const hexColor = `#${hexR}${hexG}${hexB}`;
+        return hexColor.toUpperCase();
+    }
+    
+
     const getProductDetail = async () => {
         try {
             const response = await http.get(`${apiRoutes.product_detail}/${id}`)
@@ -154,7 +212,7 @@ const DetailCard = () => {
 
 
     useEffect(() => {
-        // getProductDetail();
+        getProductDetail();
         getProduct()
     }, [])
 

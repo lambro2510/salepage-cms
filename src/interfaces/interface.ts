@@ -579,7 +579,7 @@ export interface VoucherStoreResponse {
 
 export interface ProductDetailType {
     type: string;
-    color: string;
+    color: any;
 }
 
 export interface ProductInfo {

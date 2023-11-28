@@ -65,3 +65,51 @@ export const handleErrorResponse = (
 export const convertDate = (date :any, format = 'dd-mm-yyyy') => {
   return dayjs(date, format);
 }
+
+export function hsvToHex(h : number, s : number, v : number) {
+  // Ensure h is in the range [0, 360), s and v are in [0, 1]
+  h = (h % 360 + 360) % 360;
+  s = Math.max(0, Math.min(1, s));
+  v = Math.max(0, Math.min(1, v));
+
+  const hi = Math.floor(h / 60) % 6;
+  const f = h / 60 - Math.floor(h / 60);
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+
+  let r, g, b;
+  if (hi === 0) {
+    r = v;
+    g = t;
+    b = p;
+  } else if (hi === 1) {
+    r = q;
+    g = v;
+    b = p;
+  } else if (hi === 2) {
+    r = p;
+    g = v;
+    b = t;
+  } else if (hi === 3) {
+    r = p;
+    g = q;
+    b = v;
+  } else if (hi === 4) {
+    r = t;
+    g = p;
+    b = v;
+  } else {
+    r = v;
+    g = p;
+    b = q;
+  }
+
+  // Convert to 8-bit integers
+  r = Math.round(r * 255);
+  g = Math.round(g * 255);
+  b = Math.round(b * 255);
+
+  // Convert to hex
+  return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1)}`;
+}

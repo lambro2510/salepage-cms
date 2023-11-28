@@ -160,7 +160,7 @@ const Dashboard = () => {
       <Tooltip title={data.productName}>
         <Row>
           <Col span={24}>
-            <p>{data.productName.substring(0, 30)}</p>
+            <p>{data?.productName?.substring(0, 30)}</p>
           </Col>
           <Col >
             <StatisticCard

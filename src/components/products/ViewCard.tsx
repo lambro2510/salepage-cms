@@ -167,9 +167,10 @@ const ViewCard = () => {
             sorter: false,
             search: false,
             render: (_ : any, row: SellerProductResponse) => 
-                <LazyImage
+                <Avatar
                     src={row.defaultImageUrl || row.defaultImageUrl}
-                    placeholder={<div className="bg-gray-100 h-full w-full" />}
+                    size={"large"}
+                    shape="square"
                 />
             
         },
