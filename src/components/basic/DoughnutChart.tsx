@@ -61,19 +61,20 @@ const DoughnutChart = ({ data }: { data: ChartDataInfo[] }) => {
             display: false,
           },
           datalabels: {
+            display: true,
             align: 'center',
             color: '#f6f6f6',
             formatter: (value, context) => {
               const total = context.dataset.data.reduce((acc: number, data) => acc + Number(data), 0);
               const percentage = ((value / total) * 100).toFixed(2) + '%';
-              return Number(context?.dataset?.data[context.dataIndex]) > 0 ? percentage : null;
+              return Number(context?.dataset?.data[context.dataIndex]) < 10 ? null : percentage;
             },
           }
         },
         elements: {
           arc: {
             borderColor: '#f6f6f6',
-            borderWidth: 1,
+            borderWidth: 0,
           },
         },
 
