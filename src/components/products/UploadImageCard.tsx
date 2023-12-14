@@ -3,14 +3,16 @@ import ImgCrop from 'antd-img-crop';
 import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
 import { handleErrorResponse } from "../../utils";
-import { Upload } from "antd";
+import { Spin, Upload } from "antd";
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 
-const UploadImageProduct = () => {
-    const { id } = useParams();
+interface UploadImageProductProps {
+    id: string;
+}
+const UploadImageProduct = ({ id }: UploadImageProductProps) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [fileList, setFileList] = useState<any[]>([]);
     const admin = useSelector((state: RootState) => state.admin);
@@ -62,7 +64,7 @@ const UploadImageProduct = () => {
         try {
             const formData = new FormData();
             formData.append('file', file);
-
+            setLoading(true);
             const response = await http.post(`${apiRoutes.products}/upload/${id}`, formData);
 
             const newImage = {
@@ -75,6 +77,7 @@ const UploadImageProduct = () => {
             const filteredFileList = fileList.filter(
                 (file: any) => !['uploading'].includes(file.status)
             );
+            setLoading(false);
             setFileList([...filteredFileList, newImage]);
         } catch (error) {
             handleErrorResponse(error);
@@ -85,19 +88,23 @@ const UploadImageProduct = () => {
 
 
     return (
-        <ImgCrop >
-            <Upload
-                headers={{ Authorization: 'Bearer ' + admin }}
-                action={`${apiRoutes.products}/upload/${id}`}
-                method="post"
-                listType="picture-card"
-                fileList={fileList}
-                onPreview={onPreview}
-                customRequest={({ file }) => handleUploadImage(file)}
-            >
-                {fileList.length < 5 && '+ Upload'}
-            </Upload>
-        </ImgCrop>
+        <Spin spinning={loading}>
+            <ImgCrop >
+
+                <Upload
+                    headers={{ Authorization: 'Bearer ' + admin }}
+                    action={`${apiRoutes.products}/upload/${id}`}
+                    method="post"
+                    listType="picture-card"
+                    fileList={fileList}
+                    onPreview={onPreview}
+                    customRequest={({ file }) => handleUploadImage(file)}
+                >
+                    {fileList.length < 5 && '+ Upload'}
+                </Upload>
+
+            </ImgCrop>
+        </Spin>
 
     )
 }

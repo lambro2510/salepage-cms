@@ -2,21 +2,19 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import BasePageContainer from "../layout/PageContainer";
 import { useEffect, useRef, useState } from "react";
 import { ActionType, ProColumns, ProDescriptions, ProTable, RequestData, TableDropdown } from "@ant-design/pro-components";
-import { Avatar, BreadcrumbProps, Button, Dropdown, Menu, Modal, Space } from "antd";
+import { Avatar, BreadcrumbProps, Button, Modal, Space } from "antd";
 import { Store } from "antd/es/form/interface";
 import { CategoryType } from "../../interfaces/enum/CategoryType";
 import { NotificationType, handleErrorResponse, showNotification } from "../../utils";
 import http from "../../utils/http";
 import { apiRoutes } from "../../routes/api";
-import { Product } from "../../interfaces/models/product";
 import { webRoutes } from "../../routes/web";
-import Icon, { EllipsisOutlined, WarningOutlined, DownOutlined, UpOutlined, DeleteOutlined } from '@ant-design/icons';
-import LazyImage from "../lazy-image";
-import { ProductTransactionState } from "../../interfaces/enum/ProdTransactionState";
+import Icon, { InfoOutlined, WarningOutlined, DownOutlined, UpOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CiCircleMore } from "react-icons/ci";
 import { BiPlus, BiUpload } from "react-icons/bi";
 import { MdUpdate, MdViewAgenda } from "react-icons/md";
 import { SellerProductResponse, SellerStoreResponse } from "../../interfaces/interface";
+import UploadImageProduct from "./UploadImageCard";
 
 enum ActionKey {
     DELETE = 'delete',
@@ -31,7 +29,7 @@ const breadcrumb: BreadcrumbProps = {
             key: webRoutes.products,
             title: <Link to={webRoutes.products}>Sản phẩm</Link>,
         },
-        
+
     ],
 };
 
@@ -47,7 +45,7 @@ const ViewCard = () => {
     useEffect(() => {
         Promise.all([loadStores(), loadCategories()])
             .then(() => {
-                
+
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -82,11 +80,15 @@ const ViewCard = () => {
 
 
     const loadProduct = (params: any) => {
+        console.log(params);
+
         return http
             .get(apiRoutes.products, {
                 params: {
+                    ...params,
+                    page: params.current - 1 | 0,
                     storeName: params.storeName,
-                    productName :  params.productName,
+                    productName: params.productName,
                 },
             })
             .then((response) => {
@@ -114,15 +116,15 @@ const ViewCard = () => {
             showDeleteConfirmation(product);
         } else if (key === ActionKey.UPDATE) {
             navigate(`${webRoutes.products}/${product.id}`);
-        }else if (key === ActionKey.UPLOAD) {
-            navigate(`${webRoutes.products}/${product.id}/upload`);
-        }else if (key === ActionKey.DETAIL) {
+        } else if (key === ActionKey.UPLOAD) {
+            showUpload(product);
+        } else if (key === ActionKey.DETAIL) {
             navigate(`${webRoutes.products}/detail/${product.id}`);
         }
     };
 
     const showDeleteConfirmation = (product: SellerProductResponse) => {
-        modal.confirm({
+        modal.info({
             title: 'Bạn có chắc chắn mua xóa sản phẩm này?',
             icon: <WarningOutlined />,
             type: 'warn',
@@ -149,7 +151,7 @@ const ViewCard = () => {
                             `${product} đã được xóa`
                         );
 
-                        actionRef.current?.reloadAndRest?.();
+
                     })
                     .catch((error) => {
                         handleErrorResponse(error);
@@ -159,6 +161,23 @@ const ViewCard = () => {
     };
 
 
+    const showUpload = (product: SellerProductResponse) => {
+        modal.confirm({
+            title: 'Tải ảnh lên cho sản phẩm?',
+            icon: <InfoOutlined />,
+            type: 'info',
+            content: (
+                <UploadImageProduct id={product.id} />
+            ),
+            okButtonProps: {
+                className: 'bg-primary',
+            },
+            onOk: () => {
+                actionRef.current?.reloadAndRest?.();
+            },
+        });
+    };
+
     const columns: ProColumns<SellerProductResponse>[] = [
         {
             title: 'Ảnh sản phẩm',
@@ -166,13 +185,13 @@ const ViewCard = () => {
             align: 'center',
             sorter: false,
             search: false,
-            render: (_ : any, row: SellerProductResponse) => 
+            render: (_: any, row: SellerProductResponse) =>
                 <Avatar
                     src={row.defaultImageUrl || row.defaultImageUrl}
                     size={"large"}
                     shape="square"
                 />
-            
+
         },
         {
             title: 'Tên sản phẩm',
@@ -182,7 +201,7 @@ const ViewCard = () => {
             filterMode: 'menu',
             filtered: false,
             filterDropdownOpen: false,
-            render: (_ : any, row: SellerProductResponse) => row.productName,
+            render: (_: any, row: SellerProductResponse) => row.productName,
         },
         {
             title: 'Loại sản phẩm',
@@ -190,14 +209,15 @@ const ViewCard = () => {
             align: 'center',
             sorter: false,
             search: false,
-            render: (_ : any, row: SellerProductResponse) => row.productCategory.categoryName
+            render: (_: any, row: SellerProductResponse) => row.productCategory.categoryName
         },
         {
             title: 'Cửa hàng',
             dataIndex: 'stores',
+            valueType: 'select',
             align: 'center',
             sorter: false,
-            render: (_ : any, row: SellerProductResponse) => {
+            render: (_: any, row: SellerProductResponse) => {
                 if (row.stores && row.stores.length > 0) {
                     return (
                         <div>
@@ -264,10 +284,10 @@ const ViewCard = () => {
                 </TableDropdown>,
             ],
         }
-        
+
     ];
 
-    return(
+    return (
         <BasePageContainer breadcrumb={breadcrumb}>
             <ProTable
                 columns={columns}
@@ -311,7 +331,7 @@ const ViewCard = () => {
                     },
                 }}
                 toolBarRender={() => [
-                    <Button icon={<BiPlus/>} type="primary" onClick={() => navigate(`${webRoutes.products}/create`)}>
+                    <Button icon={<BiPlus />} type="primary" onClick={() => navigate(`${webRoutes.products}/create`)}>
                         Tạo mới
                     </Button>
                 ]}
