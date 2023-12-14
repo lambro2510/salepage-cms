@@ -12,7 +12,7 @@ import { Product } from "../../interfaces/models/product";
 import { webRoutes } from "../../routes/web";
 import Icon, { EllipsisOutlined, WarningOutlined, DownOutlined, UpOutlined, DeleteOutlined } from '@ant-design/icons';
 import LazyImage from "../lazy-image";
-import { ProductTransactionState } from "../../interfaces/enum/ProdTransactionState";
+import { ProductTransactionState } from "../../interfaces/enum/ProductTransactionState";
 import { CiCircleMore } from "react-icons/ci";
 import { BiPlus, BiUpload } from "react-icons/bi";
 import { MdUpdate } from "react-icons/md";

@@ -23,7 +23,7 @@ export const showNotification = (
   });
 };
 
-export const roundedNumber = (number : number, fixed = 2) => {
+export const roundedNumber = (number: number, fixed = 2) => {
   return parseFloat(number.toFixed(fixed));
 }
 export const handleErrorResponse = (
@@ -40,7 +40,7 @@ export const handleErrorResponse = (
       try {
         error = JSON.parse(error);
       } catch (error) {
-        
+
       }
     }
 
@@ -53,7 +53,7 @@ export const handleErrorResponse = (
 
   showNotification(
     errorMessage &&
-      errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1),
+    errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1),
     NotificationType.ERROR
   );
 
@@ -62,11 +62,11 @@ export const handleErrorResponse = (
   }
 }
 
-export const convertDate = (date :any, format = 'dd-mm-yyyy') => {
+export const convertDate = (date: any, format = 'dd-mm-yyyy') => {
   return dayjs(date, format);
 }
 
-export function hsvToHex(h : number, s : number, v : number) {
+export function hsvToHex(h: number, s: number, v: number) {
   // Ensure h is in the range [0, 360), s and v are in [0, 1]
   h = (h % 360 + 360) % 360;
   s = Math.max(0, Math.min(1, s));
@@ -112,4 +112,21 @@ export function hsvToHex(h : number, s : number, v : number) {
 
   // Convert to hex
   return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1)}`;
+}
+
+export const convertUTCToVietnamTime = (utcTimestamp: number) => {
+  // const utcDate = new Date(utcTimestamp);
+
+  const vietnamDate = new Date(utcTimestamp);
+
+  const year = vietnamDate.getFullYear();
+  const month = ('0' + (vietnamDate.getMonth() + 1)).slice(-2);
+  const day = ('0' + vietnamDate.getDate()).slice(-2);
+  const hours = ('0' + vietnamDate.getHours()).slice(-2);
+  const minutes = ('0' + vietnamDate.getMinutes()).slice(-2);
+  const seconds = ('0' + vietnamDate.getSeconds()).slice(-2);
+
+  const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+  return formattedDateTime;
 }

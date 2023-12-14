@@ -1,4 +1,4 @@
-export const ProductTransactionState = {
+export const ProductTransactionState: Record<string, { value: string; text: string }> = {
     NEW: { value: 'NEW', text: 'Tạo mới' },
     WAITING_STORE: { value: 'WAITING_STORE', text: 'Đang chờ xác nhận' },
     WAITING_SHIPPER: { value: 'WAITING_SHIPPER', text: 'Đang chờ người giao hàng' },

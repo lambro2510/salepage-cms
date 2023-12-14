@@ -6,13 +6,15 @@ import {
     TableDropdown,
     ProDescriptions,
 } from '@ant-design/pro-components';
-import { Avatar, BreadcrumbProps, Modal, Button, Dropdown, Menu, Tag } from 'antd';
-import { EllipsisOutlined, SearchOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { Avatar, BreadcrumbProps, Modal, Button, Dropdown, Menu, Tag, Space } from 'antd';
+import Icon, { EllipsisOutlined, DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { CiCircleMore } from "react-icons/ci";
 import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiRoutes } from '../../routes/api';
 import { webRoutes } from '../../routes/web';
 import {
+    convertUTCToVietnamTime,
     handleErrorResponse,
     NotificationType,
     showNotification,
@@ -20,9 +22,13 @@ import {
 import http from '../../utils/http';
 import BasePageContainer from '../layout/PageContainer';
 import LazyImage from '../lazy-image';
-import { Order, OrderFilter } from '../../interfaces/models/order';
+import { OrderFilter, ProductTransaction } from '../../interfaces/models/order';
 import { Product } from '../../interfaces/models/product';
-import { ProductTransactionState } from '../../interfaces/enum/ProdTransactionState';
+import { ProductTransactionState } from '../../interfaces/enum/ProductTransactionState';
+import { BiAccessibility } from 'react-icons/bi';
+import { MdUpdate, MdViewAgenda } from 'react-icons/md';
+import { ProductDataResponse, ProductInfoResponse } from '../../interfaces/interface';
+import { FilterDropdownProps } from 'antd/es/table/interface';
 const breadcrumb: BreadcrumbProps = {
     items: [
         {
@@ -32,6 +38,13 @@ const breadcrumb: BreadcrumbProps = {
     ],
 };
 
+enum ActionKey {
+    DELETE = 'delete',
+    DETAIL = 'detail',
+    UPDATE = 'update',
+    UPLOAD = 'upload',
+}
+
 const Orders = () => {
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean>(false);
@@ -39,13 +52,13 @@ const Orders = () => {
     const [products, setProducts] = useState<any>([]);
 
     const getOrders = (params: any, sort: any) => {
-        let order : any;
+        let order: any;
         if (typeof sort === 'object' && sort !== null) {
             for (const [key, value] of Object.entries(sort)) {
                 order = key;
-                if(value == 'ascend'){
+                if (value == 'ascend') {
                     order += ',asc';
-                }else{
+                } else {
                     order += ',desc';
                 }
             }
@@ -54,7 +67,7 @@ const Orders = () => {
         return http
             .get(apiRoutes.orderHistories, {
                 params: {
-                    params : params,
+                    ...params,
                     productName: params.productName,
                     buyerName: params.buyerName,
                     sellerStoreName: params.storeName,
@@ -66,13 +79,13 @@ const Orders = () => {
                 },
             })
             .then((response) => {
-                const orders: [Order] = response.data.data.data;
+                const orders: [ProductTransaction] = response.data.data.data;
 
                 return {
                     data: orders,
                     success: true,
                     total: response.data.data.metadata.total,
-                } as RequestData<Order>;
+                } as RequestData<ProductTransaction>;
             })
             .catch((error) => {
                 handleErrorResponse(error);
@@ -80,28 +93,31 @@ const Orders = () => {
                 return {
                     data: [],
                     success: false,
-                } as RequestData<Order>;
+                } as RequestData<ProductTransaction>;
             });
     };
 
-    const productFilter = (
-        <Menu>
-            {products?.length === 0 ? null :
-                products?.map((product: Product) => (
-                    <Menu.Item key={product?.productId}>
-                        {product?.productName}
-                    </Menu.Item>
-                ))
-            }
-        </Menu>
-    )
+    const productFilter = (props: FilterDropdownProps, products : ProductInfoResponse[]) => {
+        
+        
+        return (
+            <Menu>
+                {
+                    products?.map((product: ProductInfoResponse) => (
+                        <Menu.Item key={product?.id} onClick={() => props.filters}>
+                            {product?.productName}
+                        </Menu.Item>
+                    ))
+                }
+            </Menu>
+        )
+    }
 
     const loadProduct = () => {
         return http.get(apiRoutes.products)
             .then((response) => {
                 const products: [Product] = response.data.data.data;
                 console.log(products);
-
                 setProducts(products);
             })
             .catch((error) => {
@@ -112,6 +128,18 @@ const Orders = () => {
 
     const loadStore = () => {
 
+    };
+
+    const handleActionOnSelect = (key: string, product: ProductTransaction) => {
+        if (key === ActionKey.DELETE) {
+
+        } else if (key === ActionKey.UPDATE) {
+
+        } else if (key === ActionKey.UPLOAD) {
+
+        } else if (key === ActionKey.DETAIL) {
+
+        }
     };
 
     useEffect(() => {
@@ -125,28 +153,29 @@ const Orders = () => {
     }, []);
 
 
-    const columns: ProColumns<Order>[] = [
+    const columns: ProColumns<ProductTransaction>[] = [
         {
+            key:'1',
             title: 'Ảnh sản phẩm',
-            dataIndex: 'productImage',
+            dataIndex: ['product', 'defaultImageUrl'],
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Order) =>
-                row.productImageUrl ? (
+            render: (_, row: ProductTransaction) =>
+                row.product.defaultImageUrl ? (
                     <Avatar
                         shape="circle"
                         size="small"
                         src={
                             <LazyImage
-                                src={row.productImageUrl}
+                                src={row.product.defaultImageUrl}
                                 placeholder={<div className="bg-gray-100 h-full w-full" />}
                             />
                         }
                     />
                 ) : (
                     <Avatar shape="circle" size="small">
-                        {row.buyerName.charAt(0).toUpperCase()}
+                        {row.username.charAt(0).toUpperCase()}
                     </Avatar>
                 ),
         },
@@ -156,14 +185,18 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             filterMode: 'menu',
-            filtered: false,
+            filtered: true,
             filterDropdown(props) {
                 return (
-                    productFilter
+                    productFilter(props, products)
                 )
             },
-            filterDropdownOpen: false,
-            render: (_, row: Order) => row.productName,
+            onFilter(value, record) {
+                console.log(value);
+                console.log(record);
+                return true;
+            },
+            render: (_, row: ProductTransaction) => row.product.productName,
 
         },
         {
@@ -172,30 +205,30 @@ const Orders = () => {
             align: 'center',
             sorter: true,
             search: false,
-            render: (_, row: Order) => row.quantity
+            render: (_, row: ProductTransaction) => row.quantity
         },
         {
             title: 'Tổng tiền thanh toán',
-            dataIndex: 'total_price',
+            dataIndex: 'totalPrice',
             align: 'center',
             sorter: true,
             search: false,
             valueType: 'money',
-            render: (_, row: Order) => row.total_price
+            render: (_, row: ProductTransaction) => row.totalPrice
         },
         {
             title: 'Người mua',
-            dataIndex: 'buyerName',
+            dataIndex: 'username',
             align: 'center',
             sorter: false,
-            render: (_, row: Order) => row.buyerName
+            render: (_, row: ProductTransaction) => row.username
         },
         {
             title: 'Cửa hàng',
             dataIndex: 'storeName',
             align: 'center',
             sorter: false,
-            render: (_, row: Order) => row.storeName
+            render: (_, row: ProductTransaction) => row.store.storeName
         },
         {
             title: 'Địa chỉ giao hàng',
@@ -203,7 +236,7 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Order) => row.address
+            render: (_, row: ProductTransaction) => row.address
         },
         {
             title: 'Ghi chú',
@@ -211,15 +244,7 @@ const Orders = () => {
             align: 'center',
             sorter: false,
             search: false,
-            render: (_, row: Order) => row.note
-        },
-        {
-            title: 'Sử dụng mã giảm giá',
-            dataIndex: 'isUseVoucher',
-            align: 'center',
-            sorter: false,
-            search: false,
-            render: (_, row: Order) => row.isUseVoucher
+            render: (_, row: ProductTransaction) => row.note
         },
         {
             title: 'Trạng thái đơn hàng',
@@ -229,17 +254,72 @@ const Orders = () => {
             search: false,
             filters: true,
             onFilter: true,
-            valueEnum: ProductTransactionState,
-            
+            render: (_, row: ProductTransaction) => ProductTransactionState[row.state].text
+
         },
         {
             title: 'Thời gian tạo đơn hàng',
-            dataIndex: 'created_at',
+            dataIndex: 'createdAt',
             align: 'center',
             sorter: true,
-            valueType: 'dateRange',
-            render: (_, row: Order) => row.created_at
+            valueType: 'date',
+            render: (_, row: ProductTransaction) => convertUTCToVietnamTime(row.createdAt)
+        },
+        {
+            title: 'Chức năng',
+            align: 'center',
+            key: 'option',
+            fixed: 'right',
+            filtered: false,
+            search: false,
+            render: (_, row: ProductTransaction) => [
+                <TableDropdown
+                    key="actionGroup"
+                    onSelect={(key) => handleActionOnSelect(key, row)}
+                    menus={[
+                        {
+                            key: ActionKey.UPLOAD,
+                            name: (
+                                <Space>
+                                    <BiAccessibility />
+                                    Thực hiện đơn hàng
+                                </Space>
+                            ),
+                        },
+                        {
+                            key: ActionKey.UPDATE,
+                            name: (
+                                <Space>
+                                    <MdUpdate />
+                                    Chi tiết đơn hàng
+                                </Space>
+                            ),
+                        },
+                        {
+                            key: ActionKey.DETAIL,
+                            name: (
+                                <Space>
+                                    <MdViewAgenda />
+                                    Từ chối
+                                </Space>
+                            ),
+                        },
+                        {
+                            key: ActionKey.DELETE,
+                            name: (
+                                <Space>
+                                    <DeleteOutlined />
+                                    Xóa
+                                </Space>
+                            ),
+                        },
+                    ]}
+                >
+                    <Icon component={CiCircleMore} className="text-primary text-xl" />
+                </TableDropdown>,
+            ],
         }
+
     ]
 
     return (
