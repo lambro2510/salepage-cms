@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 
 interface UploadImageProductProps {
-    id: string;
+    id: string
 }
 const UploadImageProduct = ({ id }: UploadImageProductProps) => {
     const [loading, setLoading] = useState<boolean>(true);
