@@ -25,7 +25,8 @@ const CreateVoucherModal = ({ open, callBack }: CreateVoucherModalProps) => {
     const [selectedDiscountType, setSelectedDiscountType] = useState<string>("PERCENT");
     const [showSelectRefModal, setShowSelectRefModal] = useState<boolean>(false)
     useEffect(() => {
-        setShowModal(true);
+            setShowModal(open);
+
     }, [open]);
 
     const onFinish = (formData: CreateVoucherStoreDto) => {
@@ -33,7 +34,7 @@ const CreateVoucherModal = ({ open, callBack }: CreateVoucherModalProps) => {
             http.post(`${apiRoutes.voucher}/voucher-store`, {
                 ...formData,
                 refId: refData?.refId,
-                discountType : selectedDiscountType
+                discountType: selectedDiscountType
             });
             setShowModal(false);
             callBack();
@@ -52,7 +53,13 @@ const CreateVoucherModal = ({ open, callBack }: CreateVoucherModalProps) => {
     };
 
     return (
-        <Modal open={showModal} onCancel={() => setShowModal(false)} footer={null} title="Tạo voucher mới">
+        <Modal open={showModal}
+            onCancel={() => {
+                setShowModal(false)
+                callBack()
+            }}
+            footer={null}
+            title="Tạo voucher mới">
             <Form
                 name="createVoucherForm"
                 onFinish={onFinish}

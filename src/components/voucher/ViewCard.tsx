@@ -62,7 +62,7 @@ const ViewCard = () => {
         items: [
             {
                 key: webRoutes.stores,
-                title: <Link to={webRoutes.stores}>Cửa hàng</Link>,
+                title: <Link to={webRoutes.stores}>Mã giảm giá</Link>,
             },
             {
                 key: `${webRoutes.stores}/:${storeId}`,
@@ -120,15 +120,15 @@ const ViewCard = () => {
             filterDropdownOpen: false,
             render: (_, row: VoucherStoreResponse) => row.voucherStoreStatus == 'ACTIVE' ? <Tag color='green'>Đang hoạt động</Tag> : <Tag color='red'>Ngừng hoạt động</Tag>,
         },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'voucherStoreStatus',
+                {
+            title: 'Áp dụng cho',
+            dataIndex: 'name',
             align: 'center',
             sorter: false,
             filterMode: 'menu',
             filtered: false,
             filterDropdownOpen: false,
-            render: (_, row: VoucherStoreResponse) => row.voucherStoreStatus == 'ACTIVE' ? <Tag color='green'>Đang hoạt động</Tag> : <Tag color='red'>Ngừng hoạt động</Tag>,
+            render: (_, row: VoucherStoreResponse) => row.voucherStoreType == 'PRODUCT' ? `${row.name} (Sản phẩm)` : `${row.name} (Cửa hàng)`,
         },
         {
             title: 'Chức năng',
@@ -211,7 +211,10 @@ const ViewCard = () => {
                 ]}
             />
             {modalContextHolder}
-            <CreateVoucherModal open={showModal} callBack={() => actionRef.current?.reloadAndRest?.()} />
+            <CreateVoucherModal open={showModal} callBack={() => {
+                actionRef.current?.reloadAndRest?.();
+                setShowModal(false)
+            }} />
         </BasePageContainer>
     );
 }

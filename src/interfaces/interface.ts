@@ -568,6 +568,7 @@ export interface VoucherCodeResponse {
 export interface VoucherStoreResponse {
     voucherStoreId: string;
     voucherStoreName: string;
+    name: string;
     totalQuantity: number;
     totalUsed: number;
     voucherStoreStatus: VoucherStoreStatus;
