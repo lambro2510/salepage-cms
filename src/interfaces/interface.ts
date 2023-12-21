@@ -615,6 +615,7 @@ export interface ProductComboResponse {
     value: number;
     quantityToUse: number;
     maxDiscount: number;
+    storeId : string;
 }
 
 export interface ProductComboDetailResponse {

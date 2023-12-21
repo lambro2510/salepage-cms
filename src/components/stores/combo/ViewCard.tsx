@@ -1,34 +1,92 @@
-import { BreadcrumbProps, Button, Col, ColorPicker, Modal, Row, Typography } from "antd";
+import { BreadcrumbProps, Button, Col, ColorPicker, Modal, Row, Tooltip, Typography } from "antd";
 import { useEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom";
-import { webRoutes } from "../../routes/web";
-import BasePageContainer from "../layout/PageContainer";
-import http from "../../utils/http";
-import { apiRoutes } from "../../routes/api";
+import { webRoutes } from "../../../routes/web";
+import BasePageContainer from "../../layout/PageContainer";
+import http from "../../../utils/http";
+import { apiRoutes } from "../../../routes/api";
 import { ActionType, EditableProTable, ProCard, ProColumns, ProDescriptions, ProForm, ProFormDigit, ProFormDigitRange, ProFormList, ProFormText, ProTable, RequestData } from "@ant-design/pro-components";
-import { handleErrorResponse, showNotification } from "../../utils";
-import { ProductComboResponse } from "../../interfaces/interface";
-import { ActiveState, DiscountType } from "../../interfaces/enum/Type";
-import { FaInfo } from "react-icons/fa";
+import { handleErrorResponse, showNotification } from "../../../utils";
+import { ProductComboResponse, SellerStoreResponse } from "../../../interfaces/interface";
+import { ActiveState, DiscountType } from "../../../interfaces/enum/Type";
+import ProductSelect from "../../basic/ProductSelect";
+import { ProductInComboResponse } from "../../../interfaces/models/combo";
 
 const { Title, Text } = Typography;
 
 const ViewCard = () => {
+    const { storeId } = useParams();
+
     const actionRef = useRef<ActionType>();
+    const [store, setStore] = useState<SellerStoreResponse>();
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [combos, setCombos] = useState<ProductComboResponse[]>();
     const [loading, setLoading] = useState<boolean>(false)
     const [modal, modalContextHolder] = Modal.useModal();
-
+    const [current, setCurrent] = useState<number>(0);
+    const [total, setTotal] = useState<number>(0);
+    const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
+    const [productInCombo, setProductInCombo] = useState<ProductInComboResponse[]>([])
+    const [selectComboId, setSelectComboId] = useState<string>('');
     const breadcrumb: BreadcrumbProps = {
         items: [
             {
-                key: webRoutes.products,
-                title: <Link to={webRoutes.products}>Sản phẩm</Link>,
+                key: webRoutes.stores,
+                title: <Link to={webRoutes.stores}>Cửa hàng</Link>,
             },
-
+            {
+                key: `${webRoutes.stores}/:${storeId}`,
+                title: <Link to={`${webRoutes.stores}/:${storeId}`}>{store?.storeName}</Link>,
+            },
         ],
     };
+
+    const getSellStore = async () => {
+        try {
+            const response = await http.get(`${apiRoutes.stores}/${storeId}`)
+            setStore(response.data.data)
+        } catch (err) {
+            handleErrorResponse(err);
+        }
+    }
+
+    useEffect(() => {
+        getSellStore()
+    }, [])
+
+    useEffect(() => {
+        if (selectComboId) {
+            getProductInCombo(selectComboId, current);
+        }
+    }, [selectComboId, current])
+
+    const removeProductInCombo = async (productId: string) => {
+        try {
+            const response = await http.delete(`${apiRoutes.combos}/product/${selectComboId}`, {
+                params: {
+                    productId: productId
+                }
+            })
+            await getProductInCombo(selectComboId, current)
+            showNotification("Sản phẩm đã được loại khỏi khuyến mãi")
+        } catch (err) {
+            handleErrorResponse(err)
+        }
+    }
+
+    const addProductInCombo = async (productId: string) => {
+        try {
+            const response = await http.put(`${apiRoutes.combos}/product/${selectComboId}`, {}, {
+                params: {
+                    productId: productId
+                }
+            })
+            await getProductInCombo(selectComboId, current)
+            showNotification("Sản phẩm đã được thêm vào khuyến mãi")
+        } catch (err) {
+            handleErrorResponse(err)
+        }
+    }
 
     const deleteCombo = async (comboId: string) => {
         try {
@@ -40,27 +98,27 @@ const ViewCard = () => {
         }
     }
 
-    const showComboDetail = (comboId: string) => {
-        modal.confirm({
-            title: 'Bạn có chắc chắn mua xóa sản phẩm này?',
-            icon: <FaInfo />,
-            type: 'warn',
-            content: (
-                <ProDescriptions column={1} title=" ">
-                    <ProDescriptions.Item valueType="avatar" label="Ảnh">
-                    </ProDescriptions.Item>
-                    <ProDescriptions.Item valueType="text" label="Tên sản phẩm">
-                    </ProDescriptions.Item>
-                </ProDescriptions>
-            ),
-            okButtonProps: {
-                className: 'bg-primary',
-            },
-            onOk: () => {
-                
-            },
-        });
-    };
+    const getProductInCombo = async (comboId: string, page: number) => {
+        console.log('comboId: ', comboId);
+        try {
+            if (!comboId) {
+                return;
+            }
+            const response = await http.get(`${apiRoutes.combos}/product/${comboId}`, {
+                params: {
+                    page: page - 1,
+                    size: 6
+                }
+            })
+            setCurrent(page);
+            setTotal(response.data.data.metadata.total)
+            setProductInCombo(response.data.data.data)
+        } catch (err) {
+            handleErrorResponse(err);
+            return [];
+        }
+    }
+
     const updateCombo = async (value: ProductComboResponse, comboId: any) => {
         try {
             let response;
@@ -68,7 +126,11 @@ const ViewCard = () => {
                 response = await http.put(`${apiRoutes.combos}/${comboId}`, value);
                 showNotification(response.data.message)
             } else {
-                response = await http.post(`${apiRoutes.combos}`, value);
+                response = await http.post(`${apiRoutes.combos}`, {
+                    ...value,
+                    storeId: storeId
+                }
+                );
                 showNotification(response.data.message)
             }
         } catch (error) {
@@ -79,7 +141,7 @@ const ViewCard = () => {
     }
     const getProductCombo = async () => {
         try {
-            const response = await http.get(`${apiRoutes.combos}`)
+            const response = await http.get(`${apiRoutes.combos}/${storeId}`)
             const combos = response.data.data as ProductComboResponse[];
             setCombos(combos)
             return {
@@ -103,6 +165,7 @@ const ViewCard = () => {
             dataIndex: "id",
             valueType: "text",
             align: "center",
+            hideInTable: true,
             editable: false,
         },
         {
@@ -142,7 +205,7 @@ const ViewCard = () => {
             align: "center",
         },
         {
-            title: "Hành động",
+            title: "Chức năng",
             valueType: "option",
             align: "center",
             render: (text, record, _, action) => [
@@ -164,11 +227,15 @@ const ViewCard = () => {
                 </a>,
                 <a
                     key="detail"
-                    onClick={() => {
-                        showComboDetail(record.id);
+                    onClick={async () => {
+                        setSelectComboId(record.id);
+                        setCurrent(0)
+                        setShowDetailModal(true)
                     }}
                 >
-                    Chi tiết
+                    <Tooltip title={'Sản phẩm áp dụng khuyến mãi'}>
+                        Chi tiết
+                    </Tooltip>
                 </a>,
             ],
         },
@@ -219,6 +286,18 @@ const ViewCard = () => {
                 }}
             />
             {modalContextHolder}
+            <Modal open={showDetailModal} onCancel={() => setShowDetailModal(false)} onOk={() => setShowDetailModal(false)}>
+                <ProductSelect
+                    page={current}
+                    products={productInCombo}
+                    title=""
+                    size={6}
+                    setPage={setCurrent}
+                    total={total}
+                    removeProduct={(id: string) => removeProductInCombo(id)}
+                    selectProduct={(id: string) => addProductInCombo(id)}
+                />
+            </Modal>
         </BasePageContainer>
     )
 }

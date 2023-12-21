@@ -26,4 +26,6 @@ export const apiRoutes = {
   maps : `${API_URL}/public/map`,
 
   productTypes : `${API_URL}/public/product/type`,
+
+  voucher: `${API_URL}/seller/voucher`,
 };

@@ -17,11 +17,13 @@ import { CiCircleMore } from "react-icons/ci";
 import { BiPlus, BiUpload } from "react-icons/bi";
 import { MdUpdate } from "react-icons/md";
 import { SellerStoreResponse } from "../../interfaces/interface";
+import { FaSalesforce } from "react-icons/fa";
 
 enum ActionKey {
     DELETE = 'delete',
     UPDATE = 'update',
     UPLOAD = 'upload',
+    COMBO = 'combo',
 }
 
 const breadcrumb: BreadcrumbProps = {
@@ -89,12 +91,14 @@ const ViewCard = () => {
             navigate(`${webRoutes.stores}/${store.id}`);
         } else if (key === ActionKey.UPLOAD) {
             navigate(`${webRoutes.stores}/${store.id}/upload`);
+         }else if (key === ActionKey.COMBO) {
+            navigate(`${webRoutes.product_combo}/${store.id}`);
         }
     };
 
     const showDeleteConfirmation = (store: SellerStoreResponse) => {
         modal.confirm({
-            title: 'Bạn có chắc chắn mua cửa hàng này?',
+            title: 'Bạn có chắc chắn Xoá cửa hàng này?',
             icon: <WarningOutlined />,
             type: 'warn',
             content: (
@@ -202,6 +206,15 @@ const ViewCard = () => {
                     key="actionGroup"
                     onSelect={(key) => handleActionOnSelect(key, row)}
                     menus={[
+                        {
+                            key: ActionKey.COMBO,
+                            name: (
+                                <Space>
+                                    <FaSalesforce />
+                                    Khuyến mãi của cửa hàng
+                                </Space>
+                            ),
+                        },
                         {
                             key: ActionKey.UPLOAD,
                             name: (

@@ -62,14 +62,21 @@ const UpdateCategory = loadable(() => import('../components/categories/UpdateCar
 const ViewCategory = loadable(() => import('../components/categories/ViewCard'), {
   fallback: fallbackElement,
 });
-const Combo = loadable(() => import('../components/combo'), {
+const Combo = loadable(() => import('../components/stores/combo'), {
   fallback: fallbackElement,
 });
 
-const ViewCombo = loadable(() => import('../components/combo/ViewCard'), {
+const ViewCombo = loadable(() => import('../components/stores/combo/ViewCard'), {
   fallback: fallbackElement,
 });
 
+const Voucher = loadable(() => import('../components/voucher'), {
+  fallback: fallbackElement,
+});
+
+const ViewVoucher = loadable(() => import('../components/voucher/ViewCard'), {
+  fallback: fallbackElement,
+});
 export const browserRouter = createBrowserRouter([
   {
     path: webRoutes.home,
@@ -146,17 +153,31 @@ export const browserRouter = createBrowserRouter([
         ]
       },
       {
-        path: webRoutes.product_combo,
+        path: `${webRoutes.product_combo}`,
         element: <Combo />,
         errorElement: errorElement,
         children: [
           {
-            path: `${webRoutes.product_combo}`,
+            path: `${webRoutes.product_combo}/:storeId`,
             element: <ViewCombo />,
             errorElement: errorElement
           }
         ]
       },
+
+      {
+        path: `${webRoutes.vouchers}`,
+        element: <Voucher />,
+        errorElement: errorElement,
+        children: [
+          {
+            path: `${webRoutes.vouchers}`,
+            element: <ViewVoucher />,
+            errorElement: errorElement
+          }
+        ]
+      },
+
       {
         path: webRoutes.categories,
         element: <Categories />,

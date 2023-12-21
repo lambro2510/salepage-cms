@@ -8,3 +8,11 @@ export enum ActiveState {
     ACTIVE = 'Đang hoạt động',
     INACTIVE = 'Không hoạt động'
 }
+
+export enum ActionKey {
+    DELETE = 'delete',
+    UPDATE = 'update',
+    UPLOAD = 'upload',
+    COMBO = 'combo',
+    DETAIL = 'detail',
+}

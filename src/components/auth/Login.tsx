@@ -46,14 +46,16 @@ const Login = () => {
         if(!response?.data?.error){
           const admin: Admin = {
             token: response?.data?.data?.token,
+            role : response?.data?.data?.role
           };
+          if(admin.role != 'SELLER'){
+            throw Error('Tài khoản không có quyền bán, vui lòng tạo tài khoản bán hàng để đăng nhập.')
+          }
           dispatch(login(admin));
         }else{
           throw Error(response.data.message)
         }
-        
-        
-        
+
       })
       .catch((error) => {
         handleErrorResponse(error);
