@@ -77,6 +77,11 @@ const Voucher = loadable(() => import('../components/voucher'), {
 const ViewVoucher = loadable(() => import('../components/voucher/ViewCard'), {
   fallback: fallbackElement,
 });
+
+const ViewDetailVoucher = loadable(() => import('../components/voucher/DetailCard'), {
+  fallback: fallbackElement,
+});
+
 export const browserRouter = createBrowserRouter([
   {
     path: webRoutes.home,
@@ -173,6 +178,11 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.vouchers}`,
             element: <ViewVoucher />,
+            errorElement: errorElement
+          },
+          {
+            path: `${webRoutes.vouchers}/:storeId/:storeName`,
+            element: <ViewDetailVoucher />,
             errorElement: errorElement
           }
         ]

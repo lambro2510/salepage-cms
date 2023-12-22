@@ -2,7 +2,7 @@ import { Tag, Avatar, Space, BreadcrumbProps, Modal, Button } from 'antd';
 import { ActionType, ProColumns, ProTable, RequestData, TableDropdown } from '@ant-design/pro-components';
 import { MdDelete, MdDetails, MdDiscount, MdUpdate, MdUpload } from 'react-icons/md';
 import { CiCircleMore } from 'react-icons/ci';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { ActionKey } from '../../interfaces/enum/Type';
 import { webRoutes } from '../../routes/web';
@@ -16,7 +16,7 @@ import CreateVoucherModal from './modal/createVoucher';
 
 const ViewCard = () => {
     const { storeId } = useParams();
-
+    const navigate = useNavigate();
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean>(false);
     const [modal, modalContextHolder] = Modal.useModal();
@@ -25,6 +25,8 @@ const ViewCard = () => {
     const handleActionOnSelect = (key: any, row: VoucherStoreResponse) => {
         if(key == ActionKey.DELETE){
             deleteVoucher(row.voucherStoreId)
+        }else if(key == ActionKey.DETAIL){
+            navigate(`${webRoutes.vouchers}/${row.voucherStoreId}/${row.voucherStoreName}`)
         }
     }
 

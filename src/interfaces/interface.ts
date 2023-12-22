@@ -561,8 +561,8 @@ export interface VoucherCodeResponse {
     voucherCode: string;
     voucherCodeStatus: VoucherCodeStatus;
     usedBy: string;
-    usedAt: Date;
-    expireTime: Date;
+    usedAt: number | undefined;
+    expireTime: number;
 }
 
 export interface VoucherStoreResponse {
