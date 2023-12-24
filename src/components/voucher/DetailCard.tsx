@@ -12,7 +12,8 @@ import CreateVoucherDetailModal from "./modal/createVoucherDetailModal";
 
 const DetailCard = () => {
     const { storeId, storeName } = useParams();
-    const [current, setCurrent] = useState<number>(1); // Set initial page to 1
+    const [current, setCurrent] = useState<number>(1);
+    const [size, setSize] = useState<number>(20);
     const [total, setTotal] = useState<number>(0);
     const [voucherDetails, setVoucherDetails] = useState<VoucherCodeResponse[]>([]);
     const [voucher, setVoucher] = useState<VoucherStoreResponse>();
@@ -107,7 +108,7 @@ const DetailCard = () => {
 
     return (
         <BasePageContainer breadcrumb={breadcrumb}>
-            <Row >
+            <Row className="w-full">
                 <Col span={24} className="flex justify-between items-center">
                     <div>
                         <Typography.Text strong>Tên: </Typography.Text>
@@ -127,7 +128,7 @@ const DetailCard = () => {
                     </Button>
                 </Col>
                 <Divider />
-                <Row gutter={[16, 16]}>
+                <Row gutter={[16, 16]} className="w-full">
                     <Col span={24}>
                         <Card style={{ marginBottom: 16 }}>
                             <Row gutter={16}>
@@ -141,9 +142,9 @@ const DetailCard = () => {
                                     <Typography.Text strong>Sở hữu </Typography.Text>
                                 </Col>
                                 <Col span={5}>
-                                    <Typography.Text strong>Thời gian sử dụng </Typography.Text>
+                                    <Typography.Text strong className="flex justify-center">Thời gian sử dụng </Typography.Text>
                                 </Col>
-                                <Col span={5}>
+                                <Col span={5} className="flex justify-center">
                                     <Typography.Text strong>Ngày hết hạn </Typography.Text>
                                 </Col>
                             </Row>
