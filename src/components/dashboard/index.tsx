@@ -478,7 +478,7 @@ const Dashboard = () => {
               </Col>
             </Row>
           </TabPane>
-          <TabPane tab='Tổng đơn hàng đặt mua' key='2' >
+          <TabPane tab='Tổng sản phẩm bán ' key='2' >
             <Row>
               <Col xl={16} lg={24} md={24} sm={24} xs={24}>
                 <ProCard>
@@ -492,7 +492,7 @@ const Dashboard = () => {
               </Col>
             </Row>
           </TabPane>
-          <TabPane tab='Tổng số sản phẩm bán' key='3'>
+          <TabPane tab='Tổng đơn hàng đặt mua ' key='3'>
             <Row>
               <Col xl={16} lg={24} md={24} sm={24} xs={24}>
                 <ProCard>
