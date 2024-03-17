@@ -11,7 +11,7 @@ import { NotificationType, handleErrorResponse, showNotification } from "../../u
 import { CategoryType } from "../../interfaces/enum/CategoryType";
 import { ProductTypeResponse } from "../../interfaces/interface";
 
-interface CategoryInfo {
+export interface CategoryInfo {
     categoryName: string,
     categoryType: CategoryType,
     description: string,
