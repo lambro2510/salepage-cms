@@ -209,7 +209,7 @@ const ViewCard = () => {
             align: 'center',
             sorter: false,
             search: false,
-            render: (_: any, row: SellerProductResponse) => row.productCategory.categoryName
+            render: (_: any, row: SellerProductResponse) => row.productCategory?.categoryName
         },
         {
             title: 'Cửa hàng',

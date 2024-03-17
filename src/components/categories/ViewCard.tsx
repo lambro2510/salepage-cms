@@ -90,7 +90,7 @@ const ViewCard = () => {
                         showNotification(
                             'Thành công',
                             NotificationType.SUCCESS,
-                            `${category.categoryName} đã được xóa`
+                            `${category?.categoryName} đã được xóa`
                         );
 
                         actionRef.current?.reloadAndRest?.();
@@ -113,7 +113,7 @@ const ViewCard = () => {
             filterMode: 'menu',
             filtered: false,
             filterDropdownOpen: false,
-            render: (_, row: ProductCategoryResponse) => row.categoryName,
+            render: (_, row: ProductCategoryResponse) => row?.categoryName,
 
         },
         {
