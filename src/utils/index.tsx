@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import dayjs, { Dayjs } from 'dayjs';
 // export const API_URL = `https://salepage-server-rherm.appengine.bfcplatform.vn/api/v1`;
 // export const API_URL = `http://localhost:8080/api/v1`;
-export const API_URL = `https://api.luckypresent.com.vn/api/v1`;
+export const API_URL = `https://sale-api.luckypresent.com.vn/api/v1`;
 export enum NotificationType {
   ERROR = 'error',
   SUCCESS = 'success',
