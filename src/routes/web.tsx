@@ -7,8 +7,8 @@ export const webRoutes = {
   product_combo: '/product-combo',
   about: '/about',
   products: '/products',
-  vouchers : '/vouchers',
-  stores : '/stores',
+  vouchers: '/vouchers',
+  stores: '/stores',
   categories: '/categories',
   productType: '/product/type',
 };

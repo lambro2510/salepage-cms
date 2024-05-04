@@ -23,9 +23,11 @@ export const apiRoutes = {
 
   categories: `${API_URL}/seller/product-category`,
 
-  maps : `${API_URL}/public/map`,
+  maps: `${API_URL}/public/map`,
 
-  productTypes : `${API_URL}/public/product/type`,
+  productTypes: `${API_URL}/public/product/type`,
 
   voucher: `${API_URL}/seller/voucher`,
+
+  upload: `${API_URL}/public/upload`,
 };

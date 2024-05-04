@@ -1,9 +1,9 @@
 export enum SizeType {
-    CENTIMES = 'centimes',
-    MES = 'met'
+  CENTIMES = 'centimes',
+  MES = 'met',
 }
 
 export enum WeightType {
-    KILOGRAM = 'kilogram',
-    GRAM = 'gram'
+  KILOGRAM = 'kilogram',
+  GRAM = 'gram',
 }

@@ -1,8 +1,6 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 const Combo = () => {
-    return (
-        <Outlet/>
-    )
-}
+  return <Outlet />;
+};
 
 export default Combo;

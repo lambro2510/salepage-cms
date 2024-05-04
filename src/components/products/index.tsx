@@ -1,10 +1,6 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 const Products = () => {
-    
-
-    return (
-        <Outlet/>
-    )
-}
+  return <Outlet />;
+};
 
 export default Products;

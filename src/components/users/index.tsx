@@ -36,7 +36,7 @@ const breadcrumb: BreadcrumbProps = {
     {
       key: webRoutes.dashboard,
       title: <Link to={webRoutes.dashboard}>Dashboard</Link>,
-    }
+    },
   ],
 };
 

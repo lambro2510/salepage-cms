@@ -1,5 +1,5 @@
-import { Store } from "antd/es/form/interface";
-import { SellerStoreResponse } from "../interface";
+import { Store } from 'antd/es/form/interface';
+import { SellerStoreResponse } from '../interface';
 
 export interface Product {
   productId: string;
@@ -42,7 +42,3 @@ export interface ProductDetail {
   categoryId?: string;
   isHot?: boolean;
 }
-
-
-
-

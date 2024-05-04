@@ -27,15 +27,24 @@ const Products = loadable(() => import('../components/products'), {
 const ViewProduct = loadable(() => import('../components/products/ViewCard'), {
   fallback: fallbackElement,
 });
-const ViewDetailProduct = loadable(() => import('../components/products/ViewDetailCard'), {
-  fallback: fallbackElement,
-});
-const CreateProduct = loadable(() => import('../components/products/CreateCard'), {
-  fallback: fallbackElement,
-});
-const UpdateProduct = loadable(() => import('../components/products/UpdateCard'), {
-  fallback: fallbackElement,
-});
+const ViewDetailProduct = loadable(
+  () => import('../components/products/ViewDetailCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
+const CreateProduct = loadable(
+  () => import('../components/products/CreateCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
+const UpdateProduct = loadable(
+  () => import('../components/products/UpdateCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
 
 const Stores = loadable(() => import('../components/stores'), {
   fallback: fallbackElement,
@@ -53,22 +62,34 @@ const UpdateStore = loadable(() => import('../components/stores/UpdateCard'), {
 const Categories = loadable(() => import('../components/categories'), {
   fallback: fallbackElement,
 });
-const CreateCategory = loadable(() => import('../components/categories/CreateCard'), {
-  fallback: fallbackElement,
-});
-const UpdateCategory = loadable(() => import('../components/categories/UpdateCard'), {
-  fallback: fallbackElement,
-});
-const ViewCategory = loadable(() => import('../components/categories/ViewCard'), {
-  fallback: fallbackElement,
-});
+const CreateCategory = loadable(
+  () => import('../components/categories/CreateCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
+const UpdateCategory = loadable(
+  () => import('../components/categories/UpdateCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
+const ViewCategory = loadable(
+  () => import('../components/categories/ViewCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
 const Combo = loadable(() => import('../components/stores/combo'), {
   fallback: fallbackElement,
 });
 
-const ViewCombo = loadable(() => import('../components/stores/combo/ViewCard'), {
-  fallback: fallbackElement,
-});
+const ViewCombo = loadable(
+  () => import('../components/stores/combo/ViewCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
 
 const Voucher = loadable(() => import('../components/voucher'), {
   fallback: fallbackElement,
@@ -78,9 +99,12 @@ const ViewVoucher = loadable(() => import('../components/voucher/ViewCard'), {
   fallback: fallbackElement,
 });
 
-const ViewDetailVoucher = loadable(() => import('../components/voucher/DetailCard'), {
-  fallback: fallbackElement,
-});
+const ViewDetailVoucher = loadable(
+  () => import('../components/voucher/DetailCard'),
+  {
+    fallback: fallbackElement,
+  }
+);
 
 export const browserRouter = createBrowserRouter([
   {
@@ -120,21 +144,21 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             path: `${webRoutes.products}`,
-            element: <ViewProduct />
+            element: <ViewProduct />,
           },
           {
             path: `${webRoutes.products}/detail/:id`,
-            element: <ViewDetailProduct />
+            element: <ViewDetailProduct />,
           },
           {
             path: `${webRoutes.products}/:id`,
-            element: <UpdateProduct />
+            element: <UpdateProduct />,
           },
           {
             path: `${webRoutes.products}/create`,
-            element: <CreateProduct />
-          }
-        ]
+            element: <CreateProduct />,
+          },
+        ],
       },
       {
         path: webRoutes.stores,
@@ -143,19 +167,19 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.stores}/create`,
             element: <CreateStore />,
-            errorElement: errorElement
+            errorElement: errorElement,
           },
           {
             path: `${webRoutes.stores}`,
             element: <ViewStores />,
-            errorElement: errorElement
+            errorElement: errorElement,
           },
           {
             path: `${webRoutes.stores}/:id`,
             element: <UpdateStore />,
-            errorElement: errorElement
-          }
-        ]
+            errorElement: errorElement,
+          },
+        ],
       },
       {
         path: `${webRoutes.product_combo}`,
@@ -165,9 +189,9 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.product_combo}/:storeId`,
             element: <ViewCombo />,
-            errorElement: errorElement
-          }
-        ]
+            errorElement: errorElement,
+          },
+        ],
       },
 
       {
@@ -178,14 +202,14 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.vouchers}`,
             element: <ViewVoucher />,
-            errorElement: errorElement
+            errorElement: errorElement,
           },
           {
             path: `${webRoutes.vouchers}/:storeId/:storeName`,
             element: <ViewDetailVoucher />,
-            errorElement: errorElement
-          }
-        ]
+            errorElement: errorElement,
+          },
+        ],
       },
 
       {
@@ -195,19 +219,19 @@ export const browserRouter = createBrowserRouter([
           {
             path: `${webRoutes.categories}/create`,
             element: <CreateCategory />,
-            errorElement: errorElement
+            errorElement: errorElement,
           },
           {
             path: `${webRoutes.categories}`,
             element: <ViewCategory />,
-            errorElement: errorElement
+            errorElement: errorElement,
           },
           {
             path: `${webRoutes.categories}/:id`,
             element: <UpdateCategory />,
-            errorElement: errorElement
-          }
-        ]
+            errorElement: errorElement,
+          },
+        ],
       },
       {
         path: webRoutes.orders,

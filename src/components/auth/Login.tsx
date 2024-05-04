@@ -43,19 +43,20 @@ const Login = () => {
         password: values.password,
       })
       .then((response) => {
-        if(!response?.data?.error){
+        if (!response?.data?.error) {
           const admin: Admin = {
             token: response?.data?.data?.token,
-            role : response?.data?.data?.role
+            role: response?.data?.data?.role,
           };
-          if(admin.role != 'SELLER'){
-            throw Error('Tài khoản không có quyền bán, vui lòng tạo tài khoản bán hàng để đăng nhập.')
+          if (admin.role != 'SELLER') {
+            throw Error(
+              'Tài khoản không có quyền bán, vui lòng tạo tài khoản bán hàng để đăng nhập.'
+            );
           }
           dispatch(login(admin));
-        }else{
-          throw Error(response.data.message)
+        } else {
+          throw Error(response.data.message);
         }
-
       })
       .catch((error) => {
         handleErrorResponse(error);
@@ -80,13 +81,15 @@ const Login = () => {
           <Form.Item
             name="username"
             label={
-              <p className="block text-sm font-medium text-gray-900">Tên đăng nhập</p>
+              <p className="block text-sm font-medium text-gray-900">
+                Tên đăng nhập
+              </p>
             }
             rules={[
               {
                 required: true,
                 message: 'Vui lòng nhập tài khoản',
-              }
+              },
             ]}
           >
             <Input

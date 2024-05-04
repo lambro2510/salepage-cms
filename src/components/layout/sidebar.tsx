@@ -1,6 +1,13 @@
 import { webRoutes } from '../../routes/web';
 import { BiCategory, BiHomeAlt2 } from 'react-icons/bi';
-import { UserOutlined, InfoCircleOutlined, ShoppingOutlined, BarcodeOutlined, ShopOutlined, OrderedListOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  InfoCircleOutlined,
+  ShoppingOutlined,
+  BarcodeOutlined,
+  ShopOutlined,
+  OrderedListOutlined,
+} from '@ant-design/icons';
 import { MdDiscount } from 'react-icons/md';
 
 export const sidebar = [

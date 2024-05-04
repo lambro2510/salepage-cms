@@ -29,19 +29,18 @@ http.interceptors.request.use(
 
 http.interceptors.response.use(
   (response) => {
-    if(!response?.data?.error){
+    if (!response?.data?.error) {
       return response;
     }
     console.log(response);
-    
-    throw Error(response?.data?.message)
+
+    throw Error(response?.data?.message);
   },
   (error) => {
     if (error?.response?.status === 401) {
       store.dispatch(logout());
       return Promise.reject('Phiên đăng nhập hết hạn');
-    }
-    else if(error?.response?.status === 400){
+    } else if (error?.response?.status === 400) {
       return Promise.reject('Dữ liệu không hợp lệ');
     }
     return Promise.reject(error);

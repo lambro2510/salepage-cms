@@ -1,9 +1,9 @@
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 // export const API_URL = `https://salepage-server-rherm.appengine.bfcplatform.vn/api/v1`;
-// export const API_URL = `http://localhost:8080/api/v1`;
-export const API_URL = `https://sale-api.luckypresent.com.vn/api/v1`;
+export const API_URL = `http://localhost:8080/api/v1`;
+// export const API_URL = `https://sale-api.luckypresent.com.vn/api/v1`;
 export enum NotificationType {
   ERROR = 'error',
   SUCCESS = 'success',
@@ -25,7 +25,7 @@ export const showNotification = (
 
 export const roundedNumber = (number: number, fixed = 2) => {
   return parseFloat(number.toFixed(fixed));
-}
+};
 export const handleErrorResponse = (
   error: any,
   callback?: () => void,
@@ -39,9 +39,7 @@ export const handleErrorResponse = (
     if (typeof error === 'string') {
       try {
         error = JSON.parse(error);
-      } catch (error) {
-
-      }
+      } catch (error) {}
     }
 
     if (error instanceof AxiosError && error?.response?.data?.error) {
@@ -53,22 +51,22 @@ export const handleErrorResponse = (
 
   showNotification(
     errorMessage &&
-    errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1),
+      errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1),
     NotificationType.ERROR
   );
 
   if (callback) {
     return callback();
   }
-}
+};
 
 export const convertDate = (date: any, format = 'dd-mm-yyyy') => {
   return dayjs(date, format);
-}
+};
 
 export function hsvToHex(h: number, s: number, v: number) {
   // Ensure h is in the range [0, 360), s and v are in [0, 1]
-  h = (h % 360 + 360) % 360;
+  h = ((h % 360) + 360) % 360;
   s = Math.max(0, Math.min(1, s));
   v = Math.max(0, Math.min(1, v));
 
@@ -111,7 +109,7 @@ export function hsvToHex(h: number, s: number, v: number) {
   b = Math.round(b * 255);
 
   // Convert to hex
-  return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1)}`;
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
 }
 
 export const convertUTCToVietnamTime = (utcTimestamp: number) => {
@@ -129,4 +127,4 @@ export const convertUTCToVietnamTime = (utcTimestamp: number) => {
   const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
   return formattedDateTime;
-}
+};

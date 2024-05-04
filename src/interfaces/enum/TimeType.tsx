@@ -1,5 +1,5 @@
 export enum CategoryType {
-    HOUR,
-    MINUTE,
-    DAY
+  HOUR,
+  MINUTE,
+  DAY,
 }

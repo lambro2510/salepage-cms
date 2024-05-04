@@ -1,12 +1,12 @@
-import { ComboDto } from "../interface";
+import { ComboDto } from '../interface';
 
 export interface ComboDtoInterface extends ComboDto {
-    active : boolean
+  active: boolean;
 }
 
 export interface ProductInComboResponse {
-    productId : string;
-    productName : string;
-    imageUrl : string | undefined;
-    isInCombo : boolean
+  productId: string;
+  productName: string;
+  imageUrl: string | undefined;
+  isInCombo: boolean;
 }

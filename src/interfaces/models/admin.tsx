@@ -1,6 +1,6 @@
-import { UserRole } from "../interface";
+import { UserRole } from '../interface';
 
 export interface Admin {
   token: string;
-  role : UserRole
+  role: UserRole;
 }

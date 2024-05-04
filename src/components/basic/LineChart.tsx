@@ -38,13 +38,19 @@ export const options = {
         left: 30,
         right: 30,
         top: 30,
-        bottom: 30
-      }
-    }   
+        bottom: 30,
+      },
+    },
   },
 };
 
-const LineChart = ({ datas, title }: { title: string, datas: { lb: any[], value: any[] } }) => {
+const LineChart = ({
+  datas,
+  title,
+}: {
+  title: string;
+  datas: { lb: any[]; value: any[] };
+}) => {
   const data = {
     labels: datas.lb,
     datasets: [
@@ -60,5 +66,5 @@ const LineChart = ({ datas, title }: { title: string, datas: { lb: any[], value:
   };
 
   return <Line options={options} data={data} />;
-}
+};
 export default LineChart;
