@@ -1,7 +1,7 @@
 import { CategoryType } from '../enum/CategoryType';
 
 export interface Category {
-  categoryId: string;
+  id: string;
   categoryName: string;
   categoryType: CategoryType;
   description: string;
