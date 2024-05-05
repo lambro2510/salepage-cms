@@ -1,5 +1,5 @@
 # install stage
-FROM node:20-alpine as install-stage
+FROM node as install-stage
 WORKDIR /app
 COPY . .
 RUN npm install
