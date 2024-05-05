@@ -58,12 +58,12 @@ const DetailCard = () => {
       console.log(value);
 
       let response;
-      const hexColor = hsvToHexAlt(
-        value.type.color.metaColor.originalInput.h,
-        value.type.color.metaColor.originalInput.s,
-        value.type.color.metaColor.originalInput.v,
-        value.type.color.metaColor.originalInput.a
-      );
+      // const hexColor = hsvToHexAlt(
+      //   value.type.color.metaColor.originalInput.h,
+      //   value.type.color.metaColor.originalInput.s,
+      //   value.type.color.metaColor.originalInput.v,
+      //   value.type.color.metaColor.originalInput.a
+      // );
       if (productDetailId != ' ') {
         response = await http.put(
           `${apiRoutes.product_detail}/${productDetailId}`,
@@ -71,7 +71,7 @@ const DetailCard = () => {
             ...value,
             type: {
               type: value.type.type,
-              color: hexColor,
+              color: '#4d4c4a',
             },
           }
         );
