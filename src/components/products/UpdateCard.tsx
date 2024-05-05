@@ -149,7 +149,7 @@ const UpdateProduct = () => {
           options={categories.map((category) => {
             return {
               label: category.categoryName,
-              value: category.categoryId,
+              value: category.id,
             };
           })}
           rules={[
