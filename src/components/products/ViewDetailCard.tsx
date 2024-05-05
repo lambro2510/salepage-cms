@@ -81,7 +81,7 @@ const DetailCard = () => {
           ...value,
           type: {
             type: value.type.type,
-            color: hexColor,
+            color: '#4d4c4a',
           },
         });
         showNotification(response.data.message);
