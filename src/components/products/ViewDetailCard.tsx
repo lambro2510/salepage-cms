@@ -1,7 +1,4 @@
-import {
-  BreadcrumbProps,
-  Typography,
-} from 'antd';
+import { BreadcrumbProps, Typography } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { webRoutes } from '../../routes/web';
@@ -13,11 +10,6 @@ import {
   EditableProTable,
   ProColumns,
   ProForm,
-  ProFormDigit,
-  ProFormDigitRange,
-  ProFormList,
-  ProFormText,
-  ProTable,
   RequestData,
 } from '@ant-design/pro-components';
 import { handleErrorResponse, showNotification } from '../../utils';
@@ -188,12 +180,12 @@ const DetailCard = () => {
       valueType: 'text',
       align: 'center',
     },
-    {
-      title: 'Màu hiển thị',
-      dataIndex: ['type', 'color'],
-      valueType: 'color',
-      align: 'center',
-    },
+    // {
+    //   title: 'Màu hiển thị',
+    //   dataIndex: ['type', 'color'],
+    //   valueType: 'color',
+    //   align: 'center',
+    // },
     {
       title: 'Số lượng',
       dataIndex: 'quantity',
@@ -276,18 +268,18 @@ const DetailCard = () => {
           recordCreatorProps={{
             position: 'bottom',
             record: (index, dataSource) =>
-              ({
-                id: ' ',
-                productId: id,
-                type: {
-                  type: '',
-                  color: '',
-                },
-                quantity: 0,
-                originPrice: 0,
-                sellPrice: 0,
-                discountPercent: 0,
-              } as ProductDetailInfoResponse),
+            ({
+              id: ' ',
+              productId: id,
+              type: {
+                type: '',
+                color: '',
+              },
+              quantity: 0,
+              originPrice: 0,
+              sellPrice: 0,
+              discountPercent: 0,
+            } as ProductDetailInfoResponse),
             creatorButtonText: 'Thêm mới',
           }}
           dataSource={details}
