@@ -174,24 +174,6 @@ const ViewCard = () => {
               ),
             },
             {
-              key: ActionKey.UPLOAD,
-              name: (
-                <Space>
-                  <MdUpload />
-                  Tải ảnh mã giảm giá
-                </Space>
-              ),
-            },
-            {
-              key: ActionKey.UPDATE,
-              name: (
-                <Space>
-                  <MdUpdate />
-                  Chỉnh sửa
-                </Space>
-              ),
-            },
-            {
               key: ActionKey.DELETE,
               name: (
                 <Space>
