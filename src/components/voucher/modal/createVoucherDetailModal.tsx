@@ -60,13 +60,13 @@ const CreateVoucherDetailModal = ({
     <Modal
       open={open}
       onCancel={onClose}
-      title="Create Voucher"
+      title="Tạo mã voucher"
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          Huỷ
         </Button>,
         <Button key="finish" type="primary" onClick={onFinish}>
-          Finish
+          Xác nhận
         </Button>,
       ]}
     >

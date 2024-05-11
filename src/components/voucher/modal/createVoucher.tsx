@@ -147,11 +147,11 @@ const CreateVoucherModal = ({ open, callBack }: CreateVoucherModalProps) => {
           </Form.Item>
         )}
 
-        <Form.Item label="Giảm giá tối thiểu" name="minAblePrice">
+        <Form.Item label="Áp dụng cho các sản phẩm từ" name="minAblePrice">
           <Input suffix="VND" type="number" />
         </Form.Item>
 
-        <Form.Item label="Giảm giá tối đa" name="maxAblePrice">
+        <Form.Item label="Áp dụng cho các sản phẩm đến" name="maxAblePrice">
           <Input suffix="VND" type="number" />
         </Form.Item>
         <Form.Item
