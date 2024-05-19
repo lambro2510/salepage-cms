@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   ActionType,
   ProTable,
@@ -56,10 +57,9 @@ const breadcrumb: BreadcrumbProps = {
 };
 
 enum ActionKey {
-  DELETE = 'delete',
   DETAIL = 'detail',
-  UPDATE = 'update',
-  UPLOAD = 'upload',
+  ACCEPT = 'accept',
+  REFUSE = 'refuse',
 }
 
 const Orders = () => {
@@ -143,18 +143,36 @@ const Orders = () => {
       });
   };
 
-  const loadStore = () => {};
+  const loadStore = () => { };
 
-  const handleActionOnSelect = (key: string, product: ProductTransaction) => {
-    if (key === ActionKey.DELETE) {
-    } else if (key === ActionKey.UPDATE) {
-    } else if (key === ActionKey.UPLOAD) {
+  const handleActionOnSelect = (key: string, order: ProductTransaction) => {
+    if (key === ActionKey.ACCEPT) {
+      updateOrder(order.id, 'ACCEPT_STORE');
+    } else if (key === ActionKey.REFUSE) {
+      updateOrder(order.id, 'CANCEL');
     } else if (key === ActionKey.DETAIL) {
     }
   };
 
+  const updateOrder = async (id: string, state: string) => {
+    try {
+      const response = await http.put(
+        `${apiRoutes.orderHistories}/${id}`,
+        {},
+        {
+          params: {
+            state: state,
+          },
+        }
+      );
+      showNotification(response.data.message, NotificationType.SUCCESS);
+      actionRef.current?.reloadAndRest();
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  }
   useEffect(() => {
-    Promise.all([loadProduct(), loadStore()])
+    Promise.all([loadProduct()])
       .then(() => {
         setLoading(false);
       })
@@ -286,7 +304,7 @@ const Orders = () => {
           onSelect={(key) => handleActionOnSelect(key, row)}
           menus={[
             {
-              key: ActionKey.UPLOAD,
+              key: ActionKey.ACCEPT,
               name: (
                 <Space>
                   <BiAccessibility />
@@ -294,30 +312,21 @@ const Orders = () => {
                 </Space>
               ),
             },
+            // {
+            //   key: ActionKey.DETAIL,
+            //   name: (
+            //     <Space>
+            //       <MdUpdate />
+            //       Chi tiết đơn hàng
+            //     </Space>
+            //   ),
+            // },
             {
-              key: ActionKey.UPDATE,
-              name: (
-                <Space>
-                  <MdUpdate />
-                  Chi tiết đơn hàng
-                </Space>
-              ),
-            },
-            {
-              key: ActionKey.DETAIL,
-              name: (
-                <Space>
-                  <MdViewAgenda />
-                  Từ chối
-                </Space>
-              ),
-            },
-            {
-              key: ActionKey.DELETE,
+              key: ActionKey.REFUSE,
               name: (
                 <Space>
                   <DeleteOutlined />
-                  Xóa
+                  Từ chối
                 </Space>
               ),
             },
