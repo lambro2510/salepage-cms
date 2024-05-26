@@ -43,7 +43,7 @@ const About = () => {
                   <AiFillGithub className="text-4xl opacity-90" />
                   <h2 className="mt-4 font-display text-base text-slate-900">
                     <a
-                      href="https://github.com/lambro2510/salepage-cms"
+                      href="https://github.com/lananh151122/FontEndCMS"
                       target="_blank"
                       rel="noreferrer"
                       className="hover:text-primary"
