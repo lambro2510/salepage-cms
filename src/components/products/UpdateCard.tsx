@@ -94,7 +94,9 @@ const UpdateProduct = () => {
 
       const response = await http.put(`${apiRoutes.products}/${id}`, {
         ...values,
-        sellerStoreIds: values.stores,
+        sellerStoreIds: values.stores.map((store: any) =>
+          store.value != undefined ? store.value : store
+        ),
       } as ProductDto);
       setLoading(false);
       showNotification(response?.data?.message, NotificationType.SUCCESS);
@@ -170,6 +172,7 @@ const UpdateProduct = () => {
               message: 'Vui lòng chọn cửa hàng',
             },
           ]}
+          initialValue={product?.stores}
           options={stores.map((store) => {
             return {
               label: store.storeName,

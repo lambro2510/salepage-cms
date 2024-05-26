@@ -166,8 +166,9 @@ const ViewCard = () => {
             showNotification(
               'Thành công',
               NotificationType.SUCCESS,
-              `${product} đã được xóa`
+              `${product.productName} đã được xóa`
             );
+            actionRef.current?.reloadAndRest?.();
           })
           .catch((error) => {
             handleErrorResponse(error);
