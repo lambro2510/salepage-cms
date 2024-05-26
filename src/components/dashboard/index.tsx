@@ -603,7 +603,7 @@ const Dashboard = () => {
                 <ProCard>
                   <BarChart
                     datas={getPurchaseDaily(data, 'totalProduct')}
-                    title="Đơn hàng"
+                    title="Sản phẩm"
                   />
                 </ProCard>
               </Col>
@@ -622,7 +622,7 @@ const Dashboard = () => {
                 <ProCard>
                   <BarChart
                     datas={getPurchaseDaily(data, 'totalBuy')}
-                    title="Sản phẩm"
+                    title="Đơn hàng"
                   />
                 </ProCard>
               </Col>
