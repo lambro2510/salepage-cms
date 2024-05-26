@@ -78,15 +78,11 @@ const DetailCard = () => {
     items: [
       {
         key: webRoutes.stores,
-        title: <Link to={webRoutes.stores}>Mã giảm giá</Link>,
+        title: <Link to={webRoutes.vouchers}>Mã giảm giá</Link>,
       },
       {
-        key: `${webRoutes.stores}/:${storeId}`,
-        title: (
-          <Link to={`${webRoutes.stores}/:${storeId}`}>
-            {voucher?.voucherStoreName}
-          </Link>
-        ),
+        key: `${webRoutes.vouchers}/:${storeId}`,
+        title: <Typography.Text>{voucher?.voucherStoreName}</Typography.Text>,
       },
     ],
   };

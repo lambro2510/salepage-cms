@@ -112,6 +112,7 @@ const ViewCard = () => {
       align: 'center',
       sorter: false,
       filterMode: 'menu',
+      search: false,
       filtered: false,
       filterDropdownOpen: false,
       render: (_, row: VoucherStoreResponse) => row.totalQuantity,

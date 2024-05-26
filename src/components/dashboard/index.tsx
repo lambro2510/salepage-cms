@@ -59,7 +59,7 @@ const breadcrumb: BreadcrumbProps = {
 const type = [
   {
     name: 'totalBuy',
-    value: 'Số sản phẩm đã bán',
+    value: 'Số đơn hàng',
   },
   {
     name: 'totalUser',
@@ -67,7 +67,7 @@ const type = [
   },
   {
     name: 'totalProduct',
-    value: 'Số đơn hàng',
+    value: 'Số sản phẩm đã bán',
   },
   {
     name: 'totalView',
@@ -440,7 +440,7 @@ const Dashboard = () => {
     };
 
     const sortByTotalPrice = (chart: ChartDataInfo[]) => {
-      const sortData = chart.map((data) => {
+      let sortData = chart.map((data) => {
         const totalPrice = data.datasets.reduce((acc, dataSet) => {
           return (
             acc +
@@ -452,14 +452,15 @@ const Dashboard = () => {
         }, 0);
 
         return {
-          productId: data.productId,
-          productName: data.productName,
+          productId: data.productId || 1,
+          productName: data.productName || 'Chưa có thông tin',
           value: totalPrice,
         };
       });
 
-      sortData.sort((a, b) => b.value - a.value);
-
+      sortData = sortData.sort((a, b) => b.value - a.value);
+      console.log('sortData');
+      console.log(sortData);
       let i = 1;
 
       return sortData.map((data) => {
@@ -484,8 +485,8 @@ const Dashboard = () => {
         }, 0);
 
         return {
-          productId: data.productId,
-          productName: data.productName,
+          productId: data.productId || 1,
+          productName: data.productName || 'Chưa có thông tin',
           value: totalProduct,
         };
       });
@@ -540,8 +541,8 @@ const Dashboard = () => {
 
       return (
         <Row style={{ height: '100%' }}>
-          {sortedData.map((item: ListProductPurchase) => (
-            <Col span={24} key={item.productId}>
+          {sortedData.map((item: ListProductPurchase, index: number) => (
+            <Col span={24} key={index}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div className="flex items-center">
                   <div
@@ -601,7 +602,7 @@ const Dashboard = () => {
               <Col xl={16} lg={24} md={24} sm={24} xs={24}>
                 <ProCard>
                   <BarChart
-                    datas={getPurchaseDaily(data, 'totalBuy')}
+                    datas={getPurchaseDaily(data, 'totalProduct')}
                     title="Đơn hàng"
                   />
                 </ProCard>
@@ -620,7 +621,7 @@ const Dashboard = () => {
               <Col xl={16} lg={24} md={24} sm={24} xs={24}>
                 <ProCard>
                   <BarChart
-                    datas={getPurchaseDaily(data, 'totalProduct')}
+                    datas={getPurchaseDaily(data, 'totalBuy')}
                     title="Sản phẩm"
                   />
                 </ProCard>
@@ -680,7 +681,7 @@ const Dashboard = () => {
                     (acc, data) => acc + data.totalView,
                     0
                   )}`,
-                  description: `Số đơn hàng / lượt xem sản phẩm`,
+                  description: `Số sản phẩm đã bán / lượt xem sản phẩm`,
                 }}
                 chart={
                   <Progress

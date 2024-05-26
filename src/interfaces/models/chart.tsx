@@ -1,6 +1,6 @@
 export interface ChartDataInfo {
-  productId: string;
-  productName: string;
+  productId: string | 1;
+  productName: string | 'sắp bán';
   totalUser: number;
   totalPurchase: number;
   totalProduct: number;
