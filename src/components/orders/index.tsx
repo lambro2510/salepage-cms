@@ -143,8 +143,6 @@ const Orders = () => {
       });
   };
 
-  const loadStore = () => { };
-
   const handleActionOnSelect = (key: string, order: ProductTransaction) => {
     if (key === ActionKey.ACCEPT) {
       updateOrder(order.id, 'ACCEPT_STORE');
