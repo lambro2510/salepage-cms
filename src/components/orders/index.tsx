@@ -148,7 +148,6 @@ const Orders = () => {
       updateOrder(order.id, 'ACCEPT_STORE');
     } else if (key === ActionKey.REFUSE) {
       updateOrder(order.id, 'CANCEL');
-    } else if (key === ActionKey.DETAIL) {
     }
   };
 
@@ -163,12 +162,17 @@ const Orders = () => {
           },
         }
       );
+      if (actionRef && actionRef.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        actionRef.current.reloadAndRest();
+      }
       showNotification(response.data.message, NotificationType.SUCCESS);
-      actionRef.current?.reloadAndRest();
     } catch (error) {
       handleErrorResponse(error);
     }
-  }
+  };
+
   useEffect(() => {
     Promise.all([loadProduct()])
       .then(() => {
