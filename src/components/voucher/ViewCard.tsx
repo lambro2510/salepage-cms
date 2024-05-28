@@ -89,14 +89,6 @@ const ViewCard = () => {
 
   const columns: ProColumns<VoucherStoreResponse>[] = [
     {
-      title: 'Ảnh',
-      dataIndex: 'imageUrl',
-      align: 'center',
-      sorter: false,
-      search: false,
-      render: (_, row: VoucherStoreResponse) => 123,
-    },
-    {
       title: 'Tên voucher',
       dataIndex: 'voucherStoreName',
       align: 'center',
